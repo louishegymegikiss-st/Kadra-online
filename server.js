@@ -41,18 +41,27 @@ function findIndexHtmlRecursive(dir, depth = 0, maxDepth = 3) {
 }
 
 // Liste des emplacements possibles pour index.html
+// Infomaniak peut placer les fichiers dans www/ ou public_html/
 const possibleDirs = [
   __dirname,                                    // Répertoire où se trouve server.js
   process.cwd(),                                 // Répertoire de travail courant
   path.dirname(__dirname),                       // Répertoire parent
   path.dirname(path.dirname(__dirname)),        // Grand-parent
-  path.join(__dirname, 'www'),                  // Sous-dossier www
-  path.join(__dirname, 'public_html'),          // Sous-dossier public_html
+  path.join(__dirname, 'www'),                  // Sous-dossier www (Infomaniak)
+  path.join(__dirname, 'public_html'),          // Sous-dossier public_html (Infomaniak)
+  path.join(process.cwd(), 'www'),              // www depuis cwd
+  path.join(process.cwd(), 'public_html'),      // public_html depuis cwd
+  path.join(path.dirname(__dirname), 'www'),    // www dans parent
+  path.join(path.dirname(__dirname), 'public_html'), // public_html dans parent
   path.join(__dirname, 'public'),               // Sous-dossier public
   path.join(__dirname, 'dist'),                 // Sous-dossier dist
   path.join(__dirname, 'build'),                // Sous-dossier build
   '/srv/customer/site/galerie.photolesgarennes.com',  // Chemin exact Infomaniak
+  '/srv/customer/site/galerie.photolesgarennes.com/www', // www dans chemin Infomaniak
+  '/srv/customer/site/galerie.photolesgarennes.com/public_html', // public_html dans chemin Infomaniak
   '/srv/customer/sites/galerie.photolesgarennes.com', // Variante avec 'sites'
+  '/srv/customer/sites/galerie.photolesgarennes.com/www', // www dans variante
+  '/srv/customer/sites/galerie.photolesgarennes.com/public_html', // public_html dans variante
 ];
 
 // Chercher index.html dans tous les emplacements possibles
