@@ -3,7 +3,8 @@
 
 // Configuration
 // API_BASE peut être défini via window.API_BASE (pour frontend hébergé) ou utilise '/api/client' par défaut (local)
-const API_BASE = window.API_BASE || '/api/client';
+// Si window.API_BASE est explicitement null, on reste en mode statique (pas de fallback)
+const API_BASE = (typeof window !== 'undefined' && window.API_BASE !== undefined) ? window.API_BASE : '/api/client';
 // API_KEY peut être défini via window.API_KEY (pour frontend hébergé)
 const API_KEY = window.API_KEY || null;
 let cart = [];
