@@ -15,17 +15,44 @@ const PORT = process.env.PORT || 3000;
 // __dirname pointe vers le répertoire où se trouve server.js
 // Mais Infomaniak peut cloner ailleurs ou dans un sous-dossier
 
+// Recherche récursive dans tous les sous-dossiers jusqu'à 3 niveaux de profondeur
+function findIndexHtmlRecursive(dir, depth = 0, maxDepth = 3) {
+  if (depth > maxDepth) return null;
+  
+  try {
+    const indexPath = path.join(dir, 'index.html');
+    if (fs.existsSync(indexPath)) {
+      return dir;
+    }
+    
+    // Chercher dans les sous-dossiers
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
+    for (const entry of entries) {
+      if (entry.isDirectory() && !entry.name.startsWith('.') && entry.name !== 'node_modules') {
+        const subDir = path.join(dir, entry.name);
+        const found = findIndexHtmlRecursive(subDir, depth + 1, maxDepth);
+        if (found) return found;
+      }
+    }
+  } catch (err) {
+    // Ignorer les erreurs (permissions, etc.)
+  }
+  return null;
+}
+
 // Liste des emplacements possibles pour index.html
 const possibleDirs = [
   __dirname,                                    // Répertoire où se trouve server.js
   process.cwd(),                                 // Répertoire de travail courant
   path.dirname(__dirname),                       // Répertoire parent
+  path.dirname(path.dirname(__dirname)),        // Grand-parent
   path.join(__dirname, 'www'),                  // Sous-dossier www
   path.join(__dirname, 'public_html'),          // Sous-dossier public_html
   path.join(__dirname, 'public'),               // Sous-dossier public
   path.join(__dirname, 'dist'),                 // Sous-dossier dist
   path.join(__dirname, 'build'),                // Sous-dossier build
   '/srv/customer/site/galerie.photolesgarennes.com',  // Chemin exact Infomaniak
+  '/srv/customer/sites/galerie.photolesgarennes.com', // Variante avec 'sites'
 ];
 
 // Chercher index.html dans tous les emplacements possibles
