@@ -66,3 +66,20 @@ Après configuration, vérifiez que les fichiers sont bien présents :
 - `index.html` doit être accessible
 - `static/` doit contenir les CSS/JS
 - `package.json` doit être présent (si Node.js)
+
+## Problème : index.html non trouvé
+
+Si Infomaniak ne trouve pas `index.html`, vérifiez :
+
+1. **Répertoire de déploiement** : Doit pointer vers la racine du repository (`.`)
+2. **Structure** : Le fichier `index.html` doit être directement à la racine, pas dans un sous-dossier
+3. **Permissions** : Vérifiez que les fichiers ont les bonnes permissions (644 pour fichiers, 755 pour dossiers)
+
+### Solution : Vérifier le répertoire de déploiement
+
+Dans Manager Infomaniak :
+- **Répertoire de déploiement** : `www/` ou `public_html/` (selon votre config)
+- **Répertoire source Git** : `.` (racine du repo)
+- Les fichiers du repo doivent être copiés directement dans `www/` ou `public_html/`
+
+Si le problème persiste, vérifiez que le déploiement Git copie bien tous les fichiers à la racine du répertoire de déploiement.
