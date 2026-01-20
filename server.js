@@ -32,21 +32,75 @@ const possibleDirs = [
 let actualStaticDir = null;
 let indexPath = null;
 
+console.log('\n=== RECHERCHE index.html ===');
 for (const dir of possibleDirs) {
-  const testPath = path.join(dir, 'index.html');
-  if (fs.existsSync(testPath)) {
-    actualStaticDir = dir;
-    indexPath = testPath;
-    console.log(`✅ index.html trouvé dans: ${dir}`);
-    break;
+  try {
+    if (!fs.existsSync(dir)) {
+      console.log(`  [SKIP] ${dir} (n'existe pas)`);
+      continue;
+    }
+    
+    const testPath = path.join(dir, 'index.html');
+    if (fs.existsSync(testPath)) {
+      actualStaticDir = dir;
+      indexPath = testPath;
+      console.log(`  ✅ TROUVÉ: ${dir}`);
+      break;
+    } else {
+      console.log(`  [NOT FOUND] ${dir}`);
+    }
+  } catch (err) {
+    console.log(`  [ERROR] ${dir} - ${err.message}`);
   }
 }
 
-// Si toujours pas trouvé, utiliser __dirname par défaut
+// Si toujours pas trouvé, recherche récursive dans __dirname
+if (!actualStaticDir) {
+  console.log('\n=== RECHERCHE RÉCURSIVE ===');
+  const recursiveResult = findIndexHtmlRecursive(__dirname);
+  if (recursiveResult) {
+    actualStaticDir = recursiveResult;
+    indexPath = path.join(recursiveResult, 'index.html');
+    console.log(`  ✅ TROUVÉ (récursif): ${recursiveResult}`);
+  } else {
+    console.log(`  ❌ Pas trouvé même en récursif`);
+  }
+}
+
+// Si toujours pas trouvé, utiliser __dirname par défaut et lister TOUT
 if (!actualStaticDir) {
   actualStaticDir = __dirname;
   indexPath = path.join(__dirname, 'index.html');
-  console.error(`⚠️  index.html non trouvé, utilisation de __dirname par défaut: ${__dirname}`);
+  console.error(`\n❌ index.html NON TROUVÉ - Liste complète des fichiers:`);
+  
+  // Lister récursivement tous les fichiers pour diagnostic
+  function listAllFiles(dir, prefix = '', maxDepth = 5, currentDepth = 0) {
+    if (currentDepth > maxDepth) return;
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          if (!entry.name.startsWith('.') && entry.name !== 'node_modules') {
+            console.error(`${prefix}[DIR] ${entry.name}/`);
+            listAllFiles(fullPath, prefix + '  ', maxDepth, currentDepth + 1);
+          }
+        } else {
+          console.error(`${prefix}[FILE] ${entry.name}`);
+        }
+      }
+    } catch (err) {
+      console.error(`${prefix}[ERROR] ${err.message}`);
+    }
+  }
+  
+  console.error(`\nContenu de __dirname (${__dirname}):`);
+  listAllFiles(__dirname);
+  
+  console.error(`\nContenu de process.cwd() (${process.cwd()}):`);
+  if (process.cwd() !== __dirname) {
+    listAllFiles(process.cwd());
+  }
 }
 
 // Diagnostic complet
