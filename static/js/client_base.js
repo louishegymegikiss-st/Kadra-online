@@ -705,11 +705,22 @@ function toggleColumn(side) {
 
 // Chargement des produits
 async function loadProducts() {
+  // Mode statique : pas d'API, produits non disponibles
+  if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
+    console.log('Mode statique : produits non chargés (pas d\'API)');
+    products = [];
+    return;
+  }
+  
   try {
     const response = await fetch(`${API_BASE}/products?lang=${currentLanguage}`, {
       headers: getApiHeaders()
     });
     if (!response.ok) throw new Error('Erreur chargement produits');
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      throw new Error('Réponse API n\'est pas du JSON, API peut-être indisponible');
+    }
     const data = await response.json();
     products = data.products;
     renderPromotions();
@@ -719,7 +730,10 @@ async function loadProducts() {
     }
   } catch (error) {
     console.error('Erreur:', error);
-    showMessage('Impossible de charger les produits', 'error');
+    // Ne pas afficher d'erreur en mode statique
+    if (API_BASE && API_BASE !== 'null' && API_BASE !== null) {
+      showMessage('Impossible de charger les produits', 'error');
+    }
   }
 }
 
