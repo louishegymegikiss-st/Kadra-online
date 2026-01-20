@@ -41,24 +41,30 @@ function findIndexHtmlRecursive(dir, depth = 0, maxDepth = 3) {
 }
 
 // Liste des emplacements possibles pour index.html
-// Infomaniak place les fichiers dans /srv/customer/sites/galerie.photolesgarennes.com/
+// Infomaniak clone dans /srv/customer/sites/galerie.photolesgarennes.com/
+// Puis déploie dans www/ ou public_html/ (répertoire de déploiement)
 const INFOMANIAK_BASE = '/srv/customer/sites/galerie.photolesgarennes.com';
+
+// Construire la liste des emplacements possibles
 const possibleDirs = [
-  // PRIORITÉ 1 : Emplacement exact Infomaniak (où Git clone)
-  INFOMANIAK_BASE,                              // /srv/customer/sites/galerie.photolesgarennes.com
-  path.join(INFOMANIAK_BASE, 'www'),           // www/ dans Infomaniak
-  path.join(INFOMANIAK_BASE, 'public_html'),   // public_html/ dans Infomaniak
-  // PRIORITÉ 2 : Répertoires relatifs (si serveur lancé ailleurs)
+  // PRIORITÉ 1 : Répertoires de déploiement Infomaniak (où Git copie les fichiers)
+  path.join(INFOMANIAK_BASE, 'www'),           // www/ (répertoire de déploiement le plus courant)
+  path.join(INFOMANIAK_BASE, 'public_html'),   // public_html/ (alternative)
+  path.join(INFOMANIAK_BASE, 'public'),        // public/ (alternative)
+  INFOMANIAK_BASE,                              // Racine (si déploiement direct)
+  // PRIORITÉ 2 : Répertoires relatifs depuis __dirname (où se trouve server.js)
   __dirname,                                    // Répertoire où se trouve server.js
-  process.cwd(),                                 // Répertoire de travail courant
-  path.join(__dirname, 'www'),                  // Sous-dossier www
-  path.join(__dirname, 'public_html'),          // Sous-dossier public_html
-  path.join(process.cwd(), 'www'),              // www depuis cwd
-  path.join(process.cwd(), 'public_html'),      // public_html depuis cwd
-  // PRIORITÉ 3 : Autres emplacements possibles
-  path.dirname(__dirname),                       // Répertoire parent
+  path.join(__dirname, 'www'),                 // www/ depuis server.js
+  path.join(__dirname, 'public_html'),         // public_html/ depuis server.js
+  path.join(__dirname, 'public'),              // public/ depuis server.js
+  // PRIORITÉ 3 : Répertoires relatifs depuis process.cwd()
+  process.cwd(),                                // Répertoire de travail courant
+  path.join(process.cwd(), 'www'),              // www/ depuis cwd
+  path.join(process.cwd(), 'public_html'),     // public_html/ depuis cwd
+  path.join(process.cwd(), 'public'),          // public/ depuis cwd
+  // PRIORITÉ 4 : Autres emplacements possibles
+  path.dirname(__dirname),                     // Répertoire parent
   path.dirname(path.dirname(__dirname)),        // Grand-parent
-  path.join(__dirname, 'public'),               // Sous-dossier public
   path.join(__dirname, 'dist'),                 // Sous-dossier dist
   path.join(__dirname, 'build'),                // Sous-dossier build
   // Variantes (au cas où)
