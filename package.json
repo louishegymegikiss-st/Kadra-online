@@ -4,7 +4,8 @@
   "description": "Interface client online - Site statique",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "build": "echo 'No build step required - static files are pre-generated'"
   },
   "dependencies": {
     "express": "^4.18.2"

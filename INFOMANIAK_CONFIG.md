@@ -43,13 +43,19 @@ Répertoire de déploiement: www/
 ### Node.js
 ```
 Répertoire source: .          ← RACINE (point)
+Commande de construction (build): npm install
+OU
+Commande de construction (build): (laisser vide - pas de build nécessaire)
 Commande de démarrage: npm start
 OU
 Commande de démarrage: node server.js
 Port: Laissé par défaut (Infomaniak gère automatiquement via variable d'environnement PORT)
 ```
 
-**Note** : Le serveur utilise `process.env.PORT || 3000`, donc Infomaniak définira automatiquement le port via la variable d'environnement `PORT`. Vous n'avez pas besoin de spécifier le port manuellement.
+**Note** : 
+- **Commande de construction** : `npm install` (pour installer les dépendances Express) OU laisser vide (les fichiers sont déjà générés)
+- **Commande de démarrage** : `npm start` ou `node server.js`
+- Le serveur utilise `process.env.PORT || 3000`, donc Infomaniak définira automatiquement le port via la variable d'environnement `PORT`
 
 ## Vérification
 
