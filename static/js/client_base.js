@@ -704,8 +704,8 @@ function toggleColumn(side) {
 // Chargement des produits
 async function loadProducts() {
   // Ne pas charger si pas d'API configurée
-  if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
-    console.warn('API non configurée, produits non chargés');
+  if (!API_BASE || API_BASE === 'null' || API_BASE === null || API_BASE === '') {
+    console.log('Mode statique : produits non chargés (pas d\'API)');
     return;
   }
   

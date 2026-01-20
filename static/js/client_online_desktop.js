@@ -11,7 +11,7 @@ const POLL_INTERVAL_INACTIVE = 30000; // 30 secondes quand l'utilisateur est ina
 // Vérifier les mises à jour des photos
 async function checkPhotoUpdates() {
   // Ne pas faire de polling si pas d'API configurée
-  if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
+  if (!API_BASE || API_BASE === 'null' || API_BASE === null || API_BASE === '') {
     return;
   }
   
@@ -94,6 +94,12 @@ async function refreshPhotosQuietly(query) {
 // Démarrer le polling
 function startPhotoPolling() {
   if (photoPollingInterval) return; // Déjà démarré
+  
+  // Ne pas démarrer le polling si pas d'API configurée
+  if (!API_BASE || API_BASE === 'null' || API_BASE === null || API_BASE === '') {
+    console.log('Mode statique : polling désactivé');
+    return;
+  }
   
   // Vérifier immédiatement
   checkPhotoUpdates();
