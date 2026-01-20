@@ -10,9 +10,21 @@ const POLL_INTERVAL_INACTIVE = 30000; // 30 secondes quand l'utilisateur est ina
 
 // Vérifier les mises à jour des photos
 async function checkPhotoUpdates() {
+  // Ne pas faire de polling si pas d'API configurée
+  if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
+    return;
+  }
+  
   try {
     const response = await fetch(`${API_BASE}/photos/status`);
     if (!response.ok) return;
+    
+    // Vérifier que la réponse est bien du JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.warn('Réponse API n\'est pas du JSON, API peut-être indisponible');
+      return;
+    }
     
     const status = await response.json();
     
@@ -36,6 +48,11 @@ async function checkPhotoUpdates() {
       lastPhotoStatusHash = status.hash;
     }
   } catch (error) {
+    // Ne pas afficher d'erreur si l'API n'existe pas encore
+    if (error.message && error.message.includes('JSON')) {
+      // API retourne du HTML au lieu de JSON = API non disponible
+      return;
+    }
     console.error('Erreur vérification mises à jour photos:', error);
   }
 }

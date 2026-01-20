@@ -191,9 +191,45 @@ function encodePhotoPath(path) {
     .join('/');
 }
 
-function getPhotoUrlFromFilename(filename) {
+function getPhotoUrlFromFilename(filename, relPath = null) {
+  // Si R2 est configuré et disponible, utiliser R2 pour les photos WebP
+  if (window.R2_PUBLIC_URL && relPath) {
+    try {
+      // Construire le chemin R2 : relPath contient le chemin complet jusqu'au nom de fichier original
+      // Ex: relPath = "BJ025/1_dimanche.../0005_LEBRETON LENA_HULOTTE DU BOIS/W61_7783.JPG"
+      // Le chemin R2 est : {relPath}/{filename_webp.webp}
+      // Ex: "BJ025/1_dimanche.../0005_LEBRETON LENA_HULOTTE DU BOIS/W61_7783.JPG/BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7783_303ad40e_webp.webp"
+      
+      const relPathNormalized = relPath.replace(/\\/g, '/');
+      const filenameNormalized = filename.replace(/\\/g, '/');
+      const filenameOnly = filenameNormalized.split('/').pop() || filenameNormalized;
+      
+      // Convertir le nom de fichier en WebP
+      let webpFilename = filenameOnly;
+      if (!webpFilename.includes('_webp')) {
+        // Remplacer l'extension par _webp.webp
+        webpFilename = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '_webp.webp');
+        // Si pas d'extension trouvée, ajouter _webp.webp
+        if (webpFilename === filenameOnly) {
+          webpFilename = filenameOnly + '_webp.webp';
+        }
+      }
+      
+      // Construire le chemin R2 : relPath + webpFilename
+      const r2Path = relPathNormalized + '/' + webpFilename;
+      return `${window.R2_PUBLIC_URL}/${r2Path}`;
+    } catch (e) {
+      console.warn('Erreur construction URL R2:', e);
+      // Fallback sur API locale
+    }
+  }
+  
+  // Fallback : API locale (toujours utilisé pour interface offline)
   const encoded = encodePhotoPath(filename);
-  return encoded ? `/api/photo/${encoded}` : '';
+  // Pour interface offline, API_BASE est '/api/client' ou non défini
+  // Pour interface online, API_BASE contient l'URL complète du serveur
+  const apiBase = (typeof API_BASE !== 'undefined' && API_BASE) ? API_BASE.replace('/api/client', '') : '';
+  return encoded ? `${apiBase}/api/photo/${encoded}` : '';
 }
 
 // Traductions
@@ -656,11 +692,25 @@ function toggleColumn(side) {
 
 // Chargement des produits
 async function loadProducts() {
+  // Ne pas charger si pas d'API configurée
+  if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
+    console.warn('API non configurée, produits non chargés');
+    return;
+  }
+  
   try {
     const response = await fetch(`${API_BASE}/products?lang=${currentLanguage}`, {
       headers: getApiHeaders()
     });
     if (!response.ok) throw new Error('Erreur chargement produits');
+    
+    // Vérifier que la réponse est bien du JSON
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/json')) {
+      console.warn('Réponse API n\'est pas du JSON, API peut-être indisponible');
+      return;
+    }
+    
     const data = await response.json();
     products = data.products;
     renderPromotions();
@@ -669,8 +719,12 @@ async function loadProducts() {
       renderCartItems();
     }
   } catch (error) {
-    console.error('Erreur:', error);
-    showMessage('Impossible de charger les produits', 'error');
+    // Ne pas afficher d'erreur si l'API n'existe pas encore (retourne du HTML)
+    if (error.message && error.message.includes('JSON')) {
+      // API retourne du HTML au lieu de JSON = API non disponible
+      return;
+    }
+    console.error('Erreur chargement produits:', error);
   }
 }
 
@@ -1088,6 +1142,13 @@ async function searchPhotos(query) {
   container.style.display = 'block';
   container.innerHTML = `<div style="text-align: center; padding: 20px;">${t('search_in_progress')}</div>`;
   
+  // Mode statique : pas d'API disponible
+  if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
+    container.innerHTML = `<div style="text-align: center; padding: 20px; color: orange;">${t('search_error')} - Mode statique : recherche non disponible</div>`;
+    console.warn('Mode statique : API non disponible pour la recherche');
+    return;
+  }
+  
   try {
     const response = await fetch(`${API_BASE}/search-photos?query=${encodeURIComponent(query)}&page=1&limit=80`, {
       headers: getApiHeaders()
@@ -1113,7 +1174,9 @@ function normalizePhotosData(rawPhotos) {
     const filename = photo.rel_path || photo.photo_path || photo.path || photo.filename || photo.id || '';
     const normalizedFilename = filename.replace(/\\/g, '/');
     const displayName = photo.name || (normalizedFilename ? normalizedFilename.split('/').pop() : '');
-    const imageUrl = photo.thumb_url || getPhotoUrlFromFilename(normalizedFilename);
+    // Passer rel_path pour construire l'URL R2 si disponible
+    const relPath = photo.rel_path || photo.photo_path || photo.path || null;
+    const imageUrl = photo.thumb_url || getPhotoUrlFromFilename(normalizedFilename, relPath);
     return {
       ...photo,
       filename: normalizedFilename,
