@@ -43,8 +43,13 @@ Répertoire de déploiement: www/
 ### Node.js
 ```
 Répertoire source: .          ← RACINE (point)
-Commande: npm start
+Commande de démarrage: npm start
+OU
+Commande de démarrage: node server.js
+Port: Laissé par défaut (Infomaniak gère automatiquement via variable d'environnement PORT)
 ```
+
+**Note** : Le serveur utilise `process.env.PORT || 3000`, donc Infomaniak définira automatiquement le port via la variable d'environnement `PORT`. Vous n'avez pas besoin de spécifier le port manuellement.
 
 ## Vérification
 
