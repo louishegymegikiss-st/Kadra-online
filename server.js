@@ -133,6 +133,55 @@ if (!fs.existsSync(indexPath)) {
   console.error(`Tous les emplacements testés:`, possibleDirs);
 }
 
+// Endpoint de diagnostic
+app.get('/diagnostic', (req, res) => {
+  function listAllFiles(dir, prefix = '', maxDepth = 5, currentDepth = 0) {
+    if (currentDepth > maxDepth) return '';
+    let output = '';
+    try {
+      const entries = fs.readdirSync(dir, { withFileTypes: true });
+      for (const entry of entries) {
+        const fullPath = path.join(dir, entry.name);
+        if (entry.isDirectory()) {
+          if (!entry.name.startsWith('.') && entry.name !== 'node_modules') {
+            output += `${prefix}[DIR] ${entry.name}/\n`;
+            output += listAllFiles(fullPath, prefix + '  ', maxDepth, currentDepth + 1);
+          }
+        } else {
+          output += `${prefix}[FILE] ${entry.name}\n`;
+        }
+      }
+    } catch (err) {
+      output += `${prefix}[ERROR] ${err.message}\n`;
+    }
+    return output;
+  }
+  
+  let html = '<h1>Diagnostic Serveur</h1>';
+  html += `<h2>Informations système</h2>`;
+  html += `<pre>__dirname: ${__dirname}
+process.cwd(): ${process.cwd()}
+actualStaticDir: ${actualStaticDir}
+indexPath: ${indexPath}
+index.html existe: ${fs.existsSync(indexPath)}</pre>`;
+  
+  html += `<h2>Emplacements testés</h2><pre>`;
+  for (const dir of possibleDirs) {
+    const exists = fs.existsSync(dir);
+    const hasIndex = exists && fs.existsSync(path.join(dir, 'index.html'));
+    html += `${exists ? '✅' : '❌'} ${dir}${hasIndex ? ' (index.html trouvé!)' : ''}\n`;
+  }
+  html += `</pre>`;
+  
+  html += `<h2>Contenu de __dirname</h2><pre>${listAllFiles(__dirname)}</pre>`;
+  
+  if (process.cwd() !== __dirname) {
+    html += `<h2>Contenu de process.cwd()</h2><pre>${listAllFiles(process.cwd())}</pre>`;
+  }
+  
+  res.send(`<html><head><meta charset="UTF-8"><title>Diagnostic</title></head><body>${html}</body></html>`);
+});
+
 // Servir les fichiers statiques depuis le répertoire déterminé
 app.use(express.static(actualStaticDir, {
   dotfiles: 'ignore',
@@ -149,11 +198,13 @@ app.get('*', (req, res) => {
     console.error(`Tentative d'accès à ${req.path} mais index.html introuvable`);
     res.status(404).send(`
       <h1>Erreur 404 - index.html introuvable</h1>
-      <p>Le fichier index.html n'a pas été trouvé dans: ${STATIC_DIR}</p>
+      <p>Le fichier index.html n'a pas été trouvé.</p>
       <p>Vérifiez la configuration Infomaniak (répertoire source et déploiement)</p>
       <pre>__dirname: ${__dirname}
 process.cwd(): ${process.cwd()}
-STATIC_DIR: ${STATIC_DIR}</pre>
+actualStaticDir: ${actualStaticDir}
+indexPath: ${indexPath}</pre>
+      <p><a href="/diagnostic">Voir le diagnostic complet</a></p>
     `);
   }
 });
