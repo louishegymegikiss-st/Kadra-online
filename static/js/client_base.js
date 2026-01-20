@@ -192,60 +192,55 @@ function encodePhotoPath(path) {
     .join('/');
 }
 
-function getPhotoUrlFromFilename(filename, relPath = null, originalFilename = null) {
-  // Si R2 est configuré et disponible, utiliser R2 pour les photos WebP
-  if (window.R2_PUBLIC_URL && relPath) {
-    try {
-      // Format R2 réel : {dossier_parent}/{nom_fichier_original}/{filename_avec_file_id}.webp
-      // Ex: "BJ025/.../0005_LEBRETON LENA_HULOTTE DU BOIS/W61_5391.JPG/BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5391_79c059c5.webp"
+function getPhotoUrlFromFilename(filename, relPath = null, originalFilename = null, fileId = null, eventId = null, variant = 'preview') {
+  // Si R2 est configuré et disponible
+  if (window.R2_PUBLIC_URL) {
+    // NOUVEAU : Utiliser les nouveaux chemins R2 simplifiés si file_id disponible
+    if (fileId && eventId) {
+      // Format : events/{event_id}/photos/{file_id}/{variant}.{ext}
+      const ext = variant === 'hd' ? 'jpg' : 'webp';
+      const r2Path = `events/${eventId}/photos/${fileId}/${variant}.${ext}`;
+      const newUrl = `${window.R2_PUBLIC_URL}/${r2Path}`;
       
-      const relPathNormalized = relPath.replace(/\\/g, '/');
-      const filenameNormalized = filename.replace(/\\/g, '/');
-      const filenameOnly = filenameNormalized.split('/').pop() || filenameNormalized;
-      
-      // relPath contient le chemin complet jusqu'au fichier final
-      // Ex: "BJ025/.../0005_LEBRETON LENA_HULOTTE DU BOIS/BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7708_a396865a.jpg"
-      // Il faut extraire le dossier parent
-      const relPathParts = relPathNormalized.split('/');
-      const parentDir = relPathParts.slice(0, -1).join('/');
-      
-      // Utiliser original_filename si fourni, sinon extraire depuis le filename
-      let originalFile = originalFilename;
-      if (!originalFile) {
-        // Format filename : "BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7708_a396865a.jpg"
-        // Le nom original est après le dernier # : "W61_7708_a396865a.jpg" -> "W61_7708.JPG"
-        const filenameParts = filenameOnly.split('#');
-        if (filenameParts.length > 0) {
-          const lastPart = filenameParts[filenameParts.length - 1];
-          // Extraire "W61_7708" depuis "W61_7708_a396865a.jpg"
-          const stem = lastPart.replace(/_\w+\.(jpg|jpeg|png)$/i, '');
-          originalFile = stem + '.JPG';
-        } else {
-          originalFile = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '.JPG');
+      // Pour l'instant, on retourne le nouveau chemin
+      // Si l'image ne charge pas, le navigateur essaiera l'ancien chemin via le fallback
+      return newUrl;
+    }
+    
+    // ANCIEN : Fallback sur ancien format si relPath disponible (rétrocompatibilité)
+    if (relPath) {
+      try {
+        const relPathNormalized = relPath.replace(/\\/g, '/');
+        const filenameNormalized = filename.replace(/\\/g, '/');
+        const filenameOnly = filenameNormalized.split('/').pop() || filenameNormalized;
+        
+        const relPathParts = relPathNormalized.split('/');
+        const parentDir = relPathParts.slice(0, -1).join('/');
+        
+        let originalFile = originalFilename;
+        if (!originalFile) {
+          const filenameParts = filenameOnly.split('#');
+          if (filenameParts.length > 0) {
+            const lastPart = filenameParts[filenameParts.length - 1];
+            const stem = lastPart.replace(/_\w+\.(jpg|jpeg|png)$/i, '');
+            originalFile = stem + '.JPG';
+          } else {
+            originalFile = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '.JPG');
+          }
         }
+        
+        const webpFilename = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+        const r2Path = `${parentDir}/${originalFile}/${webpFilename}`;
+        
+        return `${window.R2_PUBLIC_URL}/${r2Path}`;
+      } catch (e) {
+        console.warn('Erreur construction URL R2 (ancien format):', e);
       }
-      
-      // Construire le chemin R2 : {dossier_parent}/{nom_original}/{filename}.webp
-      const webpFilename = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-      const r2Path = `${parentDir}/${originalFile}/${webpFilename}`;
-      
-      // Encoder l'URL pour les espaces et caractères spéciaux
-      const encodedPath = r2Path.split('/').map(part => encodeURIComponent(part)).join('/');
-      const fullUrl = `${window.R2_PUBLIC_URL}/${encodedPath}`;
-      
-      console.log('🔗 URL R2:', fullUrl, '| parentDir:', parentDir, '| originalFile:', originalFile, '| webpFilename:', webpFilename);
-      
-      return fullUrl;
-    } catch (e) {
-      console.warn('Erreur construction URL R2:', e);
-      // Fallback sur API locale
     }
   }
   
   // Fallback : API locale (toujours utilisé pour interface offline)
   const encoded = encodePhotoPath(filename);
-  // Pour interface offline, API_BASE est '/api/client' ou non défini
-  // Pour interface online, API_BASE contient l'URL complète du serveur
   const apiBase = (typeof API_BASE !== 'undefined' && API_BASE) ? API_BASE.replace('/api/client', '') : '';
   return encoded ? `${apiBase}/api/photo/${encoded}` : '';
 }
@@ -710,25 +705,11 @@ function toggleColumn(side) {
 
 // Chargement des produits
 async function loadProducts() {
-  // Ne pas charger si pas d'API configurée
-  if (!API_BASE || API_BASE === 'null' || API_BASE === null || API_BASE === '') {
-    console.log('Mode statique : produits non chargés (pas d\'API)');
-    return;
-  }
-  
   try {
     const response = await fetch(`${API_BASE}/products?lang=${currentLanguage}`, {
       headers: getApiHeaders()
     });
     if (!response.ok) throw new Error('Erreur chargement produits');
-    
-    // Vérifier que la réponse est bien du JSON
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/json')) {
-      console.warn('Réponse API n\'est pas du JSON, API peut-être indisponible');
-      return;
-    }
-    
     const data = await response.json();
     products = data.products;
     renderPromotions();
@@ -737,12 +718,8 @@ async function loadProducts() {
       renderCartItems();
     }
   } catch (error) {
-    // Ne pas afficher d'erreur si l'API n'existe pas encore (retourne du HTML)
-    if (error.message && error.message.includes('JSON')) {
-      // API retourne du HTML au lieu de JSON = API non disponible
-      return;
-    }
-    console.error('Erreur chargement produits:', error);
+    console.error('Erreur:', error);
+    showMessage('Impossible de charger les produits', 'error');
   }
 }
 
@@ -1157,21 +1134,40 @@ function applySuggestion(value) {
 // Cache pour le JSON statique des photos
 let staticPhotosCache = null;
 
+// Forcer le rechargement du cache au démarrage (pour éviter les anciennes versions)
+if (typeof window !== 'undefined' && window.location) {
+  // Vider le cache si on détecte qu'on charge une ancienne version
+  const cacheVersion = sessionStorage.getItem('photos_json_version');
+  if (cacheVersion && cacheVersion !== '2') {
+    staticPhotosCache = null;
+  }
+  sessionStorage.setItem('photos_json_version', '2');
+}
+
 async function loadStaticPhotos() {
+  // Vérifier la version du cache et forcer le rechargement si nécessaire
+  const cacheVersion = sessionStorage.getItem('photos_json_version');
+  if (cacheVersion !== '2') {
+    staticPhotosCache = null; // Forcer le rechargement
+    sessionStorage.setItem('photos_json_version', '2');
+  }
+  
   // Charger le JSON statique une seule fois
   if (staticPhotosCache) {
     return staticPhotosCache;
   }
   
   try {
-    const response = await fetch('/static/photos.json');
+    // Ajouter un timestamp pour éviter le cache navigateur (version 2 = 109 photos)
+    const cacheBuster = `?v=2&t=${Date.now()}`;
+    const response = await fetch(`/static/photos.json${cacheBuster}`);
     if (!response.ok) {
       console.warn('Fichier photos.json introuvable, recherche non disponible');
       return null;
     }
     const data = await response.json();
     staticPhotosCache = data.items || data.photos || [];
-    console.log(`✅ ${staticPhotosCache.length} photos chargées depuis JSON statique`);
+    console.log(`✅ ${staticPhotosCache.length} photos chargées depuis JSON statique (version ${data.version || 'N/A'})`);
     return staticPhotosCache;
   } catch (error) {
     console.warn('Erreur chargement photos.json:', error);
@@ -1270,17 +1266,53 @@ function normalizePhotosData(rawPhotos) {
     const filename = photo.rel_path || photo.photo_path || photo.path || photo.filename || photo.id || '';
     const normalizedFilename = filename.replace(/\\/g, '/');
     const displayName = photo.name || (normalizedFilename ? normalizedFilename.split('/').pop() : '');
-    // Passer rel_path et original_filename pour construire l'URL R2 si disponible
-    const relPath = photo.rel_path || photo.photo_path || photo.path || null;
-    const originalFilename = photo.original_filename || null;
-    const imageUrl = photo.thumb_url || getPhotoUrlFromFilename(normalizedFilename, relPath, originalFilename);
-    console.log('🔗 URL générée:', imageUrl, 'pour', normalizedFilename);
+    
+    // NOUVEAU : Utiliser les URLs R2 depuis l'API si disponibles
+    let imageUrl = null;
+    let previewUrl = null;
+    
+    if (photo.urls && window.R2_PUBLIC_URL) {
+      // L'API retourne les chemins R2 dans urls.thumb, urls.preview, urls.hd
+      if (photo.urls.thumb) {
+        imageUrl = `${window.R2_PUBLIC_URL}/${photo.urls.thumb}`;
+      }
+      if (photo.urls.preview) {
+        previewUrl = `${window.R2_PUBLIC_URL}/${photo.urls.preview}`;
+      }
+      if (!imageUrl && photo.urls.preview) {
+        imageUrl = previewUrl; // Fallback sur preview si thumb manquant
+      }
+    }
+    
+    // Si pas d'URLs R2 depuis l'API, construire depuis file_id ou ancien format
+    if (!imageUrl) {
+      const fileId = photo.file_id || null;
+      const eventId = photo.event_id || photo.contest || null;
+      const relPath = photo.rel_path || photo.photo_path || photo.path || null;
+      const originalFilename = photo.original_filename || null;
+      
+      if (fileId && eventId) {
+        // Nouveau format avec file_id (prioritaire)
+        imageUrl = getPhotoUrlFromFilename(normalizedFilename, null, null, fileId, eventId, 'thumb');
+        previewUrl = getPhotoUrlFromFilename(normalizedFilename, null, null, fileId, eventId, 'preview');
+      }
+      
+      // Fallback sur ancien format si nouveau format non disponible
+      if (!imageUrl && relPath) {
+        imageUrl = photo.thumb_url || getPhotoUrlFromFilename(normalizedFilename, relPath, originalFilename);
+        previewUrl = photo.preview_url || imageUrl;
+      }
+    }
+    
     return {
       ...photo,
       filename: normalizedFilename,
       displayName,
-      imageUrl,
-      previewUrl: photo.preview_url || imageUrl,
+      imageUrl: imageUrl || photo.thumb_url || '',
+      previewUrl: previewUrl || photo.preview_url || imageUrl || '',
+      // Garder les infos pour fallback si nouveau chemin échoue
+      _fallbackRelPath: photo.rel_path || photo.photo_path || photo.path || null,
+      _fallbackOriginalFilename: photo.original_filename || null,
     };
   });
 }
@@ -1363,11 +1395,20 @@ function renderPhotos(photos) {
       card.title = t('blocked_digital_title');
     }
     
+    // Préparer le fallback sur l'ancien chemin si le nouveau échoue
+    const fallbackUrl = photo._fallbackRelPath ? 
+      getPhotoUrlFromFilename(photo.filename, photo._fallbackRelPath, photo._fallbackOriginalFilename) : 
+      null;
+    
+    // Gestionnaire d'erreur pour fallback sur ancien chemin
+    const imgErrorHandler = fallbackUrl && fallbackUrl !== imageUrl ? 
+      `this.onerror=null; this.src='${fallbackUrl.replace(/'/g, "\\'")}';` : '';
+    
     card.innerHTML = `
       <div class="photo-in-cart-badge" style="display: ${inCart ? 'flex' : 'none'}" onclick="event.stopPropagation(); removePhotoFromCart('${photo.filename}')">✓</div>
       <button class="photo-add-btn" onclick="event.stopPropagation(); toggleCartItem('${photo.filename}', this)" style="display: ${inCart ? 'none' : 'flex'}">+</button>
       ${hasBlockedDigital ? `<div class="photo-blocked-badge" title="${escapeHtml(t('blocked_digital_badge_title'))}">📦</div>` : ''}
-      <img src="${imageUrl}" class="photo-thumbnail" loading="lazy" alt="${displayName}" onload="detectPhotoOrientation(this)">
+      <img src="${imageUrl}" class="photo-thumbnail" loading="lazy" alt="${displayName}" onload="detectPhotoOrientation(this)" ${imgErrorHandler ? `onerror="${imgErrorHandler}"` : ''}>
     `;
     
     card.onclick = () => openLightbox(photo.filename, sortedPhotos);
