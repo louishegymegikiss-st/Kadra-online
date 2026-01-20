@@ -1181,12 +1181,16 @@ async function searchPhotos(query) {
   // Mode statique : recherche dans le JSON local
   if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
     try {
+      console.log('🔍 Mode statique : recherche de', query);
       // Charger le JSON statique
       const allPhotos = await loadStaticPhotos();
       if (!allPhotos || allPhotos.length === 0) {
+        console.warn('⚠️ Aucune photo chargée');
         container.innerHTML = `<div style="text-align: center; padding: 20px; color: orange;">Aucune photo disponible</div>`;
         return;
       }
+      
+      console.log(`📸 ${allPhotos.length} photos chargées`);
       
       // Recherche côté client
       const queryLower = query.toLowerCase().trim();
@@ -1197,6 +1201,8 @@ async function searchPhotos(query) {
         return;
       }
       
+      console.log('🔎 Mots recherchés:', queryWords);
+      
       // Filtrer les photos
       const filtered = allPhotos.filter(photo => {
         const rider = (photo.rider_name || photo.rider || '').toLowerCase();
@@ -1204,8 +1210,14 @@ async function searchPhotos(query) {
         const searchText = `${rider} ${horse}`.toLowerCase();
         
         // Tous les mots de la requête doivent être présents
-        return queryWords.every(word => searchText.includes(word));
+        const matches = queryWords.every(word => searchText.includes(word));
+        if (matches) {
+          console.log('✅ Match:', rider, horse);
+        }
+        return matches;
       });
+      
+      console.log(`📊 ${filtered.length} résultats trouvés`);
       
       // Normaliser et trier
       const photos = normalizePhotosData(filtered);
@@ -1218,8 +1230,9 @@ async function searchPhotos(query) {
       renderPhotos(sortedPhotos);
       return;
     } catch (error) {
-      console.error('Erreur recherche statique:', error);
-      container.innerHTML = `<div style="text-align: center; padding: 20px; color: red;">${t('search_error')}</div>`;
+      console.error('❌ Erreur recherche statique:', error);
+      console.error('Stack:', error.stack);
+      container.innerHTML = `<div style="text-align: center; padding: 20px; color: red;">${t('search_error')}: ${error.message}</div>`;
       return;
     }
   }
