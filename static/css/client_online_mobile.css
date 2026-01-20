@@ -1,0 +1,854 @@
+/* Corrections mobile pour interface online */
+/* IMPORTANT: Ce fichier ne s'applique QUE sur mobile (max-width: 768px) */
+/* Les règles desktop sont protégées avec @media (min-width: 769px) */
+
+/* Désactiver les comportements web (zoom, selection, etc.) */
+@media (max-width: 768px) {
+  * {
+    -webkit-user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Autoriser la sélection uniquement pour les inputs */
+  input, textarea {
+    -webkit-user-select: text !important;
+  }
+  
+  /* Autoriser les clics sur les suggestions */
+  .suggestion-item,
+  #suggestions-box,
+  #suggestions-box * {
+    -webkit-user-select: none !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    cursor: pointer !important;
+  }
+}
+
+/* Mobile - Header réorganisé : Logo, Panier, Langue sur la même ligne */
+@media (max-width: 768px) {
+  /* Header mobile - isolé du desktop avec spécificité maximale */
+  /* ÉCRASER toutes les règles de client_base.css pour le header mobile */
+  /* Utiliser des sélecteurs très spécifiques pour écraser les règles desktop */
+  /* FORCER position: fixed avec spécificité MAXIMALE pour écraser client_base.css */
+  /* Cibler aussi l'attribut data-mobile-header pour une spécificité encore plus élevée */
+  html body .header[data-mobile-header],
+  body .header[data-mobile-header],
+  html .header[data-mobile-header],
+  .header[data-mobile-header],
+  html body .header,
+  body .header,
+  html .header,
+  .header,
+  div.header,
+  body div.header,
+  html body div.header {
+    /* Écraser position: sticky du desktop - FORCER fixed */
+    /* IMPORTANT: position: fixed est relatif au viewport, PAS au container parent */
+    position: fixed !important;
+    /* NE PAS mettre !important sur top pour laisser la priorité aux styles inline JS */
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    transition: transform 0.3s ease-in-out !important;
+    z-index: 1000 !important;
+    box-sizing: border-box !important;
+    /* NE PAS mettre transform: none ici - laisser le JS contrôler le transform */
+    /* Écraser les règles de client_base.css */
+    text-align: left !important;
+  }
+  
+  /* S'assurer que le container parent n'a pas de transform qui casse le position: fixed */
+  /* MAIS ne pas forcer transform: none sur le container car ça affecte tous les enfants */
+  .container {
+    /* transform: none est retiré pour ne pas affecter les enfants */
+    perspective: none !important;
+    filter: none !important;
+    will-change: auto !important;
+  }
+  
+  /* Ajouter un padding au body pour compenser le header fixed */
+  body {
+    padding-top: 70px !important;
+  }
+  
+  /* Header caché quand on scroll vers le bas - utiliser top négatif */
+  /* Utiliser une valeur très négative pour être sûr que le header disparaît */
+  body .header.header-hidden,
+  html body .header.header-hidden,
+  html .header.header-hidden,
+  .header.header-hidden {
+    /* NE PAS mettre transform ici non plus - laisser le JS contrôler */
+    position: fixed !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 10px !important;
+    /* Le JS va mettre transform: translateY(-70px) pour cacher le header */
+    /* Ne pas utiliser visibility: hidden car ça peut causer des problèmes */
+  }
+  
+  .header > div {
+    flex-direction: row !important;
+    gap: 12px !important; /* Espacement uniforme entre tous les éléments */
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    justify-content: space-between !important;
+  }
+  
+  /* Logo à gauche */
+  .header .logo-container {
+    flex-shrink: 0 !important;
+    width: auto !important;
+    order: 1;
+    margin-right: auto !important;
+  }
+  
+  .header .logo {
+    height: 40px !important;
+    display: block;
+  }
+  
+  /* Cacher la recherche dans le header sur mobile */
+  .header .header-search {
+    display: none !important;
+  }
+  
+  /* Afficher le bouton "Voir nos offres" sur mobile */
+  #view-promotions-btn.mobile-only {
+    display: inline-flex !important;
+    flex-shrink: 0 !important;
+    order: 2;
+    font-size: 0.85em !important;
+    padding: 6px 12px !important;
+    white-space: nowrap !important;
+    margin-left: 8px !important; /* Espacement supplémentaire après le logo */
+  }
+  
+  /* Code panier */
+  .header .cart-code-search-box {
+    display: flex !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
+    order: 3;
+    margin-left: 4px !important; /* Espacement supplémentaire après "Nos offres" */
+  }
+  
+  .header .cart-code-search-box #cart-code-search {
+    width: 90px !important;
+    font-size: 0.85em !important;
+    padding: 8px 10px !important;
+    max-width: 90px !important;
+  }
+  
+  /* Cacher le panier du header sur mobile - remplacé par la bottom bar */
+  .header #cart-header-btn {
+    display: none !important;
+  }
+  
+  /* Cacher les boutons langue desktop sur mobile */
+  .header .lang-btn {
+    display: none !important;
+  }
+  
+  /* Le conteneur langue doit rester visible pour le dropdown mobile */
+  .header > div > div:last-child {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: flex-end !important;
+    align-items: center !important;
+    gap: 5px !important;
+    flex-shrink: 0;
+    width: auto !important;
+    order: 4;
+    margin-left: 8px !important; /* Espacement uniforme après le code panier */
+  }
+  
+  /* Cacher le div interne avec les boutons */
+  .header > div > div:last-child > div {
+    display: none !important;
+  }
+  
+  /* Bottom bar sticky pour le panier - remplace le bouton flottant */
+  #mobile-cart-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(135deg, #2d3561 0%, #1a1a2e 100%);
+    padding: 12px 16px;
+    display: none; /* Caché par défaut, affiché par JS quand cart > 0 */
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    color: white;
+    font-weight: 600;
+    gap: 12px;
+    transition: transform 0.2s ease, opacity 0.2s ease;
+  }
+  
+  #mobile-cart-bar.active {
+    display: flex !important;
+  }
+  
+  #mobile-cart-bar .cart-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+  }
+  
+  #mobile-cart-bar .cart-icon {
+    font-size: 1.3em;
+  }
+  
+  #mobile-cart-bar .cart-text {
+    font-size: 0.95em;
+  }
+  
+  #mobile-cart-bar .view-cart-btn {
+    background: white;
+    color: #2d3561;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 0.9em;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: transform 0.2s;
+  }
+  
+  #mobile-cart-bar .view-cart-btn:active {
+    transform: scale(0.95);
+  }
+  
+  /* Style pour le select natif mobile (sera créé par JS) */
+  .header #mobile-lang-select {
+    padding: 8px 12px !important;
+    background: rgba(255,255,255,0.2) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-size: 0.85em !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    outline: none !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    -moz-appearance: none !important;
+    padding-right: 24px !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='white' d='M6 9L1 4h10z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 6px center !important;
+    background-size: 10px !important;
+    height: auto !important;
+    line-height: 1.2 !important;
+    display: block !important;
+  }
+  
+  .header #mobile-lang-select option {
+    background: #2d3561 !important;
+    color: white !important;
+  }
+  
+  /* Suggestions de recherche visibles sur mobile */
+  .search-box {
+    position: relative !important;
+  }
+  
+  /* S'assurer que le conteneur de recherche a position relative */
+  .search-section .search-box {
+    position: relative !important;
+  }
+  
+  #suggestions-box {
+    position: absolute !important;
+    z-index: 2000 !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    background: white !important;
+    border: 1px solid #ddd !important;
+    border-radius: 8px !important;
+    margin-top: 5px !important;
+    max-height: 300px !important;
+    overflow-y: auto !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+  }
+  
+  /* Forcer l'affichage quand il y a du contenu */
+  #suggestions-box:not(:empty) {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+  }
+  
+  /* S'assurer que les items de suggestion sont cliquables sur mobile */
+  .suggestion-item {
+    pointer-events: auto !important;
+    touch-action: manipulation !important;
+    cursor: pointer !important;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  /* S'assurer que le conteneur parent n'a pas overflow hidden */
+  .search-section,
+  .center-column {
+    overflow: visible !important;
+  }
+  
+  /* Code panier dans le header - visible et compact */
+  .header .cart-code-search-box {
+    display: flex !important;
+    width: auto !important;
+    justify-content: flex-start !important;
+    flex-shrink: 0 !important;
+  }
+  
+  .header .cart-code-search-box #cart-code-search {
+    width: 90px !important;
+    max-width: 90px !important;
+    font-size: 0.85em !important;
+    padding: 8px 10px !important;
+  }
+}
+
+/* Mobile - Cacher complètement les colonnes gauche/droite */
+@media (max-width: 768px) {
+  .left-column,
+  .right-column {
+    display: none !important;
+  }
+  
+  .main-layout {
+    display: block !important;
+  }
+  
+  .center-column {
+    width: 100% !important;
+    padding: 0 !important;
+  }
+  
+  .content {
+    padding: 10px !important;
+  }
+  
+  .center-column h2 {
+    font-size: 1.4em !important;
+    margin-bottom: 15px !important;
+    text-align: center !important;
+  }
+  
+  .search-section {
+    margin-bottom: 15px !important;
+  }
+  
+  .search-section > div {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 10px !important;
+    align-items: center !important;
+  }
+  
+  /* === HIÉRARCHIE CTA === */
+  /* CTA principal : Rechercher */
+  #search-btn {
+    background: linear-gradient(135deg, #2d3561 0%, #1a1a2e 100%) !important;
+    color: white !important;
+    border: none !important;
+    font-weight: 700 !important;
+    font-size: 1em !important;
+    padding: 14px 40px !important;
+    box-shadow: 0 4px 15px rgba(45, 53, 97, 0.4) !important;
+    order: 1 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+  }
+  
+  #search-btn:active {
+    transform: scale(0.98);
+  }
+  
+  /* CTA secondaire : Pack */
+  #pack-btn {
+    background: transparent !important;
+    color: #2d3561 !important;
+    border: 2px solid #2d3561 !important;
+    font-weight: 600 !important;
+    font-size: 0.9em !important;
+    padding: 10px 24px !important;
+    box-shadow: none !important;
+    order: 2 !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+  }
+  
+  /* === GRILLE PHOTOS 1 COLONNE === */
+  .photos-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 10px !important;
+  }
+  
+  /* === CARTES PHOTO === */
+  .photo-card {
+    position: relative !important;
+    cursor: pointer !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+    transition: all 0.2s ease !important;
+    /* Pas d'aspect-ratio fixe, on laisse l'image définir la hauteur */
+  }
+  
+  /* Garder le bouton + sur mobile */
+  .photo-card .photo-add-btn {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    width: 36px !important;
+    height: 36px !important;
+    background: rgba(45, 53, 97, 0.9) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 50% !important;
+    font-size: 1.5em !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    z-index: 2 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+    transition: transform 0.2s !important;
+  }
+  
+  .photo-card .photo-add-btn:active {
+    transform: scale(0.9) !important;
+  }
+  
+  /* Cacher le bouton + quand la photo est dans le panier */
+  .photo-card.in-cart .photo-add-btn {
+    display: none !important;
+  }
+  
+  /* État sélectionné avec bordure */
+  .photo-card.in-cart {
+    border: 3px solid #2d3561 !important;
+    box-shadow: 0 4px 15px rgba(45, 53, 97, 0.4) !important;
+  }
+  
+  /* Checkmark sélection - visible quand dans le panier */
+  .photo-card .photo-in-cart-badge {
+    position: absolute !important;
+    top: 8px !important;
+    right: 8px !important;
+    width: 36px !important;
+    height: 36px !important;
+    background: #2d3561 !important;
+    color: white !important;
+    border-radius: 50% !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 1.3em !important;
+    font-weight: bold !important;
+    z-index: 3 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3) !important;
+    border: 3px solid white !important;
+    cursor: pointer !important;
+  }
+  
+  /* Image photo responsive */
+  .photo-card .photo-thumbnail {
+    width: 100% !important;
+    height: auto !important;
+    display: block !important;
+  }
+  
+  /* Padding pour bottom bar */
+  body.has-cart-bar .content {
+    padding-bottom: 80px !important;
+  }
+  
+  /* === LIGHTBOX MOBILE RESPONSIVE === */
+  .lightbox.active {
+    padding: 50px 10px 90px 10px !important;
+  }
+  
+  .lightbox-image-container {
+    max-width: 95vw !important;
+    max-height: calc(100vh - 140px) !important;
+  }
+  
+  .lightbox-content {
+    max-width: 100% !important;
+    max-height: 100% !important;
+    width: auto !important;
+    height: auto !important;
+  }
+  
+  /* Bouton fermer lightbox */
+  .lightbox-close {
+    top: 10px !important;
+    right: 10px !important;
+    font-size: 32px !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+  
+  /* Bouton ajouter au panier dans la lightbox - positionné en bas */
+  .lightbox-add-btn {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 20px !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: calc(100% - 40px) !important;
+    max-width: 400px !important;
+    padding: 14px 20px !important;
+    font-size: 1em !important;
+    z-index: 10002 !important;
+  }
+  
+  /* Quand la bottom bar panier est visible, décaler le bouton lightbox */
+  body.has-cart-bar .lightbox-add-btn {
+    bottom: 80px !important;
+  }
+  
+  /* Navigation lightbox (flèches) */
+  .lightbox-nav {
+    font-size: 32px !important;
+    width: 44px !important;
+    height: 44px !important;
+    padding: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    line-height: 1 !important;
+  }
+  
+  .lightbox-nav.prev {
+    left: 10px !important;
+  }
+  
+  .lightbox-nav.next {
+    right: 10px !important;
+  }
+  
+  /* Caption lightbox */
+  .lightbox-caption {
+    bottom: 90px !important;
+    font-size: 0.9em !important;
+    padding: 8px 12px !important;
+    max-width: 85% !important;
+  }
+  
+  /* Quand la bottom bar est active, remonter la caption */
+  body.has-cart-bar .lightbox-caption {
+    bottom: 150px !important;
+  }
+  
+  /* === CART MODAL ET PACK MODAL MOBILE === */
+  html, body { 
+    overflow-x: hidden !important;
+  }
+  
+  /* Modals fermés par défaut */
+  .cart-modal {
+    display: none !important;
+  }
+  
+  /* Overlay plein écran avec centrage grid */
+  body.modal-open .cart-modal.active {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    z-index: 9999 !important;
+    display: grid !important;
+    place-items: center !important;
+    background: rgba(0, 0, 0, 0.65) !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Header sous le modal */
+  body.modal-open .header {
+    z-index: 0 !important;
+  }
+  
+  /* Dialog centré dans le grid - plus large pour les photos */
+  body.modal-open .cart-modal-dialog {
+    width: min(1300px, calc(100% - 32px)) !important; /* Ajusté pour photo 410px + formats 492px + gaps */
+    max-width: calc(100% - 32px) !important;
+    max-height: calc(100% - 32px) !important;
+    margin: 16px !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    position: relative !important;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3) !important;
+    z-index: 10000 !important;
+    border-radius: 12px !important;
+    overflow: hidden !important;
+    background: white !important;
+  }
+  
+  /* Dialog des promotions plus large */
+  body.modal-open #promotions-modal .cart-modal-dialog {
+    width: min(90%, calc(100% - 32px), 1200px) !important;
+  }
+  
+  /* Scroll interne du contenu modal */
+  .cart-modal.active .cart {
+    max-height: calc(100% - 32px) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  #cart-content {
+    overflow-y: visible !important; /* Enlever le scroll */
+    -webkit-overflow-scrolling: auto !important;
+  }
+  
+  /* Diminuer uniquement la hauteur de chaque ligne produit (pas les colonnes) */
+  .cart-photo-row {
+    padding-top: 6px !important; /* Réduire padding vertical */
+    padding-bottom: 6px !important;
+    padding-left: 12px !important; /* Garder padding horizontal */
+    padding-right: 12px !important;
+    gap: 6px !important; /* Gap entre photo et formats */
+  }
+  
+  /* Container photo : s'adapter à la taille réelle de la photo */
+  .cart-photo-container {
+    width: fit-content !important; /* S'adapter à la taille réelle de la photo */
+    max-width: var(--cart-photo-w) !important; /* Limiter à la largeur maximale */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  /* Image : taille naturelle sans bandes */
+  .cart-photo-large {
+    width: auto !important; /* Taille naturelle */
+    max-width: var(--cart-photo-w) !important; /* Limiter la largeur max */
+    max-height: var(--cart-photo-h) !important; /* Limiter la hauteur max */
+    height: auto !important;
+    object-fit: contain !important;
+    display: block !important; /* Éviter les espaces inline */
+  }
+  
+  /* Uniformiser la largeur des containers photo et formats pour rentrer dans 500px */
+  .cart-photo-row[data-photo-orientation="vertical"] {
+    --cart-photo-w: 400px !important; /* Augmenté pour colonne plus large */
+    --cart-photo-h: 600px !important; /* Ratio 2:3 (400 * 3/2) */
+    --cart-formats-h: 600px !important; /* Même hauteur que la photo */
+    --cart-formats-max-w: 389px !important; /* Réduit de 7% (418px * 0.93) */
+  }
+  
+  .cart-photo-row[data-photo-orientation="horizontal"] {
+    --cart-photo-w: 400px !important; /* Augmenté pour colonne plus large */
+    --cart-photo-h: 267px !important; /* Ratio 3:2 (400 * 2/3) */
+    --cart-formats-h: 267px !important; /* Même hauteur que la photo */
+    --cart-formats-max-w: 389px !important; /* Réduit de 7% (418px * 0.93) */
+  }
+  
+  .cart-photo-row[data-photo-orientation="square"] {
+    --cart-photo-w: 400px !important; /* Augmenté pour colonne plus large */
+    --cart-photo-h: 400px !important; /* Carré */
+    --cart-formats-h: 400px !important; /* Même hauteur que la photo */
+    --cart-formats-max-w: 389px !important; /* Réduit de 7% (418px * 0.93) */
+  }
+  
+  /* Enlever le scroll et afficher tout le contenu */
+  .cart-formats-container {
+    gap: 6px !important; /* Réduire gap vertical de 8px à 6px */
+    overflow-y: visible !important; /* Enlever le scroll */
+    max-height: none !important; /* Pas de limite de hauteur */
+    height: auto !important; /* Hauteur automatique pour tout afficher */
+    margin: 0 !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important; /* Pas de marge négative, gap gère l'espacement */
+  }
+  
+  .cart-format-item {
+    padding-top: 4px !important; /* Réduire padding vertical */
+    padding-bottom: 4px !important;
+    padding-left: 10px !important; /* Garder padding horizontal */
+    padding-right: 10px !important;
+  }
+  
+  /* Limiter la largeur des boutons à la largeur des photos */
+  .pack-btn,
+  .cart-btn-remove,
+  .cart-btn-remove-format {
+    max-width: var(--cart-photo-w) !important; /* Même largeur que les photos */
+    width: 100% !important; /* Prendre toute la largeur disponible jusqu'à max-width */
+    box-sizing: border-box !important;
+  }
+  
+  /* Ajuster selon l'orientation de la photo */
+  .cart-photo-row[data-photo-orientation="vertical"] .pack-btn,
+  .cart-photo-row[data-photo-orientation="vertical"] .cart-btn-remove,
+  .cart-photo-row[data-photo-orientation="vertical"] .cart-btn-remove-format {
+    max-width: 400px !important; /* Largeur photo verticale */
+  }
+  
+  .cart-photo-row[data-photo-orientation="horizontal"] .pack-btn,
+  .cart-photo-row[data-photo-orientation="horizontal"] .cart-btn-remove,
+  .cart-photo-row[data-photo-orientation="horizontal"] .cart-btn-remove-format {
+    max-width: 400px !important; /* Largeur photo horizontale */
+  }
+  
+  .cart-photo-row[data-photo-orientation="square"] .pack-btn,
+  .cart-photo-row[data-photo-orientation="square"] .cart-btn-remove,
+  .cart-photo-row[data-photo-orientation="square"] .cart-btn-remove-format {
+    max-width: 400px !important; /* Largeur photo carrée */
+  }
+  
+  /* Header du panier centré */
+  .cart-header {
+    justify-content: center !important;
+    position: relative !important;
+  }
+  
+  .cart-header h2 {
+    text-align: center !important;
+    flex: 1 !important;
+  }
+  
+  /* Croix de fermeture */
+  .cart-header button {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    width: 44px !important;
+    height: 44px !important;
+    font-size: 36px !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10001 !important;
+    cursor: pointer !important;
+  }
+  
+  /* Bloquer le scroll du body quand modal ouvert */
+  body.modal-open {
+    overflow: hidden !important;
+  }
+  
+  html.modal-open {
+    overflow: hidden !important;
+  }
+  
+  /* Scroll interne des promotions */
+  #promotions-modal .cart {
+    max-height: calc(100% - 32px) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  #promotions-modal-list {
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  
+  /* Pack modal mobile */
+  #pack-modal .cart-modal-dialog {
+    max-width: 480px !important; /* Augmenté de 20% */
+    width: 480px !important;
+  }
+}
+
+/* Desktop : cacher la section de recherche du contenu (on garde uniquement celle du header) */
+/* IMPORTANT: Ces règles ne s'appliquent QUE sur desktop (min-width: 769px) */
+/* Elles annulent les règles mobile pour protéger le desktop */
+@media (min-width: 769px) {
+  .search-section {
+    display: none !important;
+  }
+  
+  /* S'assurer que le header reste sticky (pas fixed) sur desktop - écraser les règles mobile */
+  /* IMPORTANT: Ces règles ne doivent JAMAIS s'appliquer sur mobile (max-width: 768px) */
+  html body .header,
+  body .header {
+    position: sticky !important;
+    top: 0 !important;
+    left: auto !important;
+    right: auto !important;
+    width: auto !important;
+    /* NE PAS forcer transform: none car ça peut causer des conflits */
+    transition: none !important;
+    /* Annuler toutes les règles mobile */
+    margin: 0 !important;
+    padding: 20px 30px !important;
+  }
+  
+  /* Pas de padding-top sur desktop */
+  body {
+    padding-top: 0 !important;
+  }
+  
+  /* S'assurer que header-hidden n'a aucun effet sur desktop */
+  body .header.header-hidden,
+  html body .header.header-hidden {
+    position: sticky !important;
+    top: 0 !important;
+    /* NE PAS forcer transform: none car ça peut causer des conflits */
+  }
+  
+  /* Cacher la bottom bar mobile sur desktop */
+  #mobile-cart-bar {
+    display: none !important;
+  }
+  
+  /* Cacher le select de langue mobile sur desktop */
+  #mobile-lang-select {
+    display: none !important;
+  }
+  
+  /* Afficher les boutons langue desktop */
+  .header .lang-btn {
+    display: inline-block !important;
+  }
+  
+  /* Afficher la recherche dans le header sur desktop */
+  .header .header-search {
+    display: flex !important;
+  }
+  
+  /* Afficher le bouton panier dans le header sur desktop */
+  .header #cart-header-btn {
+    display: inline-flex !important;
+  }
+  
+  /* Cacher le bouton "Voir nos offres" sur desktop */
+  #view-promotions-btn.mobile-only {
+    display: none !important;
+  }
+}
