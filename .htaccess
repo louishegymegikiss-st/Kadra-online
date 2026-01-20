@@ -1,0 +1,21 @@
+# Configuration Apache pour Infomaniak
+# Redirige toutes les requêtes vers index.html (pour SPA)
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteBase /
+    
+    # Ne pas réécrire pour les fichiers existants
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Rediriger vers index.html pour toutes les autres requêtes
+    RewriteRule ^ index.html [L]
+</IfModule>
+
+# Headers pour les fichiers statiques
+<IfModule mod_headers.c>
+    <FilesMatch "\.(css|js|png|jpg|jpeg|gif|ico|svg|webp)$">
+        Header set Cache-Control "public, max-age=31536000"
+    </FilesMatch>
+</IfModule>
