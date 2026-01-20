@@ -196,22 +196,24 @@ function getPhotoUrlFromFilename(filename, relPath = null) {
   if (window.R2_PUBLIC_URL && relPath) {
     try {
       // Construire le chemin R2 : relPath contient le chemin complet jusqu'au nom de fichier original
-      // Ex: relPath = "BJ025/1_dimanche.../0005_LEBRETON LENA_HULOTTE DU BOIS/W61_7783.JPG"
-      // Le chemin R2 est : {relPath}/{filename_webp.webp}
-      // Ex: "BJ025/1_dimanche.../0005_LEBRETON LENA_HULOTTE DU BOIS/W61_7783.JPG/BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7783_303ad40e_webp.webp"
+      // Ex: relPath = "BJ025/1_dimanche.../0005_LEBRETON LENA_HULOTTE DU BOIS/W61_5391.JPG"
+      // Le filename est déjà le nom final avec file_id : "BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5391_79c059c5.webp"
+      // Le chemin R2 est : {relPath}/{filename}
+      // Ex: "BJ025/1_dimanche.../0005_LEBRETON LENA_HULOTTE DU BOIS/W61_5391.JPG/BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5391_79c059c5.webp"
       
       const relPathNormalized = relPath.replace(/\\/g, '/');
       const filenameNormalized = filename.replace(/\\/g, '/');
       const filenameOnly = filenameNormalized.split('/').pop() || filenameNormalized;
       
-      // Convertir le nom de fichier en WebP
+      // Le filename sur R2 est déjà en .webp avec le file_id
+      // Si le filename n'a pas d'extension .webp, le remplacer par .webp
       let webpFilename = filenameOnly;
-      if (!webpFilename.includes('_webp')) {
-        // Remplacer l'extension par _webp.webp
-        webpFilename = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '_webp.webp');
-        // Si pas d'extension trouvée, ajouter _webp.webp
+      if (!webpFilename.endsWith('.webp')) {
+        // Remplacer l'extension par .webp
+        webpFilename = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+        // Si pas d'extension trouvée, ajouter .webp
         if (webpFilename === filenameOnly) {
-          webpFilename = filenameOnly + '_webp.webp';
+          webpFilename = filenameOnly + '.webp';
         }
       }
       
