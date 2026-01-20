@@ -1147,9 +1147,9 @@ if (typeof window !== 'undefined' && window.location) {
 async function loadStaticPhotos() {
   // Vérifier la version du cache et forcer le rechargement si nécessaire
   const cacheVersion = sessionStorage.getItem('photos_json_version');
-  if (cacheVersion !== '2') {
+  if (cacheVersion !== '3') {
     staticPhotosCache = null; // Forcer le rechargement
-    sessionStorage.setItem('photos_json_version', '2');
+    sessionStorage.setItem('photos_json_version', '3');
   }
   
   // Charger le JSON statique une seule fois
@@ -1158,8 +1158,9 @@ async function loadStaticPhotos() {
   }
   
   try {
-    // Ajouter un timestamp pour éviter le cache navigateur (version 2 = 109 photos)
-    const cacheBuster = `?v=2&t=${Date.now()}`;
+    // Ajouter un timestamp pour éviter le cache navigateur (version 3 = 123 photos avec file_id/event_id)
+    // Forcer le rechargement en ajoutant un hash aléatoire
+    const cacheBuster = `?v=3&t=${Date.now()}&r=${Math.random().toString(36).substring(7)}`;
     const response = await fetch(`/static/photos.json${cacheBuster}`);
     if (!response.ok) {
       console.warn('Fichier photos.json introuvable, recherche non disponible');
@@ -1210,12 +1211,13 @@ async function searchPhotos(query) {
       const filtered = allPhotos.filter(photo => {
         const rider = (photo.rider_name || photo.rider || '').toLowerCase();
         const horse = (photo.horse_name || photo.horse || '').toLowerCase();
-        const searchText = `${rider} ${horse}`.toLowerCase();
+        const number = (photo.rider_number || photo.number || '').toLowerCase();
+        const searchText = `${rider} ${horse} ${number}`.toLowerCase();
         
         // Tous les mots de la requête doivent être présents
         const matches = queryWords.every(word => searchText.includes(word));
         if (matches) {
-          console.log('✅ Match:', rider, horse);
+          console.log('✅ Match:', rider, horse, number);
         }
         return matches;
       });
