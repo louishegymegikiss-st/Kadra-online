@@ -12,71 +12,71 @@ const PORT = process.env.PORT || 3000;
 
 // Déterminer le répertoire statique (où se trouve index.html)
 // Infomaniak clone le repo dans /srv/customer/site/galerie.photolesgarennes.com
-// __dirname pointe vers le répertoire où se trouve server.js (racine du repo cloné)
-const STATIC_DIR = __dirname;
+// __dirname pointe vers le répertoire où se trouve server.js
+// Mais Infomaniak peut cloner ailleurs ou dans un sous-dossier
 
-// Si index.html n'est pas dans __dirname, chercher dans le répertoire parent
-// (au cas où Infomaniak clone dans un sous-dossier)
-let actualStaticDir = STATIC_DIR;
-const indexPathInDir = path.join(STATIC_DIR, 'index.html');
-if (!fs.existsSync(indexPathInDir)) {
-  // Essayer le répertoire parent
-  const parentDir = path.dirname(STATIC_DIR);
-  const indexPathInParent = path.join(parentDir, 'index.html');
-  if (fs.existsSync(indexPathInParent)) {
-    actualStaticDir = parentDir;
-    console.log(`⚠️  index.html trouvé dans le répertoire parent: ${parentDir}`);
+// Liste des emplacements possibles pour index.html
+const possibleDirs = [
+  __dirname,                                    // Répertoire où se trouve server.js
+  process.cwd(),                                 // Répertoire de travail courant
+  path.dirname(__dirname),                       // Répertoire parent
+  path.join(__dirname, 'www'),                  // Sous-dossier www
+  path.join(__dirname, 'public_html'),          // Sous-dossier public_html
+  path.join(__dirname, 'public'),               // Sous-dossier public
+  path.join(__dirname, 'dist'),                 // Sous-dossier dist
+  path.join(__dirname, 'build'),                // Sous-dossier build
+  '/srv/customer/site/galerie.photolesgarennes.com',  // Chemin exact Infomaniak
+];
+
+// Chercher index.html dans tous les emplacements possibles
+let actualStaticDir = null;
+let indexPath = null;
+
+for (const dir of possibleDirs) {
+  const testPath = path.join(dir, 'index.html');
+  if (fs.existsSync(testPath)) {
+    actualStaticDir = dir;
+    indexPath = testPath;
+    console.log(`✅ index.html trouvé dans: ${dir}`);
+    break;
   }
+}
+
+// Si toujours pas trouvé, utiliser __dirname par défaut
+if (!actualStaticDir) {
+  actualStaticDir = __dirname;
+  indexPath = path.join(__dirname, 'index.html');
+  console.error(`⚠️  index.html non trouvé, utilisation de __dirname par défaut: ${__dirname}`);
 }
 
 // Diagnostic complet
 console.log('=== DIAGNOSTIC SERVEUR ===');
 console.log(`__dirname: ${__dirname}`);
 console.log(`process.cwd(): ${process.cwd()}`);
-console.log(`STATIC_DIR: ${STATIC_DIR}`);
-
-// Lister tous les fichiers dans le répertoire
-try {
-  const files = fs.readdirSync(STATIC_DIR);
-  console.log(`Fichiers dans ${STATIC_DIR}:`);
-  files.forEach(file => {
-    const filePath = path.join(STATIC_DIR, file);
-    const stats = fs.statSync(filePath);
-    console.log(`  ${stats.isDirectory() ? '[DIR]' : '[FILE]'} ${file}`);
-  });
-} catch (err) {
-  console.error(`Erreur lecture répertoire: ${err.message}`);
-}
-
-// Vérifier que index.html existe
-const indexPath = path.join(actualStaticDir, 'index.html');
-console.log(`Recherche index.html dans: ${indexPath}`);
+console.log(`Répertoire statique utilisé: ${actualStaticDir}`);
+console.log(`index.html trouvé: ${indexPath}`);
 console.log(`index.html existe: ${fs.existsSync(indexPath)}`);
 
-if (!fs.existsSync(indexPath)) {
-  console.error(`\n❌ ERREUR: index.html introuvable dans ${STATIC_DIR}`);
-  console.error(`Chemin recherché: ${indexPath}`);
-  
-  // Chercher index.html ailleurs
-  console.error('\nRecherche alternative...');
-  const possiblePaths = [
-    path.join(process.cwd(), 'index.html'),
-    path.join(__dirname, 'www', 'index.html'),
-    path.join(__dirname, 'public_html', 'index.html'),
-    path.join(__dirname, 'public', 'index.html'),
-    path.join(__dirname, 'dist', 'index.html'),
-    path.join(__dirname, 'build', 'index.html'),
-  ];
-  
-  for (const possiblePath of possiblePaths) {
-    if (fs.existsSync(possiblePath)) {
-      console.error(`✅ Trouvé index.html dans: ${possiblePath}`);
-      console.error(`   Utilisez ce chemin dans la configuration Infomaniak`);
+// Lister tous les fichiers dans le répertoire statique utilisé
+try {
+  const files = fs.readdirSync(actualStaticDir);
+  console.log(`\nFichiers dans ${actualStaticDir}:`);
+  files.forEach(file => {
+    const filePath = path.join(actualStaticDir, file);
+    try {
+      const stats = fs.statSync(filePath);
+      console.log(`  ${stats.isDirectory() ? '[DIR]' : '[FILE]'} ${file}`);
+    } catch (err) {
+      console.log(`  [ERROR] ${file} - ${err.message}`);
     }
-  }
-  
-  // Ne pas quitter - laisser le serveur démarrer pour voir les autres erreurs
-  console.error('\n⚠️  Le serveur démarre quand même, mais index.html ne sera pas accessible');
+  });
+} catch (err) {
+  console.error(`Erreur lecture répertoire ${actualStaticDir}: ${err.message}`);
+}
+
+if (!fs.existsSync(indexPath)) {
+  console.error(`\n❌ ERREUR CRITIQUE: index.html introuvable même après recherche`);
+  console.error(`Tous les emplacements testés:`, possibleDirs);
 }
 
 // Servir les fichiers statiques depuis le répertoire déterminé
@@ -105,7 +105,8 @@ STATIC_DIR: ${STATIC_DIR}</pre>
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Serveur démarré sur le port ${PORT}`);
-  console.log(`Fichiers statiques servis depuis: ${STATIC_DIR}`);
-  console.log(`index.html accessible: ${indexPath}`);
+  console.log(`\n✅ Serveur démarré sur le port ${PORT}`);
+  console.log(`📁 Fichiers statiques servis depuis: ${actualStaticDir}`);
+  console.log(`📄 index.html accessible: ${indexPath}`);
+  console.log(`🌐 Serveur prêt à recevoir des requêtes`);
 });
