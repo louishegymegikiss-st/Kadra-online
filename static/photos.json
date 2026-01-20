@@ -1,6 +1,657 @@
 {
   "items": [
     {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7818.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7818.JPG",
+      "name": "W61_7818.JPG",
+      "filename": "W61_7818.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7818.JPG",
+      "original_filename": "W61_7818.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7818.JPG",
+      "file_id": "1336ada7141b45ba49b5413af05f6d1671d7f7f63b70994405af36028b53e585",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7820.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7820.JPG",
+      "name": "W61_7820.JPG",
+      "filename": "W61_7820.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7820.JPG",
+      "original_filename": "W61_7820.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7820.JPG",
+      "file_id": "9d7379b034972243c11532134fa397e2c1e4a092de2b0c5d7850ebf3f29f9b2d",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7817.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7817.JPG",
+      "name": "W61_7817.JPG",
+      "filename": "W61_7817.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7817.JPG",
+      "original_filename": "W61_7817.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7817.JPG",
+      "file_id": "3f2a7e08ac437b709773e96e38cbb67333082fc297ec84641de08dba9f56dfa5",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7819.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7819.JPG",
+      "name": "W61_7819.JPG",
+      "filename": "W61_7819.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7819.JPG",
+      "original_filename": "W61_7819.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7819.JPG",
+      "file_id": "413cfc7d1e3b9e355de359bd763deacec6f0eda1745eccdf4dfc1734171c893f",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7822.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7822.JPG",
+      "name": "W61_7822.JPG",
+      "filename": "W61_7822.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7822.JPG",
+      "original_filename": "W61_7822.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7822.JPG",
+      "file_id": "7f452f0f4998f7964326c4de0547244f7b2075ddad591d0a0ac5c4511900c250",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7814.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7814.JPG",
+      "name": "W61_7814.JPG",
+      "filename": "W61_7814.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7814.JPG",
+      "original_filename": "W61_7814.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7814.JPG",
+      "file_id": "bed3563b3ae392d53ce2702eed49a8c3a7ffbebad98fa2f8a2572e67d13a3e19",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7816.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7816.JPG",
+      "name": "W61_7816.JPG",
+      "filename": "W61_7816.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7816.JPG",
+      "original_filename": "W61_7816.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7816.JPG",
+      "file_id": "c2d295a276c5f18e5da27284f4373beaaf97f5fe17e3b6e0a5ef892ef9b84845",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7821.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7821.JPG",
+      "name": "W61_7821.JPG",
+      "filename": "W61_7821.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7821.JPG",
+      "original_filename": "W61_7821.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7821.JPG",
+      "file_id": "ffd013b6709f8fb1cd406e50e014d2c3dc4e1b5cf006aa685954230ce7f63dec",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7825.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7825.JPG",
+      "name": "W61_7825.JPG",
+      "filename": "W61_7825.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7825.JPG",
+      "original_filename": "W61_7825.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7825.JPG",
+      "file_id": "a799cc602fcc335dfd989fa569519fdb3091a222d30431fc4dd78f7796132a41",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7829.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7829.JPG",
+      "name": "W61_7829.JPG",
+      "filename": "W61_7829.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7829.JPG",
+      "original_filename": "W61_7829.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7829.JPG",
+      "file_id": "dff0ea22e02d3fe8950d4236ac574f70a789c52bdb21e1b89acf3ab70d4c57f1",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7826.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7826.JPG",
+      "name": "W61_7826.JPG",
+      "filename": "W61_7826.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7826.JPG",
+      "original_filename": "W61_7826.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7826.JPG",
+      "file_id": "703f4065e04d99494be4ce55752f2952aeec135b45d2c87257f88aaa2baf5f97",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7827.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7827.JPG",
+      "name": "W61_7827.JPG",
+      "filename": "W61_7827.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7827.JPG",
+      "original_filename": "W61_7827.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7827.JPG",
+      "file_id": "9ea9afe325627d533b45a684f16b4d7561e30e0093f9a64496018fb5ef79c8e8",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7828.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7828.JPG",
+      "name": "W61_7828.JPG",
+      "filename": "W61_7828.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7828.JPG",
+      "original_filename": "W61_7828.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7828.JPG",
+      "file_id": "e3be055505fa9b03ab0ce1a27ec10a307a51f7a60b7dcd96d5ceb95cd85696eb",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7830.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7830.JPG",
+      "name": "W61_7830.JPG",
+      "filename": "W61_7830.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7830.JPG",
+      "original_filename": "W61_7830.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7830.JPG",
+      "file_id": "cdc39f32f5426b0b6ba0d5d43f17efa252f86d4f841d2fa014089ffe8c61f590",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7823.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7823.JPG",
+      "name": "W61_7823.JPG",
+      "filename": "W61_7823.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7823.JPG",
+      "original_filename": "W61_7823.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7823.JPG",
+      "file_id": "28d202129ffa91f96797cd23defe56c2270170e48b16a70926c36e2a2d0c7360",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7824.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7824.JPG",
+      "name": "W61_7824.JPG",
+      "filename": "W61_7824.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7824.JPG",
+      "original_filename": "W61_7824.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7824.JPG",
+      "file_id": "1f9477578c575337ac943288291b4e2e8d346a8d77f0369a85c7f299e73ee380",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8071.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8071.JPG",
+      "name": "W61_8071.JPG",
+      "filename": "W61_8071.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8071.JPG",
+      "original_filename": "W61_8071.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8071.JPG",
+      "file_id": "60f9d302ad72105b0ea963f4d4ac3750785eb57db5893a8e5efeedcf0bbf8f5c",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8076.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8076.JPG",
+      "name": "W61_8076.JPG",
+      "filename": "W61_8076.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8076.JPG",
+      "original_filename": "W61_8076.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8076.JPG",
+      "file_id": "2d0e608671a7f3421595f95b11f67ce9b96fda89802be538ddd783a4d5f432ea",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8075.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8075.JPG",
+      "name": "W61_8075.JPG",
+      "filename": "W61_8075.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8075.JPG",
+      "original_filename": "W61_8075.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8075.JPG",
+      "file_id": "e631c098100a4feb6838505f21f88d2596e8a97975814a00be77c8eb30fa3c6a",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8069.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8069.JPG",
+      "name": "W61_8069.JPG",
+      "filename": "W61_8069.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8069.JPG",
+      "original_filename": "W61_8069.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8069.JPG",
+      "file_id": "28304e0bd28c2a8ea6dc4e20f4d01f4285eb983b57e68ce2e05fac0e58c74d54",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8072.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8072.JPG",
+      "name": "W61_8072.JPG",
+      "filename": "W61_8072.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8072.JPG",
+      "original_filename": "W61_8072.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8072.JPG",
+      "file_id": "c5ebed3117be6ad020561ab84254f5973d4467b2b5da755f15cbd67a40ba3a7c",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8073.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8073.JPG",
+      "name": "W61_8073.JPG",
+      "filename": "W61_8073.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8073.JPG",
+      "original_filename": "W61_8073.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8073.JPG",
+      "file_id": "80a6f91b83a93146d453da90bc5efd39973f646db6e9a9882c5d628b7064b237",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8074.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8074.JPG",
+      "name": "W61_8074.JPG",
+      "filename": "W61_8074.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8074.JPG",
+      "original_filename": "W61_8074.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8074.JPG",
+      "file_id": "1fb2f54cafb5079bd2fa459ab9c0a96f27e02017abc275abf995fecd035beaaf",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7831.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7831.JPG",
+      "name": "W61_7831.JPG",
+      "filename": "W61_7831.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_7831.JPG",
+      "original_filename": "W61_7831.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_7831.JPG",
+      "file_id": "dae3c9d6c1b6e914ad08a70c820d077933490263da89abc6af3226d9be2c330f",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8089.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8089.JPG",
+      "name": "W61_8089.JPG",
+      "filename": "W61_8089.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8089.JPG",
+      "original_filename": "W61_8089.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8089.JPG",
+      "file_id": "1f342cc70507d471a032ed8d7297aad6cd09ef6d396f3f695ffca01f6bbba082",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8083.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8083.JPG",
+      "name": "W61_8083.JPG",
+      "filename": "W61_8083.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8083.JPG",
+      "original_filename": "W61_8083.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8083.JPG",
+      "file_id": "cce0c682caa04fcb10ca96f8fdc54a92e5aeead5da8567679f848e8b2cc25181",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8091.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8091.JPG",
+      "name": "W61_8091.JPG",
+      "filename": "W61_8091.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8091.JPG",
+      "original_filename": "W61_8091.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8091.JPG",
+      "file_id": "93947fb00f6a0340dac0f48a4e73491baf1a1670e0a25cde72024243ec070527",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8088.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8088.JPG",
+      "name": "W61_8088.JPG",
+      "filename": "W61_8088.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8088.JPG",
+      "original_filename": "W61_8088.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8088.JPG",
+      "file_id": "e17bf133f1f0e9b729ab0ed5932cd0b15cd11b61394604cb4ae682545414b357",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8084.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8084.JPG",
+      "name": "W61_8084.JPG",
+      "filename": "W61_8084.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8084.JPG",
+      "original_filename": "W61_8084.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8084.JPG",
+      "file_id": "0ebad140e1343c56e80268113a72015bf60e286b3c997506617ae788323a38f9",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8082.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8082.JPG",
+      "name": "W61_8082.JPG",
+      "filename": "W61_8082.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8082.JPG",
+      "original_filename": "W61_8082.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8082.JPG",
+      "file_id": "f5199ec027b8654d7ff9975f4729e7edc162ff297a71d451afb3d53b35cd8188",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8081.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8081.JPG",
+      "name": "W61_8081.JPG",
+      "filename": "W61_8081.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix/0009_COLIN LOLA_INDY D.FIXE/W61_8081.JPG",
+      "original_filename": "W61_8081.JPG",
+      "rider": "COLIN LOLA",
+      "rider_name": "COLIN LOLA",
+      "horse": "INDY D.FIXE",
+      "horse_name": "INDY D.FIXE",
+      "number": "0009",
+      "rider_number": "0009",
+      "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0009_COLIN LOLA_INDY D.FIXE\\W61_8081.JPG",
+      "file_id": "c928e3a7885263af1fd74ce2adc76b0eb465f267da8db32ffa81cb4ecd4fed0f",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7708_a396865a.jpg",
       "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7708_a396865a.jpg",
       "name": "BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7708_a396865a.jpg",
@@ -16,7 +667,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7708_a396865a.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7708_a396865a.jpg",
+      "file_id": "a396865a6c111d1da29f8e5e3224f41abe9fec7fb516053ecf319c94bf434960",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5400_a0987ea6.jpg",
@@ -34,7 +688,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5400_a0987ea6.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5400_a0987ea6.jpg",
+      "file_id": "a0987ea60dabb8b5a89e080f6ab7d7247ae854c779b477322311c276a084f44c",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5391_79c059c5.jpg",
@@ -52,7 +709,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5391_79c059c5.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5391_79c059c5.jpg",
+      "file_id": "79c059c59d15941b94363253d12165112709a2fdfe4c2dbb615ab7c12303773f",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7710_a070a1f1.jpg",
@@ -70,7 +730,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7710_a070a1f1.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7710_a070a1f1.jpg",
+      "file_id": "a070a1f1e144764b3c9a60dacd3ad78ef3b204f9260a6a20704e8a9f4d9604f3",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7712_c3ee9755.jpg",
@@ -88,7 +751,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7712_c3ee9755.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7712_c3ee9755.jpg",
+      "file_id": "c3ee97554381be37a31ea1a5b0decce649442cc524c57b5a8202b3f6d0d749c9",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7711_127ab140.jpg",
@@ -106,7 +772,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7711_127ab140.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7711_127ab140.jpg",
+      "file_id": "127ab140702361443aaabd48c0fd1bbeb5ccc430cc3e60dabbeaabb5aaa67fdf",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7709_e9e479bf.jpg",
@@ -124,7 +793,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7709_e9e479bf.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7709_e9e479bf.jpg",
+      "file_id": "e9e479bfdce291ee0f37ad12460f44f9a2fc79477252835dfe2a888d27efe77b",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7713_bfe564b0.jpg",
@@ -142,7 +814,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7713_bfe564b0.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7713_bfe564b0.jpg",
+      "file_id": "bfe564b03f01cb7862fa645d7439e6f8d4ffcd9eff73cb84855e9a3999232b10",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7714_fe16d027.jpg",
@@ -160,7 +835,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7714_fe16d027.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7714_fe16d027.jpg",
+      "file_id": "fe16d027296ae769391865d4830a8140bdaec15a6e9b4266732c49f63407a01e",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7720_652d9135.jpg",
@@ -178,7 +856,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7720_652d9135.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7720_652d9135.jpg",
+      "file_id": "652d9135bdd040445c10f309da2d278b721cb1485a2c0e536bd38e65ba4d9cea",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7715_dc30d3ca.jpg",
@@ -196,7 +877,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7715_dc30d3ca.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7715_dc30d3ca.jpg",
+      "file_id": "dc30d3ca929873229bdb5868bc6cd31f14deeb71d38c60280679c498386c5356",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7717_17262ed4.jpg",
@@ -214,7 +898,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7717_17262ed4.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7717_17262ed4.jpg",
+      "file_id": "17262ed498f16d9e69cce8183a9db9545f829075ff47793830ee8b9fd7031119",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7716_41738a61.jpg",
@@ -232,7 +919,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7716_41738a61.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7716_41738a61.jpg",
+      "file_id": "41738a6174e40d6a41e733ea99dee1e357ad805759288ef45412b28a3142f63d",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7721_b39b01d4.jpg",
@@ -250,7 +940,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7721_b39b01d4.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7721_b39b01d4.jpg",
+      "file_id": "b39b01d44394196e282a6420447e1c92689eeb88c672fe4aceabc5dca40f64de",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7718_89e3e4fd.jpg",
@@ -268,7 +961,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7718_89e3e4fd.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7718_89e3e4fd.jpg",
+      "file_id": "89e3e4fdec22704de099bdcf9579ca77cea92699cf204fa9f150ec1980f65083",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7719_10ee7bef.jpg",
@@ -286,7 +982,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7719_10ee7bef.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7719_10ee7bef.jpg",
+      "file_id": "10ee7bef8b12287a22713188640e171f4d8aaf0b15e7a41497c74f8aa36e689b",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7775_0d646a32.jpg",
@@ -304,7 +1003,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7775_0d646a32.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7775_0d646a32.jpg",
+      "file_id": "0d646a32a8fd7e79f4a0345b2fee4240ec21b4d5d2581a6d0e65ce49e01829ae",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7771_6e44a966.jpg",
@@ -322,7 +1024,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7771_6e44a966.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7771_6e44a966.jpg",
+      "file_id": "6e44a9669611498509a02279bdca573320963604c7ba30d44ae23589abd8ae41",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7773_4c255e1a.jpg",
@@ -340,7 +1045,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7773_4c255e1a.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7773_4c255e1a.jpg",
+      "file_id": "4c255e1a3c2fae6b4ec00a6bf44f6357c03a817e0bffe0ae05418d89d06621d6",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7774_b13e8f16.jpg",
@@ -358,7 +1066,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7774_b13e8f16.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7774_b13e8f16.jpg",
+      "file_id": "b13e8f166348ac309d3e79fa1c6ea79ca3909076d1fe544b5f9a3240cb1ffc2a",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7770_a8134296.jpg",
@@ -376,7 +1087,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7770_a8134296.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7770_a8134296.jpg",
+      "file_id": "a81342962fcdd9a3b7054c9e766e00ad7229ea2ff73408d351bfcc7d2c4c52b1",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7769_7d251270.jpg",
@@ -394,7 +1108,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7769_7d251270.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7769_7d251270.jpg",
+      "file_id": "7d251270749a25f6ad93c0d341222db768a4686439e5cce06d50cb31d9a3fbd2",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7776_112c494b.jpg",
@@ -412,7 +1129,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7776_112c494b.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7776_112c494b.jpg",
+      "file_id": "112c494bcb85c7f3d5bbf1b32325845f113e177431b4615be2b0ece9e573f5cd",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7772_26f0beb2.jpg",
@@ -430,7 +1150,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7772_26f0beb2.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7772_26f0beb2.jpg",
+      "file_id": "26f0beb23ff4a0f3c294bda2210e33c01c601c39997522548348c5ab826fd6ae",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7778_ff976f49.jpg",
@@ -448,7 +1171,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7778_ff976f49.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7778_ff976f49.jpg",
+      "file_id": "ff976f49c0adf86b5c34bbf7ca843978fe3ef3d013766c546f68ae6fd05bddae",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7780_1c76cba8.jpg",
@@ -466,7 +1192,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7780_1c76cba8.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7780_1c76cba8.jpg",
+      "file_id": "1c76cba802f8d112cdc36e8991831ffccf486842b961a5a78493a2d1ea081168",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7783_303ad40e.jpg",
@@ -484,7 +1213,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7783_303ad40e.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7783_303ad40e.jpg",
+      "file_id": "303ad40e5412416548b85bcbb58835cac76c78946604d768a6c81af65b89acf4",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7781_fd8604d5.jpg",
@@ -502,7 +1234,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7781_fd8604d5.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7781_fd8604d5.jpg",
+      "file_id": "fd8604d56afec069b2c2782dba7b3a48dd38bac5077b7a2856b498fb15d4da05",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7782_f373d871.jpg",
@@ -520,7 +1255,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7782_f373d871.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7782_f373d871.jpg",
+      "file_id": "f373d871f3ece326a222a067b980d8191ace193deb940ff5bc039773badebef5",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7777_d1a5429f.jpg",
@@ -538,7 +1276,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7777_d1a5429f.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7777_d1a5429f.jpg",
+      "file_id": "d1a5429f63972f83da01f6640a570198426d681dbb860150e3738611e4eb1e37",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7779_caaa9acd.jpg",
@@ -556,7 +1297,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7779_caaa9acd.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0005_LEBRETON LENA_HULOTTE DU BOIS\\BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7779_caaa9acd.jpg",
+      "file_id": "caaa9acdb8f096c605a710e82bebbf285c27b45bc0eafcad9673fd0a6ce4aada",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7806_3da89627.jpg",
@@ -574,7 +1318,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7806_3da89627.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7806_3da89627.jpg",
+      "file_id": "3da89627123bda58c38cd889b894727556931378b91802a4e2b4b5388d14ece0",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7800_161ea1d6.jpg",
@@ -592,7 +1339,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7800_161ea1d6.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7800_161ea1d6.jpg",
+      "file_id": "161ea1d6bad8ee5719c1b15a72541fc406d8e273831480d5f4097b2695ef4dbd",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7802_6f4ef6db.jpg",
@@ -610,7 +1360,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7802_6f4ef6db.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7802_6f4ef6db.jpg",
+      "file_id": "6f4ef6dba6e7b33be2f63646f5844978889b99cb0ceeec649911160c4263b306",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7804_32922b4d.jpg",
@@ -628,7 +1381,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7804_32922b4d.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7804_32922b4d.jpg",
+      "file_id": "32922b4d4a02b428d973c3830d9f453ecf221562cfac640721755b3db94b7400",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7807_604afd7b.jpg",
@@ -646,7 +1402,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7807_604afd7b.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7807_604afd7b.jpg",
+      "file_id": "604afd7b8aa1049c284d8476db1e73686d67b5868690a03143a41bf600f8fb7b",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7803_8f1700be.jpg",
@@ -664,7 +1423,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7803_8f1700be.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7803_8f1700be.jpg",
+      "file_id": "8f1700beae5c9e8a2b31fa3a80378641868d4854ae0652196c500c4ee959541c",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7805_7494d7ed.jpg",
@@ -682,7 +1444,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7805_7494d7ed.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7805_7494d7ed.jpg",
+      "file_id": "7494d7edcffc353575ddf5cb79b436fa021124e3625aca04133b337aed64e0a1",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7801_9bbbb446.jpg",
@@ -700,7 +1465,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7801_9bbbb446.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7801_9bbbb446.jpg",
+      "file_id": "9bbbb446250059769775f1be69da895a5834b85c6e7244697992708647fa6fdf",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7812_bbfd6be9.jpg",
@@ -718,7 +1486,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7812_bbfd6be9.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7812_bbfd6be9.jpg",
+      "file_id": "bbfd6be99693f3d26e9e1b17801abd2bfb536f069b852058232d5229340d9ce3",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7811_abbea703.jpg",
@@ -736,7 +1507,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7811_abbea703.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7811_abbea703.jpg",
+      "file_id": "abbea70328f13c385b75a21d7ac30197ad1b0442dd2346fda1e318a50c761648",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7808_e027e1f9.jpg",
@@ -754,7 +1528,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7808_e027e1f9.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7808_e027e1f9.jpg",
+      "file_id": "e027e1f98893bde40457bf0780f5e19e0ab61d02fedf9ec2e28a4a6aeddd4e9a",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7809_4b1eb63a.jpg",
@@ -772,7 +1549,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7809_4b1eb63a.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7809_4b1eb63a.jpg",
+      "file_id": "4b1eb63ac93b4fd1c553946005514113b871f16e0203a7c66afe65e6b5a5eb38",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7813_7f80d9f7.jpg",
@@ -790,7 +1570,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7813_7f80d9f7.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7813_7f80d9f7.jpg",
+      "file_id": "7f80d9f70f54a8e7dd4aefc1a4e8ac13f84d9e1ef9e45d973dfde5548a99cc93",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8131_6346036b.jpg",
@@ -808,7 +1591,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8131_6346036b.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8131_6346036b.jpg",
+      "file_id": "6346036bafe0560f539287d45c7718cef290a15088bda70e0d46442c445ccabb",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7810_15446631.jpg",
@@ -826,7 +1612,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7810_15446631.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7810_15446631.jpg",
+      "file_id": "154466318231f2a34c118185317df1340f9e31eeb15ae31927bdc1434009034f",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7832_68ff55f5.jpg",
@@ -844,7 +1633,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7832_68ff55f5.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_7832_68ff55f5.jpg",
+      "file_id": "68ff55f50d4c1c7356f6db9252fd744a897837f6f2afae8ba4456a3864ccdacb",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8134_9fbe0d9f.jpg",
@@ -862,7 +1654,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8134_9fbe0d9f.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8134_9fbe0d9f.jpg",
+      "file_id": "9fbe0d9f9ce811ef6b64f79290415b25dc71fd210a23ae757ae94cc519745c26",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8132_2cab20cc.jpg",
@@ -880,7 +1675,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8132_2cab20cc.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8132_2cab20cc.jpg",
+      "file_id": "2cab20cc8e0598ebcf2457f7327e8d905f76d4edaf49fb58e37310298b66ee85",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8135_36a1b30b.jpg",
@@ -898,7 +1696,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8135_36a1b30b.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8135_36a1b30b.jpg",
+      "file_id": "36a1b30b4ff70a1424cefce0d985df178dbbb81350505ba13df9e79838701f69",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8133_d2d7f34d.jpg",
@@ -916,7 +1717,304 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8133_d2d7f34d.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0007_CONSTANT MAYLINE_KARAMEL DE L.ETAPE\\BJ025#CONSTANT MAYLINE#KARAMEL DE L.ETAPE#W61_8133_d2d7f34d.jpg",
+      "file_id": "d2d7f34d8b36006ffff0c5c0c0c38d192d586211aaafcde97d9ff724e451a540",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7991.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7991.JPG",
+      "name": "W61_7991.JPG",
+      "filename": "W61_7991.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_7991.JPG",
+      "original_filename": "W61_7991.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7991.JPG",
+      "file_id": "840d6b422f08732ef62ea4912ca3862e52d5bd3fc9d8c47cae2c8694fb2f2807",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7999.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7999.JPG",
+      "name": "W61_7999.JPG",
+      "filename": "W61_7999.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_7999.JPG",
+      "original_filename": "W61_7999.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7999.JPG",
+      "file_id": "f806eb37c2fda75fafd45a9ebd137338ea490c05f13a72731b388913372f16e2",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8001.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8001.JPG",
+      "name": "W61_8001.JPG",
+      "filename": "W61_8001.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_8001.JPG",
+      "original_filename": "W61_8001.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8001.JPG",
+      "file_id": "117f39a7b54fc749e2c0a84ee4988e982715b084f0c09e35ecfaa4f133d3661d",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7993.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7993.JPG",
+      "name": "W61_7993.JPG",
+      "filename": "W61_7993.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_7993.JPG",
+      "original_filename": "W61_7993.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7993.JPG",
+      "file_id": "9e865856dcaeefdddd59a9c8a4b7c96fb08f56f68af1d3c156287cc5d1370739",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7997.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7997.JPG",
+      "name": "W61_7997.JPG",
+      "filename": "W61_7997.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_7997.JPG",
+      "original_filename": "W61_7997.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7997.JPG",
+      "file_id": "df9e05cfacf43f12701c2cf3da076e14615d1c446e4935eb195204ff005d4cbd",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7992.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7992.JPG",
+      "name": "W61_7992.JPG",
+      "filename": "W61_7992.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_7992.JPG",
+      "original_filename": "W61_7992.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7992.JPG",
+      "file_id": "38b353110fff4cf61534c45d0e9b9237a644f1e200a2233040f10a9dbfdc7334",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8000.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8000.JPG",
+      "name": "W61_8000.JPG",
+      "filename": "W61_8000.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_8000.JPG",
+      "original_filename": "W61_8000.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8000.JPG",
+      "file_id": "22fe9cb6dd6334e7e8bd18277029ba16859d01e41a2f5c1e122b93abc00fc560",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7998.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7998.JPG",
+      "name": "W61_7998.JPG",
+      "filename": "W61_7998.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_7998.JPG",
+      "original_filename": "W61_7998.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7998.JPG",
+      "file_id": "691181ff7332afc9758adeba82527b64ec68f6b6e05c6172e83085299c44ac11",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7994.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7994.JPG",
+      "name": "W61_7994.JPG",
+      "filename": "W61_7994.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_7994.JPG",
+      "original_filename": "W61_7994.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7994.JPG",
+      "file_id": "a68cee8f3a3d4ff7d84d15784f7dcbe42f74f0b5aab45ed93f1a03282da62330",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8005.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8005.JPG",
+      "name": "W61_8005.JPG",
+      "filename": "W61_8005.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_8005.JPG",
+      "original_filename": "W61_8005.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8005.JPG",
+      "file_id": "c8216463e4f4964a05b7b915fc0c6de9cfbd7618c885c36ed1483c249966d301",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7990.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7990.JPG",
+      "name": "W61_7990.JPG",
+      "filename": "W61_7990.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_7990.JPG",
+      "original_filename": "W61_7990.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_7990.JPG",
+      "file_id": "b99faed0b9304c084bd898a8a4ab569b4369997171da0691eb6a0a387a260961",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8004.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8004.JPG",
+      "name": "W61_8004.JPG",
+      "filename": "W61_8004.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_8004.JPG",
+      "original_filename": "W61_8004.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8004.JPG",
+      "file_id": "062e3af60dec0dc69e2b6de90f86f7e09a2248594f1993e60c574368d1737569",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8002.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8002.JPG",
+      "name": "W61_8002.JPG",
+      "filename": "W61_8002.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_8002.JPG",
+      "original_filename": "W61_8002.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8002.JPG",
+      "file_id": "0c6a222ceaf4b3f9954505e3aef43b0f87adb806d055132c91ae779330e02124",
+      "event_id": "BJ025",
+      "contest": "BJ025"
+    },
+    {
+      "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8003.JPG",
+      "path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8003.JPG",
+      "name": "W61_8003.JPG",
+      "filename": "W61_8003.JPG",
+      "rel_path": "BJ025/1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix/0019_VEYER JADE_JUST DO IT DE LA BAIE/W61_8003.JPG",
+      "original_filename": "W61_8003.JPG",
+      "rider": "VEYER JADE",
+      "rider_name": "VEYER JADE",
+      "horse": "JUST DO IT DE LA BAIE",
+      "horse_name": "JUST DO IT DE LA BAIE",
+      "number": "0019",
+      "rider_number": "0019",
+      "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "concours": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
+      "processed": true,
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0019_VEYER JADE_JUST DO IT DE LA BAIE\\W61_8003.JPG",
+      "file_id": "dfd7a44a9253e3dc010707d2930ed7ebd4a5b3d1860882c7f19349520cd2341b",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7722_1b496d41.jpg",
@@ -934,7 +2032,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7722_1b496d41.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7722_1b496d41.jpg",
+      "file_id": "1b496d410d782b32647ebcdbebcbe3b0e9644788bc9e47cb8af6b2274455f6ce",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7701_244a35f4.jpg",
@@ -952,7 +2053,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7701_244a35f4.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7701_244a35f4.jpg",
+      "file_id": "244a35f44bca51160a05572929a898ab5bf4c2e0e41a6687b6f50408d0a484ea",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7705_e012e2fc.jpg",
@@ -970,7 +2074,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7705_e012e2fc.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7705_e012e2fc.jpg",
+      "file_id": "e012e2fc5ba2d0909bb1f85f396676ce2a4cd4f5160fdcd8ae232bc6f549ff28",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7698_61fd90e8.jpg",
@@ -988,7 +2095,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7698_61fd90e8.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7698_61fd90e8.jpg",
+      "file_id": "61fd90e8cfd92df62acfa0f917f41f0a76d192a94abe05d869d3557c4cf26d8f",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7699_861ec6a2.jpg",
@@ -1006,7 +2116,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7699_861ec6a2.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7699_861ec6a2.jpg",
+      "file_id": "861ec6a21984272c1cc57e18a957d7993962343656066ee2eadd8adf0d670800",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7700_c5b2f2aa.jpg",
@@ -1024,7 +2137,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7700_c5b2f2aa.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7700_c5b2f2aa.jpg",
+      "file_id": "c5b2f2aa226ae231d905742b95fc9b8d51718a8124c8c864641532b5d4f75d8c",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7724_477a139b.jpg",
@@ -1042,7 +2158,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7724_477a139b.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7724_477a139b.jpg",
+      "file_id": "477a139b1fb9c15b50991ee1778fc3980dd8167aed8a521cba63a93c229f58ba",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7723_fe807749.jpg",
@@ -1060,7 +2179,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7723_fe807749.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7723_fe807749.jpg",
+      "file_id": "fe807749c032d6e57ba528605070475cd2b0769c6f6e66493f5ba39794244d5c",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7734_da938390.jpg",
@@ -1078,7 +2200,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7734_da938390.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7734_da938390.jpg",
+      "file_id": "da938390c1cce6747679343f8420fb9e7e8c8d8029cf7bf255dcee0149d648ee",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7692_0c9eaa4a.jpg",
@@ -1096,7 +2221,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7692_0c9eaa4a.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7692_0c9eaa4a.jpg",
+      "file_id": "0c9eaa4a5489f868607622d22ed6b8112b83830b8a64b0e18dd15f64be47b998",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7694_f66fe263.jpg",
@@ -1114,7 +2242,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7694_f66fe263.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7694_f66fe263.jpg",
+      "file_id": "f66fe2636b451bddc7a551790561df4e6d0454303ac5d7ec164ee0e2d98a674e",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7732_ecfbdfb9.jpg",
@@ -1132,7 +2263,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7732_ecfbdfb9.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7732_ecfbdfb9.jpg",
+      "file_id": "ecfbdfb9e2a3ef51e84fc0ca3ca6f3438ae0672f46c81d90bb9f1977b0d4ba43",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7733_c7e801d1.jpg",
@@ -1150,7 +2284,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7733_c7e801d1.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7733_c7e801d1.jpg",
+      "file_id": "c7e801d13ea9cd6dc6e32eff62d189bf19350f65001207e20bf2dd8e4e9482ff",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7695_577c42ca.jpg",
@@ -1168,7 +2305,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7695_577c42ca.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7695_577c42ca.jpg",
+      "file_id": "577c42ca8209036d81c1cf6b99b79123d9a99c70b6b9a706ce14e0b3b73ebfc3",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7725_b85ae5a5.jpg",
@@ -1186,7 +2326,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7725_b85ae5a5.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7725_b85ae5a5.jpg",
+      "file_id": "b85ae5a5838151bff7b5561d5654aaaa462987e1687d468af81d3f662e772a4f",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7731_eb1b1e4b.jpg",
@@ -1204,7 +2347,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7731_eb1b1e4b.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7731_eb1b1e4b.jpg",
+      "file_id": "eb1b1e4bce9368ee0357a0c359741504e8733ee97b2f08d67560a3efb887c3db",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7728_5cfbb8bc.jpg",
@@ -1222,7 +2368,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7728_5cfbb8bc.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7728_5cfbb8bc.jpg",
+      "file_id": "5cfbb8bc795c35f0a581a97ec9a2092b471aaf767ed16164d7465b91416c5269",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7697_61717a37.jpg",
@@ -1240,7 +2389,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7697_61717a37.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7697_61717a37.jpg",
+      "file_id": "61717a3724b27565a6de9e3873af51cfc874e5fe6ebc6bb6be9fc8dea56a906c",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7726_951ec297.jpg",
@@ -1258,7 +2410,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7726_951ec297.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7726_951ec297.jpg",
+      "file_id": "951ec29780a6ce9e9406fed182059d761754ea5cd5e4044bca3fc7f2f55c5fc3",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7727_51d9cc4f.jpg",
@@ -1276,7 +2431,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7727_51d9cc4f.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7727_51d9cc4f.jpg",
+      "file_id": "51d9cc4fdf80ce06cddf0051a4b41bc9eba88215a93313102f89aa8ad5f1c7d6",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7696_8308ef36.jpg",
@@ -1294,7 +2452,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7696_8308ef36.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7696_8308ef36.jpg",
+      "file_id": "8308ef36cdc9a2562d72c1ae8a202cedeb2e0a88c62d2ac3259f5749e9af5e92",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7730_83b302b4.jpg",
@@ -1312,7 +2473,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7730_83b302b4.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7730_83b302b4.jpg",
+      "file_id": "83b302b439304256ed1fda12ae43d72eee59f6c7a22d4462a4690cb46045f268",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7729_59ab2c83.jpg",
@@ -1330,7 +2494,10 @@
       "epreuve": "1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7729_59ab2c83.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_91_Poney Elite D Grand Prix\\0004_JAGER MELODY_BILLI BRAUDIERE\\BJ025#JAGER MELODY#BILLI BRAUDIERE#W61_7729_59ab2c83.jpg",
+      "file_id": "59ab2c8397df1746dea23b8ffa979725554a17a744547ed77f3b370b5426fd72",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5390_60688825.jpg",
@@ -1348,7 +2515,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5390_60688825.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5390_60688825.jpg",
+      "file_id": "60688825abde0fea3eaa79d0a9989a9b67df21556193bc516b7525eff6c44c4f",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5385_36cfc65f.jpg",
@@ -1366,7 +2536,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5385_36cfc65f.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5385_36cfc65f.jpg",
+      "file_id": "36cfc65fc5f1e9d9d56c71d0b32105e5c448e6026738db24f97bb16ade2f9c0e",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5384_7e8f7b2d.jpg",
@@ -1384,7 +2557,10 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5384_7e8f7b2d.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5384_7e8f7b2d.jpg",
+      "file_id": "7e8f7b2d8d6b349a5d2f9755e6f2d840e8061aa28c144ca88e38ef88a2f18b2e",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     },
     {
       "id": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5386_242742c3.jpg",
@@ -1402,9 +2578,12 @@
       "epreuve": "1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix",
       "concours": "BJ025",
       "processed": true,
-      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5386_242742c3.jpg"
+      "processed_path": "C:\\Kadra by ST\\Code original\\redim\\BJ025\\1_dimanche_gdhall_sif_93_As Poney 2C Grand Prix\\0008_GALERNEAU MARIE_DHULIA DE L.AUBE\\BJ025#GALERNEAU MARIE#DHULIA DE L.AUBE#W61_5386_242742c3.jpg",
+      "file_id": "242742c3ffa7b12f40d4448994d6b57155448237c51103801560b95587e12eb0",
+      "event_id": "BJ025",
+      "contest": "BJ025"
     }
   ],
-  "total": 78,
+  "total": 123,
   "version": "1.0"
 }
