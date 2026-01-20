@@ -229,7 +229,13 @@ function getPhotoUrlFromFilename(filename, relPath = null, originalFilename = nu
       const webpFilename = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '.webp');
       const r2Path = `${parentDir}/${originalFile}/${webpFilename}`;
       
-      return `${window.R2_PUBLIC_URL}/${r2Path}`;
+      // Encoder l'URL pour les espaces et caractères spéciaux
+      const encodedPath = r2Path.split('/').map(part => encodeURIComponent(part)).join('/');
+      const fullUrl = `${window.R2_PUBLIC_URL}/${encodedPath}`;
+      
+      console.log('🔗 URL R2:', fullUrl, '| parentDir:', parentDir, '| originalFile:', originalFile, '| webpFilename:', webpFilename);
+      
+      return fullUrl;
     } catch (e) {
       console.warn('Erreur construction URL R2:', e);
       // Fallback sur API locale
@@ -1264,9 +1270,11 @@ function normalizePhotosData(rawPhotos) {
     const filename = photo.rel_path || photo.photo_path || photo.path || photo.filename || photo.id || '';
     const normalizedFilename = filename.replace(/\\/g, '/');
     const displayName = photo.name || (normalizedFilename ? normalizedFilename.split('/').pop() : '');
-    // Passer rel_path pour construire l'URL R2 si disponible
+    // Passer rel_path et original_filename pour construire l'URL R2 si disponible
     const relPath = photo.rel_path || photo.photo_path || photo.path || null;
-    const imageUrl = photo.thumb_url || getPhotoUrlFromFilename(normalizedFilename, relPath);
+    const originalFilename = photo.original_filename || null;
+    const imageUrl = photo.thumb_url || getPhotoUrlFromFilename(normalizedFilename, relPath, originalFilename);
+    console.log('🔗 URL générée:', imageUrl, 'pour', normalizedFilename);
     return {
       ...photo,
       filename: normalizedFilename,
