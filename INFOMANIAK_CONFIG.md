@@ -7,13 +7,17 @@
 ### Dans Manager Infomaniak
 
 #### Pour Git (déploiement automatique) :
-- **Répertoire source** : `.` (point = racine)
-- **OU** : Laissez vide (Infomaniak utilisera la racine par défaut)
+- **Répertoire source** : `.` (point = racine) **OBLIGATOIRE**
+- **OU** : `/` (slash = racine)
+- **OU** : Laissez vide **UNIQUEMENT** si Infomaniak utilise la racine par défaut
 - **PAS** : `deploy_infomaniak/` ou autre sous-dossier
 
 #### Pour Node.js :
-- **Répertoire source** : `.` (point = racine)
+- **Répertoire source** : `.` (point = racine) **OBLIGATOIRE**
+- **OU** : `/` (slash = racine)
 - **PAS** : `deploy_infomaniak/` ou autre sous-dossier
+
+**⚠️ IMPORTANT** : Si le répertoire source est vide, Infomaniak ne sait pas où chercher les fichiers du repository. Mettez toujours `.` (point) pour la racine.
 
 ### Structure du repository
 
