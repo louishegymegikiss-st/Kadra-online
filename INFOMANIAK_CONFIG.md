@@ -49,13 +49,16 @@ Commande de construction (build): (laisser vide - pas de build nécessaire)
 Commande de démarrage: npm start
 OU
 Commande de démarrage: node server.js
-Port: Laissé par défaut (Infomaniak gère automatiquement via variable d'environnement PORT)
+Port: 3000 (par défaut si Infomaniak ne définit pas PORT)
 ```
 
 **Note** : 
 - **Commande de construction** : `npm install` (pour installer les dépendances Express) OU laisser vide (les fichiers sont déjà générés)
 - **Commande de démarrage** : `npm start` ou `node server.js`
-- Le serveur utilise `process.env.PORT || 3000`, donc Infomaniak définira automatiquement le port via la variable d'environnement `PORT`
+- **Port** : Le serveur utilise `process.env.PORT || 3000`
+  - Si Infomaniak définit la variable d'environnement `PORT`, ce port sera utilisé
+  - Sinon, le port par défaut est **3000**
+  - Vous pouvez laisser le port vide dans la config Infomaniak, ou spécifier **3000** si demandé
 
 ## Vérification
 
