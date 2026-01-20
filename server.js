@@ -11,8 +11,23 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Déterminer le répertoire statique (où se trouve index.html)
-// Infomaniak clone le repo, donc __dirname pointe vers le repo cloné
+// Infomaniak clone le repo dans /srv/customer/site/galerie.photolesgarennes.com
+// __dirname pointe vers le répertoire où se trouve server.js (racine du repo cloné)
 const STATIC_DIR = __dirname;
+
+// Si index.html n'est pas dans __dirname, chercher dans le répertoire parent
+// (au cas où Infomaniak clone dans un sous-dossier)
+let actualStaticDir = STATIC_DIR;
+const indexPathInDir = path.join(STATIC_DIR, 'index.html');
+if (!fs.existsSync(indexPathInDir)) {
+  // Essayer le répertoire parent
+  const parentDir = path.dirname(STATIC_DIR);
+  const indexPathInParent = path.join(parentDir, 'index.html');
+  if (fs.existsSync(indexPathInParent)) {
+    actualStaticDir = parentDir;
+    console.log(`⚠️  index.html trouvé dans le répertoire parent: ${parentDir}`);
+  }
+}
 
 // Diagnostic complet
 console.log('=== DIAGNOSTIC SERVEUR ===');
@@ -34,7 +49,7 @@ try {
 }
 
 // Vérifier que index.html existe
-const indexPath = path.join(STATIC_DIR, 'index.html');
+const indexPath = path.join(actualStaticDir, 'index.html');
 console.log(`Recherche index.html dans: ${indexPath}`);
 console.log(`index.html existe: ${fs.existsSync(indexPath)}`);
 
@@ -64,8 +79,8 @@ if (!fs.existsSync(indexPath)) {
   console.error('\n⚠️  Le serveur démarre quand même, mais index.html ne sera pas accessible');
 }
 
-// Servir les fichiers statiques depuis le répertoire courant
-app.use(express.static(STATIC_DIR, {
+// Servir les fichiers statiques depuis le répertoire déterminé
+app.use(express.static(actualStaticDir, {
   dotfiles: 'ignore',
   index: false // Ne pas servir index.html automatiquement, on le gère manuellement
 }));
