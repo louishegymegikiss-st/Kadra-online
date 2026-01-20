@@ -191,34 +191,43 @@ function encodePhotoPath(path) {
     .join('/');
 }
 
-function getPhotoUrlFromFilename(filename, relPath = null) {
+function getPhotoUrlFromFilename(filename, relPath = null, originalFilename = null) {
   // Si R2 est configuré et disponible, utiliser R2 pour les photos WebP
   if (window.R2_PUBLIC_URL && relPath) {
     try {
-      // Construire le chemin R2 : relPath contient le chemin complet jusqu'au nom de fichier original
-      // Ex: relPath = "BJ025/1_dimanche.../0005_LEBRETON LENA_HULOTTE DU BOIS/W61_5391.JPG"
-      // Le filename est déjà le nom final avec file_id : "BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5391_79c059c5.webp"
-      // Le chemin R2 est : {relPath}/{filename}
-      // Ex: "BJ025/1_dimanche.../0005_LEBRETON LENA_HULOTTE DU BOIS/W61_5391.JPG/BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5391_79c059c5.webp"
+      // Format R2 réel : {dossier_parent}/{nom_fichier_original}/{filename_avec_file_id}.webp
+      // Ex: "BJ025/.../0005_LEBRETON LENA_HULOTTE DU BOIS/W61_5391.JPG/BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_5391_79c059c5.webp"
       
       const relPathNormalized = relPath.replace(/\\/g, '/');
       const filenameNormalized = filename.replace(/\\/g, '/');
       const filenameOnly = filenameNormalized.split('/').pop() || filenameNormalized;
       
-      // Le filename sur R2 est déjà en .webp avec le file_id
-      // Si le filename n'a pas d'extension .webp, le remplacer par .webp
-      let webpFilename = filenameOnly;
-      if (!webpFilename.endsWith('.webp')) {
-        // Remplacer l'extension par .webp
-        webpFilename = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '.webp');
-        // Si pas d'extension trouvée, ajouter .webp
-        if (webpFilename === filenameOnly) {
-          webpFilename = filenameOnly + '.webp';
+      // relPath contient le chemin complet jusqu'au fichier final
+      // Ex: "BJ025/.../0005_LEBRETON LENA_HULOTTE DU BOIS/BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7708_a396865a.jpg"
+      // Il faut extraire le dossier parent
+      const relPathParts = relPathNormalized.split('/');
+      const parentDir = relPathParts.slice(0, -1).join('/');
+      
+      // Utiliser original_filename si fourni, sinon extraire depuis le filename
+      let originalFile = originalFilename;
+      if (!originalFile) {
+        // Format filename : "BJ025#LEBRETON LENA#HULOTTE DU BOIS#W61_7708_a396865a.jpg"
+        // Le nom original est après le dernier # : "W61_7708_a396865a.jpg" -> "W61_7708.JPG"
+        const filenameParts = filenameOnly.split('#');
+        if (filenameParts.length > 0) {
+          const lastPart = filenameParts[filenameParts.length - 1];
+          // Extraire "W61_7708" depuis "W61_7708_a396865a.jpg"
+          const stem = lastPart.replace(/_\w+\.(jpg|jpeg|png)$/i, '');
+          originalFile = stem + '.JPG';
+        } else {
+          originalFile = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '.JPG');
         }
       }
       
-      // Construire le chemin R2 : relPath + webpFilename
-      const r2Path = relPathNormalized + '/' + webpFilename;
+      // Construire le chemin R2 : {dossier_parent}/{nom_original}/{filename}.webp
+      const webpFilename = filenameOnly.replace(/\.(jpg|jpeg|png)$/i, '.webp');
+      const r2Path = `${parentDir}/${originalFile}/${webpFilename}`;
+      
       return `${window.R2_PUBLIC_URL}/${r2Path}`;
     } catch (e) {
       console.warn('Erreur construction URL R2:', e);
@@ -1138,19 +1147,84 @@ function applySuggestion(value) {
   }
 }
 
+// Cache pour le JSON statique des photos
+let staticPhotosCache = null;
+
+async function loadStaticPhotos() {
+  // Charger le JSON statique une seule fois
+  if (staticPhotosCache) {
+    return staticPhotosCache;
+  }
+  
+  try {
+    const response = await fetch('/static/photos.json');
+    if (!response.ok) {
+      console.warn('Fichier photos.json introuvable, recherche non disponible');
+      return null;
+    }
+    const data = await response.json();
+    staticPhotosCache = data.items || data.photos || [];
+    console.log(`✅ ${staticPhotosCache.length} photos chargées depuis JSON statique`);
+    return staticPhotosCache;
+  } catch (error) {
+    console.warn('Erreur chargement photos.json:', error);
+    return null;
+  }
+}
+
 async function searchPhotos(query) {
   currentSearch = query; // Sauvegarder la recherche pour le pack
   const container = document.getElementById('photos-results');
   container.style.display = 'block';
   container.innerHTML = `<div style="text-align: center; padding: 20px;">${t('search_in_progress')}</div>`;
   
-  // Mode statique : pas d'API disponible
+  // Mode statique : recherche dans le JSON local
   if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
-    container.innerHTML = `<div style="text-align: center; padding: 20px; color: orange;">${t('search_error')} - Mode statique : recherche non disponible</div>`;
-    console.warn('Mode statique : API non disponible pour la recherche');
-    return;
+    try {
+      // Charger le JSON statique
+      const allPhotos = await loadStaticPhotos();
+      if (!allPhotos || allPhotos.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 20px; color: orange;">Aucune photo disponible</div>`;
+        return;
+      }
+      
+      // Recherche côté client
+      const queryLower = query.toLowerCase().trim();
+      const queryWords = queryLower.split(/\s+/).filter(w => w.length > 0);
+      
+      if (queryWords.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 20px;">${t('search_error')}</div>`;
+        return;
+      }
+      
+      // Filtrer les photos
+      const filtered = allPhotos.filter(photo => {
+        const rider = (photo.rider_name || photo.rider || '').toLowerCase();
+        const horse = (photo.horse_name || photo.horse || '').toLowerCase();
+        const searchText = `${rider} ${horse}`.toLowerCase();
+        
+        // Tous les mots de la requête doivent être présents
+        return queryWords.every(word => searchText.includes(word));
+      });
+      
+      // Normaliser et trier
+      const photos = normalizePhotosData(filtered);
+      const sortedPhotos = [...photos].sort(naturalSort);
+      
+      // Stocker les résultats
+      currentSearchResults = sortedPhotos;
+      
+      // Afficher
+      renderPhotos(sortedPhotos);
+      return;
+    } catch (error) {
+      console.error('Erreur recherche statique:', error);
+      container.innerHTML = `<div style="text-align: center; padding: 20px; color: red;">${t('search_error')}</div>`;
+      return;
+    }
   }
   
+  // Mode API : recherche via API
   try {
     const response = await fetch(`${API_BASE}/search-photos?query=${encodeURIComponent(query)}&page=1&limit=80`, {
       headers: getApiHeaders()
