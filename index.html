@@ -311,6 +311,9 @@
         window.API_KEY = null;
         // Configuration R2 pour photos WebP (uniquement pour interface online)
         window.R2_PUBLIC_URL = 'https://galerie.smarttrailerapp.com';
+        // Endpoint public Infomaniak pour envoyer les commandes vers R2
+        // Cet endpoint sera créé côté serveur Infomaniak (PHP/Node) qui écrit dans R2
+        window.PUBLIC_API_URL = '/api/orders/snapshot'; // À configurer selon votre serveur Infomaniak
     </script>
     <script src="/static/js/client_base.js?v=1"></script>
     <script src="/static/js/client_online_desktop.js?v=1"></script>

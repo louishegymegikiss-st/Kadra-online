@@ -10,6 +10,9 @@ const fs = require('fs');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Middleware pour parser JSON
+app.use(express.json());
+
 // Dossier où est server.js = racine du repo
 const ROOT = __dirname;
 const indexPath = path.join(ROOT, 'index.html');
@@ -24,6 +27,118 @@ if (!fs.existsSync(indexPath)) {
 } else {
   console.log('✅ index.html trouvé, serveur prêt');
 }
+
+// Endpoint pour créer snapshot des commandes dans R2
+app.post('/api/orders/snapshot', async (req, res) => {
+  try {
+    // Vérifier que AWS SDK est disponible
+    let AWS;
+    try {
+      AWS = require('aws-sdk');
+    } catch (e) {
+      console.error('❌ aws-sdk non installé. Exécutez: npm install aws-sdk');
+      return res.status(500).json({ 
+        error: 'AWS SDK non disponible',
+        hint: 'Installer avec: npm install aws-sdk'
+      });
+    }
+    
+    const { event_id, orders } = req.body;
+    
+    if (!event_id || !orders || !Array.isArray(orders)) {
+      return res.status(400).json({ error: 'event_id et orders requis' });
+    }
+    
+    // Configuration R2 depuis variables d'environnement ou valeurs par défaut
+    const R2_ENDPOINT = process.env.R2_ENDPOINT || 'https://0ed22897e4a8686bd8c20227ad79d736.r2.cloudflarestorage.com';
+    const R2_ACCESS_KEY = process.env.R2_ACCESS_KEY_ID || '6ed17ae409c1969b754af590ee6b2d84';
+    const R2_SECRET_KEY = process.env.R2_SECRET_ACCESS_KEY || '38725e098bc5d93f940f4bdcac31013da64fd4ddaeb2f348f87a7913e986f09b';
+    const R2_BUCKET = process.env.R2_BUCKET_NAME || 'photos-kadra';
+    
+    // Configuration S3 pour R2
+    const s3 = new AWS.S3({
+      endpoint: R2_ENDPOINT,
+      accessKeyId: R2_ACCESS_KEY,
+      secretAccessKey: R2_SECRET_KEY,
+      signatureVersion: 'v4',
+      region: 'auto'
+    });
+    
+    // Lire le snapshot existant depuis R2
+    const r2Key = `orders/${event_id}/pending_orders.json`;
+    let existingSnapshot = null;
+    
+    try {
+      const existing = await s3.getObject({
+        Bucket: R2_BUCKET,
+        Key: r2Key
+      }).promise();
+      existingSnapshot = JSON.parse(existing.Body.toString());
+      console.log(`📥 Snapshot existant chargé: v${existingSnapshot.snapshot_version}, ${existingSnapshot.count} commandes`);
+    } catch (e) {
+      if (e.code !== 'NoSuchKey') {
+        console.error('Erreur lecture snapshot R2:', e);
+      }
+      // Fichier n'existe pas encore, c'est normal
+    }
+    
+    // Merger avec les nouvelles commandes (éviter doublons par order_id)
+    let allOrders = orders;
+    if (existingSnapshot) {
+      const existingOrderIds = new Set(
+        existingSnapshot.orders.map(o => o.order_id).filter(Boolean)
+      );
+      const newOrders = orders.filter(o => o.order_id && !existingOrderIds.has(o.order_id));
+      allOrders = [...existingSnapshot.orders, ...newOrders];
+      console.log(`🔄 Merge: ${newOrders.length} nouvelle(s) commande(s) sur ${orders.length} reçue(s)`);
+    }
+    
+    // Créer le snapshot
+    const snapshot = {
+      event_id,
+      snapshot_version: existingSnapshot ? existingSnapshot.snapshot_version + 1 : 1,
+      generated_at: new Date().toISOString(),
+      count: allOrders.length,
+      orders: allOrders
+    };
+    
+    // Upload atomique : d'abord .tmp
+    const tmpKey = `orders/${event_id}/pending_orders.tmp.json`;
+    await s3.putObject({
+      Bucket: R2_BUCKET,
+      Key: tmpKey,
+      Body: JSON.stringify(snapshot, null, 2),
+      ContentType: 'application/json',
+      CacheControl: 'no-cache'
+    }).promise();
+    
+    // Puis upload final
+    await s3.putObject({
+      Bucket: R2_BUCKET,
+      Key: r2Key,
+      Body: JSON.stringify(snapshot, null, 2),
+      ContentType: 'application/json',
+      CacheControl: 'no-cache'
+    }).promise();
+    
+    console.log(`✅ Snapshot v${snapshot.snapshot_version} uploadé: ${allOrders.length} commandes (${orders.length} nouvelles)`);
+    
+    res.json({
+      message: `Snapshot v${snapshot.snapshot_version} de ${allOrders.length} commande(s) créé`,
+      event_id,
+      snapshot_version: snapshot.snapshot_version,
+      new_orders: orders.length,
+      total_orders: allOrders.length
+    });
+    
+  } catch (error) {
+    console.error('❌ Erreur création snapshot:', error);
+    res.status(500).json({ 
+      error: error.message,
+      hint: 'Vérifier les credentials R2 et la connexion'
+    });
+  }
+});
 
 // Servir les fichiers statiques depuis la racine
 app.use(express.static(ROOT, {

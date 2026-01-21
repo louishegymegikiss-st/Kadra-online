@@ -3554,6 +3554,94 @@ async function submitOrder(e) {
   const calculatedTotal = items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0);
   console.log('Total calculé côté client:', calculatedTotal);
   
+  // Mode statique : envoyer vers endpoint public Infomaniak qui écrit dans R2
+  if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
+    try {
+      // Générer UUID pour order_id (idempotence)
+      const orderId = 'order_' + crypto.randomUUID ? crypto.randomUUID() : 
+        Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 15);
+      
+      // Détecter event_id depuis les photos du panier
+      let eventId = null;
+      for (const item of items) {
+        if (item.filename) {
+          // Chercher dans les résultats de recherche
+          const photo = currentSearchResults.find(p => p.filename === item.filename);
+          if (photo && (photo.event_id || photo.contest)) {
+            eventId = photo.event_id || photo.contest;
+            break;
+          }
+        }
+      }
+      
+      // Fallback : utiliser 'UNKNOWN' si pas d'event_id trouvé
+      if (!eventId) {
+        eventId = 'UNKNOWN';
+        console.warn('⚠️ Event ID non détecté, utilisation de "UNKNOWN"');
+      }
+      
+      const orderWithId = {
+        ...orderData,
+        order_id: orderId,
+        event_id: eventId,
+        created_at: new Date().toISOString(),
+        status: 'pending'
+      };
+      
+      // Envoyer vers endpoint public Infomaniak (qui écrit dans R2)
+      // Cet endpoint sera créé côté serveur Infomaniak (PHP/Node)
+      const publicApiUrl = window.PUBLIC_API_URL || '/api/orders/snapshot';
+      
+      try {
+        const response = await fetch(publicApiUrl, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            event_id: eventId,
+            orders: [orderWithId]
+          })
+        });
+        
+        if (response.ok) {
+          console.log('✅ Commande envoyée vers R2 via endpoint public');
+        } else {
+          console.warn('⚠️ Échec envoi vers endpoint public, stockage local uniquement');
+          // Fallback : stocker dans localStorage
+          const pendingOrders = JSON.parse(localStorage.getItem('pending_orders') || '[]');
+          pendingOrders.push(orderWithId);
+          localStorage.setItem('pending_orders', JSON.stringify(pendingOrders));
+        }
+      } catch (fetchError) {
+        console.warn('⚠️ Erreur envoi vers endpoint public, stockage local:', fetchError);
+        // Fallback : stocker dans localStorage
+        const pendingOrders = JSON.parse(localStorage.getItem('pending_orders') || '[]');
+        pendingOrders.push(orderWithId);
+        localStorage.setItem('pending_orders', JSON.stringify(pendingOrders));
+      }
+      
+      // Succès
+      await showCustomAlert(
+        'Commande enregistrée. Elle sera synchronisée avec l\'interface vendeur lors de la prochaine synchronisation.',
+        'success',
+        'Commande enregistrée'
+      );
+      
+      // Recharger la page pour réinitialiser complètement l'interface
+      location.reload();
+      
+    } catch (error) {
+      console.error(error);
+      await showCustomAlert('Erreur lors de l\'enregistrement: ' + error.message, 'error', 'Erreur');
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = t('submit_order_btn');
+    }
+    return;
+  }
+  
+  // Mode avec API : envoyer directement
   try {
     const response = await fetch(`${API_BASE}/orders`, {
       method: 'POST',

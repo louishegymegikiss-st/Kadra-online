@@ -1,0 +1,12 @@
+{
+  "name": "kadra-client-online",
+  "description": "Interface client online - Endpoint PHP pour commandes",
+  "require": {
+    "aws/aws-sdk-php": "^3.300"
+  },
+  "autoload": {
+    "psr-4": {
+      "Kadra\\": "src/"
+    }
+  }
+}

@@ -9,7 +9,8 @@
     "verify": "node verify-deployment.js"
   },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "aws-sdk": "^2.1691.0"
   },
   "engines": {
     "node": ">=24",
