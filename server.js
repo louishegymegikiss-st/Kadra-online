@@ -45,16 +45,19 @@ app.post('/api/orders/snapshot', async (req, res) => {
   console.log('Body:', JSON.stringify(req.body, null, 2));
   
   try {
-    // Vérifier que AWS SDK est disponible
-    let AWS;
+    // Vérifier que AWS SDK v3 est disponible
+    let S3Client, GetObjectCommand, PutObjectCommand;
     try {
-      AWS = require('aws-sdk');
-      console.log('✅ AWS SDK chargé');
+      const awsSdk = require('@aws-sdk/client-s3');
+      S3Client = awsSdk.S3Client;
+      GetObjectCommand = awsSdk.GetObjectCommand;
+      PutObjectCommand = awsSdk.PutObjectCommand;
+      console.log('✅ AWS SDK v3 chargé');
     } catch (e) {
-      console.error('❌ aws-sdk non installé. Exécutez: npm install aws-sdk');
+      console.error('❌ @aws-sdk/client-s3 non installé. Exécutez: npm install @aws-sdk/client-s3');
       return res.status(500).json({ 
         error: 'AWS SDK non disponible',
-        hint: 'Installer avec: npm install aws-sdk'
+        hint: 'Installer avec: npm install @aws-sdk/client-s3'
       });
     }
     
@@ -73,13 +76,14 @@ app.post('/api/orders/snapshot', async (req, res) => {
     const R2_SECRET_KEY = process.env.R2_SECRET_ACCESS_KEY || '38725e098bc5d93f940f4bdcac31013da64fd4ddaeb2f348f87a7913e986f09b';
     const R2_BUCKET = process.env.R2_BUCKET_NAME || 'photos-kadra';
     
-    // Configuration S3 pour R2
-    const s3 = new AWS.S3({
+    // Configuration S3 Client pour R2 (v3)
+    const s3Client = new S3Client({
+      region: 'auto',
       endpoint: R2_ENDPOINT,
-      accessKeyId: R2_ACCESS_KEY,
-      secretAccessKey: R2_SECRET_KEY,
-      signatureVersion: 'v4',
-      region: 'auto'
+      credentials: {
+        accessKeyId: R2_ACCESS_KEY,
+        secretAccessKey: R2_SECRET_KEY
+      }
     });
     
     // Lire le snapshot existant depuis R2
@@ -87,14 +91,16 @@ app.post('/api/orders/snapshot', async (req, res) => {
     let existingSnapshot = null;
     
     try {
-      const existing = await s3.getObject({
+      const command = new GetObjectCommand({
         Bucket: R2_BUCKET,
         Key: r2Key
-      }).promise();
-      existingSnapshot = JSON.parse(existing.Body.toString());
+      });
+      const response = await s3Client.send(command);
+      const bodyString = await response.Body.transformToString();
+      existingSnapshot = JSON.parse(bodyString);
       console.log(`📥 Snapshot existant chargé: v${existingSnapshot.snapshot_version}, ${existingSnapshot.count} commandes`);
     } catch (e) {
-      if (e.code !== 'NoSuchKey') {
+      if (e.name !== 'NoSuchKey' && e.$metadata?.httpStatusCode !== 404) {
         console.error('Erreur lecture snapshot R2:', e);
       }
       // Fichier n'existe pas encore, c'est normal
@@ -120,24 +126,28 @@ app.post('/api/orders/snapshot', async (req, res) => {
       orders: allOrders
     };
     
+    const snapshotJson = JSON.stringify(snapshot, null, 2);
+    
     // Upload atomique : d'abord .tmp
     const tmpKey = `orders/${event_id}/pending_orders.tmp.json`;
-    await s3.putObject({
+    const tmpCommand = new PutObjectCommand({
       Bucket: R2_BUCKET,
       Key: tmpKey,
-      Body: JSON.stringify(snapshot, null, 2),
+      Body: snapshotJson,
       ContentType: 'application/json',
       CacheControl: 'no-cache'
-    }).promise();
+    });
+    await s3Client.send(tmpCommand);
     
     // Puis upload final
-    await s3.putObject({
+    const finalCommand = new PutObjectCommand({
       Bucket: R2_BUCKET,
       Key: r2Key,
-      Body: JSON.stringify(snapshot, null, 2),
+      Body: snapshotJson,
       ContentType: 'application/json',
       CacheControl: 'no-cache'
-    }).promise();
+    });
+    await s3Client.send(finalCommand);
     
     console.log(`✅ Snapshot v${snapshot.snapshot_version} uploadé: ${allOrders.length} commandes (${orders.length} nouvelles)`);
     
