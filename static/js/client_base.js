@@ -198,7 +198,7 @@ function getPhotoUrlFromFilename(filename, relPath = null, originalFilename = nu
     // NOUVEAU : Utiliser les nouveaux chemins R2 simplifiés si file_id disponible
     if (fileId && eventId) {
       // Format : events/{event_id}/photos/{file_id}/{variant}.{ext}
-      const ext = variant === 'hd' ? 'jpg' : 'webp';
+      const ext = variant === 'small' ? 'jpg' : 'webp';
       const r2Path = `events/${eventId}/photos/${fileId}/${variant}.${ext}`;
       const newUrl = `${window.R2_PUBLIC_URL}/${r2Path}`;
       
@@ -1288,7 +1288,7 @@ function normalizePhotosData(rawPhotos) {
     let previewUrl = null;
     
     if (photo.urls && window.R2_PUBLIC_URL) {
-      // L'API retourne les chemins R2 dans urls.thumb, urls.preview, urls.hd
+      // L'API retourne les chemins R2 dans urls.thumb, urls.preview, urls.small
       if (photo.urls.thumb) {
         imageUrl = `${window.R2_PUBLIC_URL}/${photo.urls.thumb}`;
       }
