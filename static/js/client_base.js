@@ -705,11 +705,31 @@ function toggleColumn(side) {
 
 // Chargement des produits
 async function loadProducts() {
-  // Mode statique : pas d'API, produits non disponibles
+  // Mode statique : charger depuis JSON statique
   if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
-    console.log('Mode statique : produits non chargés (pas d\'API)');
-    products = [];
-    return;
+    try {
+      console.log('Mode statique : chargement produits depuis JSON statique');
+      const cacheBuster = `?v=1&t=${Date.now()}`;
+      const response = await fetch(`/static/products.json${cacheBuster}`);
+      if (!response.ok) {
+        console.warn('Fichier products.json introuvable, produits non disponibles');
+        products = [];
+        return;
+      }
+      const data = await response.json();
+      products = data.products || [];
+      console.log(`✅ ${products.length} produits chargés depuis JSON statique (version ${data.version || 'N/A'})`);
+      renderPromotions();
+      // Re-rendre le panier si ouvert pour mettre à jour les traductions
+      if (cart.length > 0) {
+        renderCartItems();
+      }
+      return;
+    } catch (error) {
+      console.warn('Erreur chargement products.json:', error);
+      products = [];
+      return;
+    }
   }
   
   try {
