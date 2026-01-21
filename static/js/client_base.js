@@ -1501,13 +1501,15 @@ function toggleCartItem(filename, btn) {
     const photoData = currentSearchResults.find(p => p.filename === filename);
     const riderName = photoData ? (photoData.rider_name || photoData.cavalier || '') : '';
     const horseName = photoData ? (photoData.horse_name || photoData.cheval || '') : '';
+    const eventId = photoData ? (photoData.event_id || photoData.contest || null) : null;
     
     cart.push({
       type: 'photo',
       filename: filename,
       formats: {}, // { product_id: quantity }
       rider_name: riderName,
-      horse_name: horseName
+      horse_name: horseName,
+      event_id: eventId // Stocker l'event_id dans le panier
     });
     card.classList.add('in-cart');
     btn.style.display = 'none';
@@ -3566,21 +3568,33 @@ async function submitOrder(e) {
         orderId = 'order_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 15);
       }
       
-      // Détecter event_id depuis les photos du panier
+      // Détecter event_id depuis les items (priorité : event_id stocké dans l'item)
       let eventId = null;
       
-      // Méthode 1 : Chercher via filename dans currentSearchResults
+      // Méthode 1 : Chercher l'event_id directement dans les items (stocké lors de l'ajout au panier)
       for (const item of items) {
-        if (item.filename) {
-          const photo = currentSearchResults.find(p => p.filename === item.filename);
-          if (photo && (photo.event_id || photo.contest)) {
-            eventId = photo.event_id || photo.contest;
-            break;
+        if (item.event_id) {
+          eventId = item.event_id;
+          console.log('✅ Event ID trouvé dans item:', eventId);
+          break;
+        }
+      }
+      
+      // Méthode 2 : Si pas trouvé, chercher via filename dans currentSearchResults
+      if (!eventId) {
+        for (const item of items) {
+          if (item.filename) {
+            const photo = currentSearchResults.find(p => p.filename === item.filename);
+            if (photo && (photo.event_id || photo.contest)) {
+              eventId = photo.event_id || photo.contest;
+              console.log('✅ Event ID trouvé via filename:', eventId);
+              break;
+            }
           }
         }
       }
       
-      // Méthode 2 : Si pas trouvé, chercher via rider_name/horse_name dans toutes les photos chargées
+      // Méthode 3 : Si pas trouvé, chercher via rider_name/horse_name dans toutes les photos chargées
       if (!eventId) {
         try {
           const allPhotos = await loadStaticPhotos();
@@ -3604,7 +3618,7 @@ async function submitOrder(e) {
         }
       }
       
-      // Méthode 3 : Chercher dans le localStorage ou window si défini
+      // Méthode 4 : Chercher dans le localStorage ou window si défini
       if (!eventId && typeof window !== 'undefined') {
         if (window.currentEventId) {
           eventId = window.currentEventId;
@@ -3619,9 +3633,9 @@ async function submitOrder(e) {
       if (!eventId) {
         eventId = 'UNKNOWN';
         console.warn('⚠️ Event ID non détecté, utilisation de "UNKNOWN"');
-        console.warn('Items:', items.map(i => ({ filename: i.filename, rider: i.rider_name, horse: i.horse_name })));
+        console.warn('Items:', items.map(i => ({ filename: i.filename, rider: i.rider_name, horse: i.horse_name, event_id: i.event_id })));
       } else {
-        console.log('✅ Event ID détecté:', eventId);
+        console.log('✅ Event ID final:', eventId);
       }
       
       const orderWithId = {
