@@ -13,6 +13,17 @@ const PORT = process.env.PORT || 3000;
 // Middleware pour parser JSON
 app.use(express.json());
 
+// CORS pour permettre les requêtes depuis le frontend
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.header('Access-Control-Allow-Headers', 'Content-Type');
+  if (req.method === 'OPTIONS') {
+    return res.sendStatus(200);
+  }
+  next();
+});
+
 // Dossier où est server.js = racine du repo
 const ROOT = __dirname;
 const indexPath = path.join(ROOT, 'index.html');
@@ -30,11 +41,15 @@ if (!fs.existsSync(indexPath)) {
 
 // Endpoint pour créer snapshot des commandes dans R2
 app.post('/api/orders/snapshot', async (req, res) => {
+  console.log('📥 Requête reçue: POST /api/orders/snapshot');
+  console.log('Body:', JSON.stringify(req.body, null, 2));
+  
   try {
     // Vérifier que AWS SDK est disponible
     let AWS;
     try {
       AWS = require('aws-sdk');
+      console.log('✅ AWS SDK chargé');
     } catch (e) {
       console.error('❌ aws-sdk non installé. Exécutez: npm install aws-sdk');
       return res.status(500).json({ 
@@ -46,8 +61,11 @@ app.post('/api/orders/snapshot', async (req, res) => {
     const { event_id, orders } = req.body;
     
     if (!event_id || !orders || !Array.isArray(orders)) {
+      console.error('❌ Validation échouée: event_id ou orders manquants');
       return res.status(400).json({ error: 'event_id et orders requis' });
     }
+    
+    console.log(`📦 Traitement: event_id=${event_id}, ${orders.length} commande(s)`);
     
     // Configuration R2 depuis variables d'environnement ou valeurs par défaut
     const R2_ENDPOINT = process.env.R2_ENDPOINT || 'https://0ed22897e4a8686bd8c20227ad79d736.r2.cloudflarestorage.com';
@@ -133,9 +151,23 @@ app.post('/api/orders/snapshot', async (req, res) => {
     
   } catch (error) {
     console.error('❌ Erreur création snapshot:', error);
+    console.error('Stack:', error.stack);
+    console.error('Error code:', error.code);
+    console.error('Error message:', error.message);
+    
+    // Détails supplémentaires pour erreurs AWS
+    if (error.code) {
+      console.error('AWS Error Code:', error.code);
+    }
+    if (error.statusCode) {
+      console.error('HTTP Status:', error.statusCode);
+    }
+    
     res.status(500).json({ 
-      error: error.message,
-      hint: 'Vérifier les credentials R2 et la connexion'
+      error: error.message || 'Erreur serveur',
+      code: error.code,
+      hint: 'Vérifier les credentials R2 et la connexion',
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 });

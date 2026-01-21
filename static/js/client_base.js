@@ -3568,9 +3568,10 @@ async function submitOrder(e) {
       
       // Détecter event_id depuis les photos du panier
       let eventId = null;
+      
+      // Méthode 1 : Chercher via filename dans currentSearchResults
       for (const item of items) {
         if (item.filename) {
-          // Chercher dans les résultats de recherche
           const photo = currentSearchResults.find(p => p.filename === item.filename);
           if (photo && (photo.event_id || photo.contest)) {
             eventId = photo.event_id || photo.contest;
@@ -3579,10 +3580,48 @@ async function submitOrder(e) {
         }
       }
       
+      // Méthode 2 : Si pas trouvé, chercher via rider_name/horse_name dans toutes les photos chargées
+      if (!eventId) {
+        try {
+          const allPhotos = await loadStaticPhotos();
+          for (const item of items) {
+            if (item.rider_name || item.horse_name) {
+              const photo = allPhotos.find(p => 
+                (p.rider_name && p.rider_name.toLowerCase() === item.rider_name?.toLowerCase()) ||
+                (p.horse_name && p.horse_name.toLowerCase() === item.horse_name?.toLowerCase()) ||
+                (p.cavalier && p.cavalier.toLowerCase() === item.rider_name?.toLowerCase()) ||
+                (p.cheval && p.cheval.toLowerCase() === item.horse_name?.toLowerCase())
+              );
+              if (photo && (photo.event_id || photo.contest)) {
+                eventId = photo.event_id || photo.contest;
+                console.log('✅ Event ID détecté via rider/horse:', eventId);
+                break;
+              }
+            }
+          }
+        } catch (e) {
+          console.warn('Erreur chargement photos pour event_id:', e);
+        }
+      }
+      
+      // Méthode 3 : Chercher dans le localStorage ou window si défini
+      if (!eventId && typeof window !== 'undefined') {
+        if (window.currentEventId) {
+          eventId = window.currentEventId;
+          console.log('✅ Event ID depuis window.currentEventId:', eventId);
+        } else if (localStorage.getItem('currentEventId')) {
+          eventId = localStorage.getItem('currentEventId');
+          console.log('✅ Event ID depuis localStorage:', eventId);
+        }
+      }
+      
       // Fallback : utiliser 'UNKNOWN' si pas d'event_id trouvé
       if (!eventId) {
         eventId = 'UNKNOWN';
         console.warn('⚠️ Event ID non détecté, utilisation de "UNKNOWN"');
+        console.warn('Items:', items.map(i => ({ filename: i.filename, rider: i.rider_name, horse: i.horse_name })));
+      } else {
+        console.log('✅ Event ID détecté:', eventId);
       }
       
       const orderWithId = {
