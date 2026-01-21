@@ -3572,14 +3572,9 @@ async function submitOrder(e) {
   // Mode statique : envoyer vers endpoint public Infomaniak qui écrit dans R2
   if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
     try {
-      // Générer UUID pour order_id (idempotence)
-      let orderId;
-      if (typeof crypto !== 'undefined' && crypto.randomUUID && typeof crypto.randomUUID === 'function') {
-        orderId = 'order_' + crypto.randomUUID();
-      } else {
-        // Fallback pour navigateurs qui ne supportent pas randomUUID
-        orderId = 'order_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 15);
-      }
+      // Générer référence simple : web + 4 chiffres aléatoires (ex: web5226)
+      const randomDigits = Math.floor(1000 + Math.random() * 9000); // 1000-9999
+      const orderId = 'web' + randomDigits;
       
       // Détecter event_id depuis les items (priorité : event_id stocké dans l'item)
       let eventId = null;
