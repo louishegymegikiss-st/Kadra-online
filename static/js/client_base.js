@@ -3558,8 +3558,13 @@ async function submitOrder(e) {
   if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
     try {
       // Générer UUID pour order_id (idempotence)
-      const orderId = 'order_' + crypto.randomUUID ? crypto.randomUUID() : 
-        Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 15);
+      let orderId;
+      if (typeof crypto !== 'undefined' && crypto.randomUUID && typeof crypto.randomUUID === 'function') {
+        orderId = 'order_' + crypto.randomUUID();
+      } else {
+        // Fallback pour navigateurs qui ne supportent pas randomUUID
+        orderId = 'order_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2, 15);
+      }
       
       // Détecter event_id depuis les photos du panier
       let eventId = null;
