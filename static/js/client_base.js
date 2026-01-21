@@ -3425,7 +3425,8 @@ async function submitOrder(e) {
                   unit_price: price,  // Prix exact pour cette position
                   filename: item.filename,
                   rider_name: item.rider_name || '',
-                  horse_name: item.horse_name || ''
+                  horse_name: item.horse_name || '',
+                  event_id: item.event_id || null // Inclure l'event_id depuis le panier
                 });
               }
               
@@ -3489,6 +3490,17 @@ async function submitOrder(e) {
             prices.push(price);
             
             // Créer un item pour chaque unité avec son prix exact
+            // Récupérer l'event_id depuis les photos du pack
+            let packEventId = item.event_id || null;
+            if (!packEventId && firstPhoto) {
+              const firstPhotoData = currentSearchResults.find(p => 
+                p.filename === (firstPhoto.filename || firstPhoto)
+              );
+              if (firstPhotoData) {
+                packEventId = firstPhotoData.event_id || firstPhotoData.contest || null;
+              }
+            }
+            
             items.push({ 
               product_id: item.product_id, 
               quantity: 1,
@@ -3496,7 +3508,8 @@ async function submitOrder(e) {
               filename: firstPhoto ? (firstPhoto.filename || firstPhoto) : '',
               rider_name: riderName,
               horse_name: horseName,
-              notes: JSON.stringify(allPhotosData)
+              notes: JSON.stringify(allPhotosData),
+              event_id: packEventId // Inclure l'event_id
             });
           }
           
