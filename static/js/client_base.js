@@ -1166,7 +1166,9 @@ function applySuggestion(value) {
 }
 
 // Cache pour le JSON statique des photos
-let staticPhotosCache = null;
+let staticPhotosCache = null; // Cache global (legacy, pour compatibilité)
+let multiEventPhotosCache = {}; // Cache multi-événements : { event_id: [photos] }
+let selectedEventIds = []; // Événements sélectionnés pour la recherche
 
 // Forcer le rechargement du cache au démarrage (pour éviter les anciennes versions)
 if (typeof window !== 'undefined' && window.location) {
@@ -1178,81 +1180,124 @@ if (typeof window !== 'undefined' && window.location) {
   sessionStorage.setItem('photos_json_version', '2');
 }
 
-async function loadStaticPhotos() {
-  // Détecter l'event_id depuis l'URL, localStorage, ou window
-  let eventId = null;
-  
-  // Méthode 1 : Depuis l'URL (ex: ?event=BJ025)
-  const urlParams = new URLSearchParams(window.location.search);
-  eventId = urlParams.get('event');
-  
-  // Méthode 2 : Depuis window ou localStorage
-  if (!eventId && typeof window !== 'undefined') {
-    eventId = window.currentEventId || localStorage.getItem('currentEventId');
-  }
-  
-  // Méthode 3 : Essayer de détecter depuis les photos déjà chargées
-  if (!eventId && staticPhotosCache && staticPhotosCache.length > 0) {
-    const firstPhoto = staticPhotosCache[0];
-    eventId = firstPhoto.event_id || firstPhoto.contest;
-  }
-  
-  // Si pas d'event_id, utiliser le mode legacy (fichier local)
-  if (!eventId) {
-    console.warn('⚠️ Aucun event_id détecté, utilisation du mode legacy (photos.json local)');
-    return loadStaticPhotosLegacy();
-  }
-  
-  // Vérifier le cache pour cet event_id
-  const cacheKey = `photos_cache_${eventId}`;
-  const cachedData = sessionStorage.getItem(cacheKey);
-  if (cachedData) {
-    try {
-      const parsed = JSON.parse(cachedData);
-      const cacheTime = parsed.timestamp || 0;
-      const cacheAge = Date.now() - cacheTime;
-      // Cache valide pendant 5 minutes
-      if (cacheAge < 5 * 60 * 1000) {
-        staticPhotosCache = parsed.items || [];
-        console.log(`✅ ${staticPhotosCache.length} photos chargées depuis cache (event_id: ${eventId})`);
-        return staticPhotosCache;
-      }
-    } catch (e) {
-      console.warn('Erreur parsing cache:', e);
-    }
-  }
-  
-  // Charger depuis R2
-  try {
-    const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
-    const r2Key = `events/${eventId}/photos_index.json`;
-    const cacheBuster = `?t=${Date.now()}`;
-    const response = await fetch(`${r2Url}/${r2Key}${cacheBuster}`);
+/**
+ * Charge les photos pour un ou plusieurs événements
+ * @param {string|string[]} eventIds - Un event_id ou un tableau d'event_ids. Si null, détecte automatiquement.
+ * @returns {Promise<Array>} Tableau de toutes les photos des événements demandés
+ */
+async function loadStaticPhotos(eventIds = null) {
+  // Si eventIds est null, détecter automatiquement (comportement legacy)
+  if (!eventIds) {
+    let eventId = null;
     
-    if (!response.ok) {
-      console.warn(`⚠️ Index photos introuvable sur R2 pour ${eventId}, fallback vers mode legacy`);
+    // Méthode 1 : Depuis l'URL (ex: ?event=BJ025)
+    const urlParams = new URLSearchParams(window.location.search);
+    eventId = urlParams.get('event');
+    
+    // Méthode 2 : Depuis window ou localStorage
+    if (!eventId && typeof window !== 'undefined') {
+      eventId = window.currentEventId || localStorage.getItem('currentEventId');
+    }
+    
+    // Méthode 3 : Utiliser les événements sélectionnés
+    if (!eventId && selectedEventIds.length > 0) {
+      eventId = selectedEventIds[0];
+    }
+    
+    // Méthode 4 : Essayer de détecter depuis les photos déjà chargées
+    if (!eventId && staticPhotosCache && staticPhotosCache.length > 0) {
+      const firstPhoto = staticPhotosCache[0];
+      eventId = firstPhoto.event_id || firstPhoto.contest;
+    }
+    
+    // Si pas d'event_id, utiliser le mode legacy (fichier local)
+    if (!eventId) {
+      console.warn('⚠️ Aucun event_id détecté, utilisation du mode legacy (photos.json local)');
       return loadStaticPhotosLegacy();
     }
     
-    const data = await response.json();
-    staticPhotosCache = data.items || data.photos || [];
+    eventIds = [eventId];
+  }
+  
+  // Normaliser en tableau
+  if (typeof eventIds === 'string') {
+    eventIds = [eventIds];
+  }
+  
+  // Charger tous les événements demandés
+  const allPhotos = [];
+  for (const eventId of eventIds) {
+    // Vérifier le cache pour cet event_id
+    const cacheKey = `photos_cache_${eventId}`;
+    const cachedData = sessionStorage.getItem(cacheKey);
+    let photos = null;
     
-    // Mettre en cache
-    try {
-      sessionStorage.setItem(cacheKey, JSON.stringify({
-        items: staticPhotosCache,
-        timestamp: Date.now()
-      }));
-    } catch (e) {
-      console.warn('Erreur mise en cache:', e);
+    if (cachedData) {
+      try {
+        const parsed = JSON.parse(cachedData);
+        const cacheTime = parsed.timestamp || 0;
+        const cacheAge = Date.now() - cacheTime;
+        // Cache valide pendant 5 minutes
+        if (cacheAge < 5 * 60 * 1000) {
+          photos = parsed.items || [];
+          console.log(`✅ ${photos.length} photos chargées depuis cache (event_id: ${eventId})`);
+        }
+      } catch (e) {
+        console.warn('Erreur parsing cache:', e);
+      }
     }
     
-    console.log(`✅ ${staticPhotosCache.length} photos chargées depuis R2 (event_id: ${eventId}, version ${data.version || 'N/A'})`);
-    return staticPhotosCache;
-  } catch (error) {
-    console.warn('Erreur chargement photos depuis R2:', error);
+    // Si pas de cache, charger depuis R2
+    if (!photos) {
+      try {
+        const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
+        const r2Key = `events/${eventId}/photos_index.json`;
+        const cacheBuster = `?t=${Date.now()}`;
+        const response = await fetch(`${r2Url}/${r2Key}${cacheBuster}`);
+        
+        if (!response.ok) {
+          console.warn(`⚠️ Index photos introuvable sur R2 pour ${eventId}`);
+          continue; // Passer au suivant
+        }
+        
+        const data = await response.json();
+        photos = data.items || data.photos || [];
+        
+        // Mettre en cache
+        try {
+          sessionStorage.setItem(cacheKey, JSON.stringify({
+            items: photos,
+            timestamp: Date.now()
+          }));
+          multiEventPhotosCache[eventId] = photos; // Mettre aussi dans le cache mémoire
+        } catch (e) {
+          console.warn('Erreur mise en cache:', e);
+        }
+        
+        console.log(`✅ ${photos.length} photos chargées depuis R2 (event_id: ${eventId}, version ${data.version || 'N/A'})`);
+      } catch (error) {
+        console.warn(`Erreur chargement photos depuis R2 pour ${eventId}:`, error);
+        continue; // Passer au suivant
+      }
+    } else {
+      multiEventPhotosCache[eventId] = photos; // Mettre dans le cache mémoire
+    }
+    
+    if (photos && photos.length > 0) {
+      allPhotos.push(...photos);
+    }
+  }
+  
+  // Si aucun événement chargé, fallback legacy
+  if (allPhotos.length === 0) {
+    console.warn('⚠️ Aucune photo chargée depuis R2, fallback vers mode legacy');
     return loadStaticPhotosLegacy();
   }
+  
+  // Mettre à jour le cache legacy pour compatibilité
+  staticPhotosCache = allPhotos;
+  
+  return allPhotos;
 }
 
 async function loadStaticPhotosLegacy() {
@@ -1284,8 +1329,9 @@ async function searchPhotos(query) {
   if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
     try {
       console.log('🔍 Mode statique : recherche de', query);
-      // Charger le JSON statique
-      const allPhotos = await loadStaticPhotos();
+      // Charger les photos des événements sélectionnés (ou détecter automatiquement)
+      const eventIdsToLoad = selectedEventIds.length > 0 ? selectedEventIds : null;
+      const allPhotos = await loadStaticPhotos(eventIdsToLoad);
       if (!allPhotos || allPhotos.length === 0) {
         console.warn('⚠️ Aucune photo chargée');
         container.innerHTML = `<div style="text-align: center; padding: 20px; color: orange;">Aucune photo disponible</div>`;
@@ -4052,3 +4098,172 @@ function openPromotionsModal() {
 window.openPromotionsModal = openPromotionsModal;
 window.toggleCart = toggleCart;
 window.resetInterface = resetInterface;
+
+/**
+ * Découvre les événements disponibles depuis R2
+ * @returns {Promise<string[]>} Tableau des event_ids disponibles
+ */
+async function discoverAvailableEvents() {
+  const events = new Set();
+  
+  // Événements communs à essayer
+  const commonEvents = ['BJ025', 'UNKNOWN'];
+  
+  // Essayer les événements communs
+  for (const eventId of commonEvents) {
+    try {
+      const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
+      const r2Key = `events/${eventId}/photos_index.json`;
+      const response = await fetch(`${r2Url}/${r2Key}?t=${Date.now()}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (data.items && data.items.length > 0) {
+          events.add(eventId);
+          console.log(`✅ Événement trouvé: ${eventId} (${data.items.length} photos)`);
+        }
+      }
+    } catch (e) {
+      console.debug(`Événement ${eventId} non disponible:`, e);
+    }
+  }
+  
+  // Essayer aussi de détecter depuis l'URL ou localStorage
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlEvent = urlParams.get('event');
+  if (urlEvent) {
+    events.add(urlEvent);
+  }
+  
+  const storedEvent = localStorage.getItem('currentEventId');
+  if (storedEvent) {
+    events.add(storedEvent);
+  }
+  
+  return Array.from(events).sort();
+}
+
+/**
+ * Gère le changement de sélection d'événements
+ */
+function handleEventFilterChange(availableEvents) {
+  selectedEventIds = [];
+  
+  // Récupérer les sélections depuis desktop et mobile
+  const desktopSelect = document.getElementById('event-filter');
+  const mobileSelect = document.getElementById('event-filter-mobile');
+  
+  let selectedOptions = [];
+  if (desktopSelect) {
+    selectedOptions = Array.from(desktopSelect.selectedOptions);
+  } else if (mobileSelect) {
+    selectedOptions = Array.from(mobileSelect.selectedOptions);
+  }
+  
+  if (selectedOptions.some(opt => opt.value === 'all')) {
+    // "Tous" sélectionné : charger tous les événements
+    selectedEventIds = availableEvents;
+    // Synchroniser les deux selects
+    if (desktopSelect) {
+      desktopSelect.querySelector('option[value="all"]').selected = true;
+      Array.from(desktopSelect.options).forEach(opt => {
+        if (opt.value !== 'all') opt.selected = false;
+      });
+    }
+    if (mobileSelect) {
+      mobileSelect.querySelector('option[value="all"]').selected = true;
+      Array.from(mobileSelect.options).forEach(opt => {
+        if (opt.value !== 'all') opt.selected = false;
+      });
+    }
+  } else {
+    // Événements spécifiques sélectionnés
+    selectedEventIds = selectedOptions.map(opt => opt.value);
+    // Désélectionner "Tous" dans les deux selects
+    if (desktopSelect) {
+      desktopSelect.querySelector('option[value="all"]').selected = false;
+    }
+    if (mobileSelect) {
+      mobileSelect.querySelector('option[value="all"]').selected = false;
+    }
+  }
+  
+  console.log('📋 Événements sélectionnés:', selectedEventIds);
+  
+  // Vider le cache pour forcer le rechargement
+  staticPhotosCache = null;
+  multiEventPhotosCache = {};
+  
+  // Si une recherche est en cours, relancer la recherche
+  const searchInput = document.getElementById('photo-search');
+  if (searchInput && searchInput.value.trim()) {
+    searchPhotos(searchInput.value.trim());
+  }
+}
+
+/**
+ * Initialise le filtre d'événements
+ */
+async function initEventFilter() {
+  const filterSelect = document.getElementById('event-filter');
+  const filterSelectMobile = document.getElementById('event-filter-mobile');
+  
+  if (!filterSelect && !filterSelectMobile) {
+    console.warn('Filtre d\'événements introuvable dans le DOM');
+    return;
+  }
+  
+  // Découvrir les événements disponibles
+  const availableEvents = await discoverAvailableEvents();
+  
+  // Fonction pour initialiser un select
+  const initSelect = (select) => {
+    if (!select) return;
+    
+    // Vider le select (garder "Tous")
+    select.innerHTML = '<option value="all" selected>Tous</option>';
+    
+    // Ajouter les événements disponibles
+    for (const eventId of availableEvents) {
+      const option = document.createElement('option');
+      option.value = eventId;
+      option.textContent = eventId;
+      select.appendChild(option);
+    }
+    
+    // Si un seul événement, le sélectionner automatiquement
+    if (availableEvents.length === 1) {
+      select.value = availableEvents[0];
+      selectedEventIds = [availableEvents[0]];
+    } else if (availableEvents.length > 0) {
+      // Par défaut, sélectionner "Tous"
+      selectedEventIds = availableEvents;
+    }
+    
+    // Gérer le changement de sélection
+    select.addEventListener('change', () => handleEventFilterChange(availableEvents));
+  };
+  
+  // Initialiser desktop et mobile
+  initSelect(filterSelect);
+  initSelect(filterSelectMobile);
+  
+  // Afficher le filtre mobile si on est sur mobile
+  if (filterSelectMobile && window.innerWidth <= 768) {
+    const mobileContainer = document.getElementById('event-filter-container-mobile');
+    if (mobileContainer) {
+      mobileContainer.style.display = 'block';
+    }
+  }
+  
+  console.log(`✅ Filtre d'événements initialisé: ${availableEvents.length} événement(s) disponible(s)`);
+}
+
+// Initialiser le filtre au chargement de la page
+if (typeof document !== 'undefined') {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initEventFilter);
+  } else {
+    // DOM déjà chargé
+    setTimeout(initEventFilter, 100);
+  }
+}

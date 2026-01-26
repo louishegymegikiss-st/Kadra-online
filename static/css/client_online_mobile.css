@@ -367,14 +367,25 @@
   
   .mobile-search-shell {
     display: flex !important;
+    flex-direction: column !important;
     width: 100% !important;
     margin-bottom: 15px !important;
     justify-content: center !important;
+    gap: 10px !important;
   }
 
   .mobile-search-shell .search-box {
     width: 100% !important;
     max-width: none !important;
+  }
+  
+  #event-filter-container-mobile {
+    display: block !important;
+    width: 100% !important;
+  }
+  
+  #event-filter-container-mobile select {
+    width: 100% !important;
   }
 
   /* === HIÉRARCHIE CTA === */
