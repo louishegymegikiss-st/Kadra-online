@@ -260,6 +260,9 @@
     color: white !important;
   }
   
+.mobile-search-shell {
+  display: none;
+}
   /* Suggestions de recherche visibles sur mobile */
   .search-box {
     position: relative !important;
@@ -362,6 +365,18 @@
     align-items: center !important;
   }
   
+  .mobile-search-shell {
+    display: flex !important;
+    width: 100% !important;
+    margin-bottom: 15px !important;
+    justify-content: center !important;
+  }
+
+  .mobile-search-shell .search-box {
+    width: 100% !important;
+    max-width: none !important;
+  }
+
   /* === HIÉRARCHIE CTA === */
   /* CTA principal : Rechercher */
   #search-btn {

@@ -8,6 +8,38 @@ let pollIntervalMs = 5000; // 5 secondes par défaut (actif)
 const POLL_INTERVAL_ACTIVE = 5000; // 5 secondes quand l'utilisateur est actif
 const POLL_INTERVAL_INACTIVE = 30000; // 30 secondes quand l'utilisateur est inactif
 
+const MOBILE_SEARCH_BREAKPOINT = 768;
+const MOBILE_SEARCH_SHELL_ID = 'mobile-search-shell';
+let mobileSearchResizeTimer = null;
+
+function relocatePhotoSearchForMobile() {
+  const headerSearch = document.querySelector('.header-search');
+  const searchBox = headerSearch?.querySelector('.search-box');
+  const mobileShell = document.getElementById(MOBILE_SEARCH_SHELL_ID);
+
+  if (!headerSearch || !searchBox || !mobileShell) {
+    return;
+  }
+
+  const shouldUseMobileShell = window.innerWidth <= MOBILE_SEARCH_BREAKPOINT;
+  const isInMobileShell = mobileShell.contains(searchBox);
+  const isInHeader = headerSearch.contains(searchBox);
+
+  if (shouldUseMobileShell && !isInMobileShell) {
+    mobileShell.appendChild(searchBox);
+  } else if (!shouldUseMobileShell && !isInHeader) {
+    headerSearch.appendChild(searchBox);
+  }
+}
+
+function initMobileSearchRelocation() {
+  relocatePhotoSearchForMobile();
+  window.addEventListener('resize', () => {
+    clearTimeout(mobileSearchResizeTimer);
+    mobileSearchResizeTimer = setTimeout(relocatePhotoSearchForMobile, 150);
+  });
+}
+
 // Vérifier les mises à jour des photos
 async function checkPhotoUpdates() {
   try {
@@ -391,8 +423,8 @@ function setupMobileHeaderScroll() {
   });
 }
 
-// Initialisation
-document.addEventListener('DOMContentLoaded', () => {
+function handleClientOnlineMobileReady() {
+  initMobileSearchRelocation();
   // Portail : déplacer les modals en enfant direct de <body> dès le chargement
   ensureModalInBody('cart-modal');
   ensureModalInBody('promotions-modal');
@@ -482,4 +514,10 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('mousemove', resetActivity);
   document.addEventListener('click', resetActivity);
   document.addEventListener('keypress', resetActivity);
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', handleClientOnlineMobileReady);
+} else {
+  handleClientOnlineMobileReady();
+}
