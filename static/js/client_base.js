@@ -1165,20 +1165,10 @@ function applySuggestion(value) {
   }
 }
 
-// Cache pour le JSON statique des photos
-let staticPhotosCache = null; // Cache global (legacy, pour compatibilité)
+// Cache pour les photos depuis R2
+let staticPhotosCache = null; // Cache global (pour compatibilité avec code existant)
 let multiEventPhotosCache = {}; // Cache multi-événements : { event_id: [photos] }
 let selectedEventIds = []; // Événements sélectionnés pour la recherche
-
-// Forcer le rechargement du cache au démarrage (pour éviter les anciennes versions)
-if (typeof window !== 'undefined' && window.location) {
-  // Vider le cache si on détecte qu'on charge une ancienne version
-  const cacheVersion = sessionStorage.getItem('photos_json_version');
-  if (cacheVersion && cacheVersion !== '2') {
-    staticPhotosCache = null;
-  }
-  sessionStorage.setItem('photos_json_version', '2');
-}
 
 /**
  * Charge les photos pour un ou plusieurs événements
@@ -1204,19 +1194,24 @@ async function loadStaticPhotos(eventIds = null) {
       eventId = selectedEventIds[0];
     }
     
-    // Méthode 4 : Essayer de détecter depuis les photos déjà chargées
-    if (!eventId && staticPhotosCache && staticPhotosCache.length > 0) {
-      const firstPhoto = staticPhotosCache[0];
-      eventId = firstPhoto.event_id || firstPhoto.contest;
+    // Méthode 4 : Essayer de détecter depuis les photos déjà chargées en cache
+    if (!eventId && Object.keys(multiEventPhotosCache).length > 0) {
+      eventId = Object.keys(multiEventPhotosCache)[0];
     }
     
-    // Si pas d'event_id, utiliser le mode legacy (fichier local)
+    // Si pas d'event_id, essayer de découvrir les événements disponibles
     if (!eventId) {
-      console.warn('⚠️ Aucun event_id détecté, utilisation du mode legacy (photos.json local)');
-      return loadStaticPhotosLegacy();
+      console.warn('⚠️ Aucun event_id détecté, tentative de découverte des événements');
+      const availableEvents = await discoverAvailableEvents();
+      if (availableEvents.length > 0) {
+        eventIds = availableEvents;
+      } else {
+        console.error('❌ Aucun événement disponible, impossible de charger les photos');
+        return [];
+      }
+    } else {
+      eventIds = [eventId];
     }
-    
-    eventIds = [eventId];
   }
   
   // Normaliser en tableau
@@ -1288,35 +1283,16 @@ async function loadStaticPhotos(eventIds = null) {
     }
   }
   
-  // Si aucun événement chargé, fallback legacy
+  // Si aucun événement chargé, retourner un tableau vide
   if (allPhotos.length === 0) {
-    console.warn('⚠️ Aucune photo chargée depuis R2, fallback vers mode legacy');
-    return loadStaticPhotosLegacy();
+    console.warn('⚠️ Aucune photo chargée depuis R2 pour les événements demandés');
+    return [];
   }
   
-  // Mettre à jour le cache legacy pour compatibilité
+  // Mettre à jour le cache pour compatibilité
   staticPhotosCache = allPhotos;
   
   return allPhotos;
-}
-
-async function loadStaticPhotosLegacy() {
-  // Mode legacy : charger depuis /static/photos.json (fallback)
-  try {
-    const cacheBuster = `?v=legacy&t=${Date.now()}`;
-    const response = await fetch(`/static/photos.json${cacheBuster}`);
-    if (!response.ok) {
-      console.warn('Fichier photos.json introuvable, recherche non disponible');
-      return null;
-    }
-    const data = await response.json();
-    staticPhotosCache = data.items || data.photos || [];
-    console.log(`✅ ${staticPhotosCache.length} photos chargées depuis JSON statique legacy (version ${data.version || 'N/A'})`);
-    return staticPhotosCache;
-  } catch (error) {
-    console.warn('Erreur chargement photos.json legacy:', error);
-    return null;
-  }
 }
 
 async function searchPhotos(query) {
@@ -1353,15 +1329,29 @@ async function searchPhotos(query) {
       
       // Filtrer les photos
       const filtered = allPhotos.filter(photo => {
-        const rider = (photo.rider_name || photo.rider || '').toLowerCase();
-        const horse = (photo.horse_name || photo.horse || '').toLowerCase();
-        const number = (photo.rider_number || photo.number || '').toLowerCase();
+        // Extraire les noms depuis différentes sources possibles (JSON R2, API legacy, etc.)
+        const rider = (photo.rider_name || photo.rider || photo.cavalier || '').toLowerCase().trim();
+        const horse = (photo.horse_name || photo.horse || photo.cheval || '').toLowerCase().trim();
+        const number = (photo.rider_number || photo.number || photo.bib || '').toLowerCase().trim();
+        
+        // Construire le texte de recherche avec tous les champs possibles
         const searchText = `${rider} ${horse} ${number}`.toLowerCase();
+        
+        // Debug : afficher les données de la photo pour diagnostic
+        if (queryWords.length > 0 && queryWords[0].length > 2) {
+          console.debug('Photo data:', {
+            rider_name: photo.rider_name,
+            horse_name: photo.horse_name,
+            rider_number: photo.rider_number,
+            searchText: searchText,
+            query: queryWords.join(' ')
+          });
+        }
         
         // Tous les mots de la requête doivent être présents
         const matches = queryWords.every(word => searchText.includes(word));
         if (matches) {
-          console.log('✅ Match:', rider, horse, number);
+          console.log('✅ Match trouvé:', { rider, horse, number, query: queryWords.join(' ') });
         }
         return matches;
       });
@@ -1413,17 +1403,38 @@ function normalizePhotosData(rawPhotos) {
     const normalizedFilename = filename.replace(/\\/g, '/');
     const displayName = photo.name || (normalizedFilename ? normalizedFilename.split('/').pop() : '');
     
-    // NOUVEAU : Utiliser les URLs R2 depuis l'API si disponibles
+    // NOUVEAU : Utiliser les URLs R2 depuis l'index JSON R2 ou l'API
     let imageUrl = null;
     let previewUrl = null;
+    const r2PublicUrl = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
     
-    if (photo.urls && window.R2_PUBLIC_URL) {
+    // Priorité 1 : Utiliser r2_key_* depuis l'index JSON R2 (format events/{event_id}/photos/{file_id}/webp.webp)
+    if (window.R2_PUBLIC_URL) {
+      if (photo.r2_key_webp) {
+        // Utiliser webp comme preview (prioritaire car plus léger)
+        previewUrl = `${r2PublicUrl}/${photo.r2_key_webp}`;
+        imageUrl = previewUrl; // Utiliser webp comme image principale aussi
+      } else if (photo.r2_key_preview) {
+        previewUrl = `${r2PublicUrl}/${photo.r2_key_preview}`;
+        imageUrl = previewUrl;
+      } else if (photo.r2_key_thumb) {
+        imageUrl = `${r2PublicUrl}/${photo.r2_key_thumb}`;
+        previewUrl = imageUrl;
+      } else if (photo.r2_key_hd) {
+        // Utiliser HD comme fallback si pas de preview/webp
+        imageUrl = `${r2PublicUrl}/${photo.r2_key_hd}`;
+        previewUrl = imageUrl;
+      }
+    }
+    
+    // Priorité 2 : Utiliser urls depuis l'API (format legacy)
+    if (!imageUrl && photo.urls && window.R2_PUBLIC_URL) {
       // L'API retourne les chemins R2 dans urls.thumb, urls.preview, urls.small
       if (photo.urls.thumb) {
-        imageUrl = `${window.R2_PUBLIC_URL}/${photo.urls.thumb}`;
+        imageUrl = `${r2PublicUrl}/${photo.urls.thumb}`;
       }
       if (photo.urls.preview) {
-        previewUrl = `${window.R2_PUBLIC_URL}/${photo.urls.preview}`;
+        previewUrl = `${r2PublicUrl}/${photo.urls.preview}`;
       }
       if (!imageUrl && photo.urls.preview) {
         imageUrl = previewUrl; // Fallback sur preview si thumb manquant
@@ -1456,6 +1467,10 @@ function normalizePhotosData(rawPhotos) {
       displayName,
       imageUrl: imageUrl || photo.thumb_url || '',
       previewUrl: previewUrl || photo.preview_url || imageUrl || '',
+      // S'assurer que rider_name et horse_name sont préservés depuis le JSON R2
+      rider_name: photo.rider_name || photo.rider || photo.cavalier || '',
+      horse_name: photo.horse_name || photo.horse || photo.cheval || '',
+      rider_number: photo.rider_number || photo.number || photo.bib || '',
       // Garder les infos pour fallback si nouveau chemin échoue
       _fallbackRelPath: photo.rel_path || photo.photo_path || photo.path || null,
       _fallbackOriginalFilename: photo.original_filename || null,
@@ -4106,10 +4121,10 @@ window.resetInterface = resetInterface;
 async function discoverAvailableEvents() {
   const events = new Set();
   
-  // Événements communs à essayer
+  // Événements communs à essayer (BJ025 en priorité)
   const commonEvents = ['BJ025', 'UNKNOWN'];
   
-  // Essayer les événements communs
+  // Essayer les événements communs (BJ025 en premier)
   for (const eventId of commonEvents) {
     try {
       const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
@@ -4120,6 +4135,10 @@ async function discoverAvailableEvents() {
         if (data.items && data.items.length > 0) {
           events.add(eventId);
           console.log(`✅ Événement trouvé: ${eventId} (${data.items.length} photos)`);
+          // Si BJ025 est trouvé, on peut s'arrêter ici (priorité)
+          if (eventId === 'BJ025') {
+            console.log('✅ BJ025 trouvé, priorité donnée à cet événement');
+          }
         }
       }
     } catch (e) {
