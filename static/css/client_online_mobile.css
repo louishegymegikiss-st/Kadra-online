@@ -260,9 +260,41 @@
     color: white !important;
   }
   
-.mobile-search-shell {
-  display: none;
-}
+  /* Mobile search shell - visible sur mobile */
+  .mobile-search-shell {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    margin-bottom: 15px !important;
+    gap: 10px !important;
+    order: 2; /* Après le logo */
+  }
+  
+  /* Afficher le filtre d'événements mobile */
+  #event-filter-container-mobile {
+    display: block !important;
+    width: 100% !important;
+    margin-bottom: 10px !important;
+  }
+  
+  #event-filter-container-mobile label {
+    color: white !important;
+    font-size: 0.85em !important;
+    font-weight: 600 !important;
+    display: block !important;
+    margin-bottom: 5px !important;
+  }
+  
+  #event-filter-container-mobile select {
+    width: 100% !important;
+    background: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    padding: 8px !important;
+    font-size: 0.9em !important;
+    color: #2d3561 !important;
+    cursor: pointer !important;
+  }
   /* Suggestions de recherche visibles sur mobile */
   .search-box {
     position: relative !important;
