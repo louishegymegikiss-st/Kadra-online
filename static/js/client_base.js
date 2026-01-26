@@ -3709,10 +3709,20 @@ async function submitOrder(e) {
   
   // Mode avec API : envoyer directement
   try {
+    // Générer référence simple : web + 4 chiffres aléatoires (ex: web5226)
+    const randomDigits = Math.floor(1000 + Math.random() * 9000); // 1000-9999
+    const orderId = 'web' + randomDigits;
+    
+    // Ajouter l'order_id au orderData
+    const orderDataWithId = {
+      ...orderData,
+      order_id: orderId
+    };
+    
     const response = await fetch(`${API_BASE}/orders`, {
       method: 'POST',
       headers: getApiHeaders(),
-      body: JSON.stringify(orderData)
+      body: JSON.stringify(orderDataWithId)
     });
     
     if (!response.ok) throw new Error('Erreur lors de la commande');
