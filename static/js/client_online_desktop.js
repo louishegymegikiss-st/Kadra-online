@@ -136,28 +136,46 @@ function updatePollingFrequency() {
 function detectAndLoadMobile() {
   // Détecter si on est sur mobile (largeur <= 768px ou User-Agent mobile)
   const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-  
-  if (isMobile) {
-    // Charger le fichier mobile
-    const script = document.createElement('script');
-    script.src = '/static/js/client_online_mobile.js?v=1';
-    script.onload = () => {
-      console.log('Client online mobile JS chargé');
-    };
-    document.head.appendChild(script);
-    
-    // Charger aussi le CSS mobile si pas déjà chargé
-    const mobileCssLink = document.querySelector('link[href*="client_online_mobile.css"]');
-    if (!mobileCssLink) {
-      const link = document.createElement('link');
-      link.rel = 'stylesheet';
-      link.href = '/static/css/client_online_mobile.css?v=1';
-      document.head.appendChild(link);
-    }
-    
+
+  if (!isMobile) {
+    return false;
+  }
+
+  if (window.clientOnlineMobileScriptLoading || window.clientOnlineMobileScriptLoaded) {
     return true;
   }
-  return false;
+
+  const existingScript = document.querySelector('script[src*="client_online_mobile.js"]');
+  if (existingScript) {
+    window.clientOnlineMobileScriptLoaded = true;
+    return true;
+  }
+
+  // Charger le fichier mobile
+  const script = document.createElement('script');
+  script.src = '/static/js/client_online_mobile.js?v=1';
+  script.onload = () => {
+    window.clientOnlineMobileScriptLoaded = true;
+    window.clientOnlineMobileScriptLoading = false;
+    console.log('Client online mobile JS chargé');
+  };
+  script.onerror = () => {
+    window.clientOnlineMobileScriptLoading = false;
+    console.warn('Erreur chargement client_online_mobile.js');
+  };
+  window.clientOnlineMobileScriptLoading = true;
+  document.head.appendChild(script);
+  
+  // Charger aussi le CSS mobile si pas déjà chargé
+  const mobileCssLink = document.querySelector('link[href*="client_online_mobile.css"]');
+  if (!mobileCssLink) {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = '/static/css/client_online_mobile.css?v=1';
+    document.head.appendChild(link);
+  }
+  
+  return true;
 }
 
 // Initialisation
