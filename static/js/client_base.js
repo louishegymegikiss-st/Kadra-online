@@ -3575,6 +3575,7 @@ async function submitOrder(e) {
       // Générer référence simple : web + 4 chiffres aléatoires (ex: web5226)
       const randomDigits = Math.floor(1000 + Math.random() * 9000); // 1000-9999
       const orderId = 'web' + randomDigits;
+      console.log('🔢 Order ID généré:', orderId);
       
       // Détecter event_id depuis les items (priorité : event_id stocké dans l'item)
       let eventId = null;
@@ -3648,11 +3649,13 @@ async function submitOrder(e) {
       
       const orderWithId = {
         ...orderData,
-        order_id: orderId,
+        order_id: orderId, // Format: web + 4 chiffres (ex: web2556)
         event_id: eventId,
         created_at: new Date().toISOString(),
         status: 'pending'
       };
+      
+      console.log('📦 OrderWithId avant envoi:', JSON.stringify(orderWithId, null, 2));
       
       // Envoyer vers endpoint public Infomaniak (qui écrit dans R2)
       // Cet endpoint sera créé côté serveur Infomaniak (PHP/Node)
@@ -3712,12 +3715,15 @@ async function submitOrder(e) {
     // Générer référence simple : web + 4 chiffres aléatoires (ex: web5226)
     const randomDigits = Math.floor(1000 + Math.random() * 9000); // 1000-9999
     const orderId = 'web' + randomDigits;
+    console.log('🔢 Order ID généré (mode API):', orderId);
     
     // Ajouter l'order_id au orderData
     const orderDataWithId = {
       ...orderData,
-      order_id: orderId
+      order_id: orderId // Format: web + 4 chiffres (ex: web2556)
     };
+    
+    console.log('📦 OrderDataWithId avant envoi:', JSON.stringify(orderDataWithId, null, 2));
     
     const response = await fetch(`${API_BASE}/orders`, {
       method: 'POST',
