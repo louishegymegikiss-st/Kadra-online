@@ -4191,8 +4191,8 @@ window.resetInterface = resetInterface;
 async function discoverAvailableEvents() {
   const events = new Set();
   
-  // Événements communs à essayer (BJ025 en priorité)
-  const commonEvents = ['BJ025', 'UNKNOWN'];
+  // Événements communs à essayer
+  const commonEvents = ['BJ025'];
   
   // Essayer les événements communs (BJ025 en premier)
   for (const eventId of commonEvents) {
@@ -4239,43 +4239,23 @@ async function discoverAvailableEvents() {
 function handleEventFilterChange(availableEvents) {
   selectedEventIds = [];
   
-  // Récupérer les sélections depuis desktop et mobile
-  const desktopSelect = document.getElementById('event-filter');
+  // Récupérer la sélection depuis mobile uniquement (desktop select supprimé)
   const mobileSelect = document.getElementById('event-filter-mobile');
   
-  let selectedOptions = [];
-  if (desktopSelect) {
-    selectedOptions = Array.from(desktopSelect.selectedOptions);
-  } else if (mobileSelect) {
-    selectedOptions = Array.from(mobileSelect.selectedOptions);
+  let selectedValue = null;
+  if (mobileSelect && mobileSelect.value) {
+    selectedValue = mobileSelect.value;
   }
   
-  if (selectedOptions.some(opt => opt.value === 'all')) {
+  if (selectedValue === 'all') {
     // "Tous" sélectionné : charger tous les événements
     selectedEventIds = availableEvents;
-    // Synchroniser les deux selects
-    if (desktopSelect) {
-      desktopSelect.querySelector('option[value="all"]').selected = true;
-      Array.from(desktopSelect.options).forEach(opt => {
-        if (opt.value !== 'all') opt.selected = false;
-      });
-    }
-    if (mobileSelect) {
-      mobileSelect.querySelector('option[value="all"]').selected = true;
-      Array.from(mobileSelect.options).forEach(opt => {
-        if (opt.value !== 'all') opt.selected = false;
-      });
-    }
+  } else if (selectedValue) {
+    // Événement spécifique sélectionné
+    selectedEventIds = [selectedValue];
   } else {
-    // Événements spécifiques sélectionnés
-    selectedEventIds = selectedOptions.map(opt => opt.value);
-    // Désélectionner "Tous" dans les deux selects
-    if (desktopSelect) {
-      desktopSelect.querySelector('option[value="all"]').selected = false;
-    }
-    if (mobileSelect) {
-      mobileSelect.querySelector('option[value="all"]').selected = false;
-    }
+    // Par défaut, tous les événements
+    selectedEventIds = availableEvents;
   }
   
   console.log('📋 Événements sélectionnés:', selectedEventIds);
@@ -4295,56 +4275,41 @@ function handleEventFilterChange(availableEvents) {
  * Initialise le filtre d'événements
  */
 async function initEventFilter() {
-  const filterSelect = document.getElementById('event-filter');
   const filterSelectMobile = document.getElementById('event-filter-mobile');
   
-  if (!filterSelect && !filterSelectMobile) {
-    console.warn('Filtre d\'événements introuvable dans le DOM');
+  if (!filterSelectMobile) {
+    console.warn('Filtre d\'événements mobile introuvable dans le DOM');
     return;
   }
   
   // Découvrir les événements disponibles
   const availableEvents = await discoverAvailableEvents();
   
-  // Fonction pour initialiser un select
-  const initSelect = (select, isMobile = false) => {
-    if (!select) return;
-    
-    // Sur mobile, utiliser un select simple (pas multiple)
-    if (isMobile && select.hasAttribute('multiple')) {
-      select.removeAttribute('multiple');
-    }
-    
-    // Vider le select (garder "Tous")
-    select.innerHTML = '<option value="all" selected>Tous</option>';
-    
-    // Ajouter les événements disponibles
-    for (const eventId of availableEvents) {
-      const option = document.createElement('option');
-      option.value = eventId;
-      option.textContent = eventId;
-      select.appendChild(option);
-    }
-    
-    // Si un seul événement, le sélectionner automatiquement
-    if (availableEvents.length === 1) {
-      select.value = availableEvents[0];
-      selectedEventIds = [availableEvents[0]];
-    } else if (availableEvents.length > 0) {
-      // Par défaut, sélectionner "Tous"
-      selectedEventIds = availableEvents;
-    }
-    
-    // Gérer le changement de sélection
-    select.addEventListener('change', () => handleEventFilterChange(availableEvents));
-  };
+  // Vider le select (garder "Tous")
+  filterSelectMobile.innerHTML = '<option value="all" selected>Tous</option>';
   
-  // Initialiser desktop et mobile
-  initSelect(filterSelect, false);
-  initSelect(filterSelectMobile, true); // Mobile : select simple
+  // Ajouter les événements disponibles
+  for (const eventId of availableEvents) {
+    const option = document.createElement('option');
+    option.value = eventId;
+    option.textContent = eventId;
+    filterSelectMobile.appendChild(option);
+  }
+  
+  // Si un seul événement, le sélectionner automatiquement
+  if (availableEvents.length === 1) {
+    filterSelectMobile.value = availableEvents[0];
+    selectedEventIds = [availableEvents[0]];
+  } else if (availableEvents.length > 0) {
+    // Par défaut, sélectionner "Tous"
+    selectedEventIds = availableEvents;
+  }
+  
+  // Gérer le changement de sélection
+  filterSelectMobile.addEventListener('change', () => handleEventFilterChange(availableEvents));
   
   // Afficher le filtre mobile si on est sur mobile
-  if (filterSelectMobile && window.innerWidth <= 768) {
+  if (window.innerWidth <= 768) {
     const mobileContainer = document.getElementById('event-filter-container-mobile');
     if (mobileContainer) {
       mobileContainer.style.display = 'block';
