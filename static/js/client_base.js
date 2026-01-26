@@ -1179,22 +1179,86 @@ if (typeof window !== 'undefined' && window.location) {
 }
 
 async function loadStaticPhotos() {
-  // Vérifier la version du cache et forcer le rechargement si nécessaire
-  const cacheVersion = sessionStorage.getItem('photos_json_version');
-  if (cacheVersion !== '3') {
-    staticPhotosCache = null; // Forcer le rechargement
-    sessionStorage.setItem('photos_json_version', '3');
+  // Détecter l'event_id depuis l'URL, localStorage, ou window
+  let eventId = null;
+  
+  // Méthode 1 : Depuis l'URL (ex: ?event=BJ025)
+  const urlParams = new URLSearchParams(window.location.search);
+  eventId = urlParams.get('event');
+  
+  // Méthode 2 : Depuis window ou localStorage
+  if (!eventId && typeof window !== 'undefined') {
+    eventId = window.currentEventId || localStorage.getItem('currentEventId');
   }
   
-  // Charger le JSON statique une seule fois
-  if (staticPhotosCache) {
-    return staticPhotosCache;
+  // Méthode 3 : Essayer de détecter depuis les photos déjà chargées
+  if (!eventId && staticPhotosCache && staticPhotosCache.length > 0) {
+    const firstPhoto = staticPhotosCache[0];
+    eventId = firstPhoto.event_id || firstPhoto.contest;
   }
   
+  // Si pas d'event_id, utiliser le mode legacy (fichier local)
+  if (!eventId) {
+    console.warn('⚠️ Aucun event_id détecté, utilisation du mode legacy (photos.json local)');
+    return loadStaticPhotosLegacy();
+  }
+  
+  // Vérifier le cache pour cet event_id
+  const cacheKey = `photos_cache_${eventId}`;
+  const cachedData = sessionStorage.getItem(cacheKey);
+  if (cachedData) {
+    try {
+      const parsed = JSON.parse(cachedData);
+      const cacheTime = parsed.timestamp || 0;
+      const cacheAge = Date.now() - cacheTime;
+      // Cache valide pendant 5 minutes
+      if (cacheAge < 5 * 60 * 1000) {
+        staticPhotosCache = parsed.items || [];
+        console.log(`✅ ${staticPhotosCache.length} photos chargées depuis cache (event_id: ${eventId})`);
+        return staticPhotosCache;
+      }
+    } catch (e) {
+      console.warn('Erreur parsing cache:', e);
+    }
+  }
+  
+  // Charger depuis R2
   try {
-    // Ajouter un timestamp pour éviter le cache navigateur (version 3 = 123 photos avec file_id/event_id)
-    // Forcer le rechargement en ajoutant un hash aléatoire
-    const cacheBuster = `?v=3&t=${Date.now()}&r=${Math.random().toString(36).substring(7)}`;
+    const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
+    const r2Key = `events/${eventId}/photos_index.json`;
+    const cacheBuster = `?t=${Date.now()}`;
+    const response = await fetch(`${r2Url}/${r2Key}${cacheBuster}`);
+    
+    if (!response.ok) {
+      console.warn(`⚠️ Index photos introuvable sur R2 pour ${eventId}, fallback vers mode legacy`);
+      return loadStaticPhotosLegacy();
+    }
+    
+    const data = await response.json();
+    staticPhotosCache = data.items || data.photos || [];
+    
+    // Mettre en cache
+    try {
+      sessionStorage.setItem(cacheKey, JSON.stringify({
+        items: staticPhotosCache,
+        timestamp: Date.now()
+      }));
+    } catch (e) {
+      console.warn('Erreur mise en cache:', e);
+    }
+    
+    console.log(`✅ ${staticPhotosCache.length} photos chargées depuis R2 (event_id: ${eventId}, version ${data.version || 'N/A'})`);
+    return staticPhotosCache;
+  } catch (error) {
+    console.warn('Erreur chargement photos depuis R2:', error);
+    return loadStaticPhotosLegacy();
+  }
+}
+
+async function loadStaticPhotosLegacy() {
+  // Mode legacy : charger depuis /static/photos.json (fallback)
+  try {
+    const cacheBuster = `?v=legacy&t=${Date.now()}`;
     const response = await fetch(`/static/photos.json${cacheBuster}`);
     if (!response.ok) {
       console.warn('Fichier photos.json introuvable, recherche non disponible');
@@ -1202,10 +1266,10 @@ async function loadStaticPhotos() {
     }
     const data = await response.json();
     staticPhotosCache = data.items || data.photos || [];
-    console.log(`✅ ${staticPhotosCache.length} photos chargées depuis JSON statique (version ${data.version || 'N/A'})`);
+    console.log(`✅ ${staticPhotosCache.length} photos chargées depuis JSON statique legacy (version ${data.version || 'N/A'})`);
     return staticPhotosCache;
   } catch (error) {
-    console.warn('Erreur chargement photos.json:', error);
+    console.warn('Erreur chargement photos.json legacy:', error);
     return null;
   }
 }
