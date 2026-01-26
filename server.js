@@ -130,6 +130,7 @@ app.post('/api/orders/snapshot', async (req, res) => {
     
     // Upload atomique : d'abord .tmp
     const tmpKey = `orders/${event_id}/pending_orders.tmp.json`;
+    console.log(`📤 Upload temporaire: ${tmpKey} (${snapshotJson.length} bytes)`);
     const tmpCommand = new PutObjectCommand({
       Bucket: R2_BUCKET,
       Key: tmpKey,
@@ -137,9 +138,18 @@ app.post('/api/orders/snapshot', async (req, res) => {
       ContentType: 'application/json',
       CacheControl: 'no-cache'
     });
-    await s3Client.send(tmpCommand);
+    try {
+      await s3Client.send(tmpCommand);
+      console.log(`✅ Upload temporaire réussi: ${tmpKey}`);
+    } catch (tmpError) {
+      console.error(`❌ Erreur upload temporaire ${tmpKey}:`, tmpError);
+      console.error('Error code:', tmpError.code);
+      console.error('Error message:', tmpError.message);
+      throw tmpError;
+    }
     
     // Puis upload final
+    console.log(`📤 Upload final: ${r2Key} (${snapshotJson.length} bytes)`);
     const finalCommand = new PutObjectCommand({
       Bucket: R2_BUCKET,
       Key: r2Key,
@@ -147,7 +157,15 @@ app.post('/api/orders/snapshot', async (req, res) => {
       ContentType: 'application/json',
       CacheControl: 'no-cache'
     });
-    await s3Client.send(finalCommand);
+    try {
+      await s3Client.send(finalCommand);
+      console.log(`✅ Upload final réussi: ${r2Key}`);
+    } catch (finalError) {
+      console.error(`❌ Erreur upload final ${r2Key}:`, finalError);
+      console.error('Error code:', finalError.code);
+      console.error('Error message:', finalError.message);
+      throw finalError;
+    }
     
     console.log(`✅ Snapshot v${snapshot.snapshot_version} uploadé: ${allOrders.length} commandes (${orders.length} nouvelles)`);
     
