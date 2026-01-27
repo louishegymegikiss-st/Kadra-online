@@ -1642,20 +1642,25 @@ function toggleCartItem(filename, btn) {
   }
   
   // Trouver la carte spécifique qui contient ce bouton
-  const card = btn ? btn.closest('.photo-card') : null;
+  if (!btn) {
+    console.warn('Bouton non fourni pour toggleCartItem');
+    return;
+  }
+  
+  const card = btn.closest('.photo-card');
   if (!card) {
-    console.warn('Photo card non trouvée pour:', filename);
+    console.warn('Photo card non trouvée pour:', filename.substring(0, 50));
     return;
   }
   
   // Vérifier que cette carte correspond bien au filename EXACT
   const cardFilename = card.dataset.filename;
   if (cardFilename !== filename) {
-    console.warn('Filename mismatch:', cardFilename, 'vs', filename);
+    console.warn('Filename mismatch:', cardFilename?.substring(0, 50), 'vs', filename.substring(0, 50));
     return;
   }
   
-  console.log('✅ Ajout photo au panier:', filename.substring(0, 50), 'Card:', card);
+  console.log('✅ Ajout photo au panier:', filename.substring(0, 50), 'Card ID:', card.id);
   
   const badge = card.querySelector('.photo-in-cart-badge');
   const addBtn = card.querySelector('.photo-add-btn');
