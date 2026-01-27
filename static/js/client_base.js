@@ -4297,6 +4297,53 @@ function openPromotionsModal() {
 
 // Exposer la fonction globalement pour les onclick dans le HTML
 window.openPromotionsModal = openPromotionsModal;
+
+// Fonction pour ouvrir le modal du tutoriel (mobile)
+function openTutorialModal() {
+  // Portail : déplacer le modal en enfant direct de <body>
+  ensureModalInBody('tutorial-modal');
+  const modal = document.getElementById('tutorial-modal');
+  const modalContent = document.getElementById('tutorial-modal-content');
+  
+  if (!modal || !modalContent) return;
+  
+  // Récupérer le contenu du tutoriel depuis la colonne droite
+  const rightColumn = document.getElementById('right-column');
+  const tutorialContent = rightColumn ? rightColumn.querySelector('#tutorial-content') : null;
+  
+  if (tutorialContent) {
+    // Copier le contenu du tutoriel dans le modal
+    modalContent.innerHTML = tutorialContent.innerHTML;
+  } else {
+    // Si pas de contenu, re-rendre le tutoriel
+    renderTutorial();
+    const updatedContent = document.getElementById('tutorial-content');
+    if (updatedContent) {
+      modalContent.innerHTML = updatedContent.innerHTML;
+    }
+  }
+  
+  // Ouvrir le modal
+  modal.classList.add('active');
+  // Bloquer le scroll sans position: fixed (problème n°2)
+  document.documentElement.classList.add('modal-open');
+  document.body.classList.add('modal-open');
+  
+  // Gérer la fermeture en cliquant en dehors
+  if (!modal.dataset.clickOutsideHandler) {
+    modal.dataset.clickOutsideHandler = 'true';
+    modal.addEventListener('click', function(e) {
+      if (e.target === modal) {
+        modal.classList.remove('active');
+        document.documentElement.classList.remove('modal-open');
+        document.body.classList.remove('modal-open');
+      }
+    });
+  }
+}
+
+// Exposer la fonction globalement pour les onclick dans le HTML
+window.openTutorialModal = openTutorialModal;
 window.toggleCart = toggleCart;
 window.resetInterface = resetInterface;
 

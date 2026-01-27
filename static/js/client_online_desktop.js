@@ -209,6 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Portail : déplacer les modals en enfant direct de <body> dès le chargement
   ensureModalInBody('cart-modal');
   ensureModalInBody('promotions-modal');
+  ensureModalInBody('tutorial-modal');
   ensureModalInBody('saved-cart-code-modal');
   ensureModalInBody('order-info-modal');
   ensureModalInBody('pack-modal');

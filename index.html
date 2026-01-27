@@ -336,6 +336,21 @@
         </div>
     </div>
     
+    <!-- Tutorial Modal -->
+    <div id="tutorial-modal" class="cart-modal">
+        <div class="cart-modal-dialog" style="max-width: 1200px;">
+            <div class="cart">
+                <div class="cart-header">
+                    <h2 data-i18n="tutorial_title">Comment utiliser la borne</h2>
+                    <button onclick="document.getElementById('tutorial-modal').classList.remove('active'); document.body.classList.remove('modal-open');" style="background: none; border: none; color: white; font-size: 20px; cursor: pointer;">&times;</button>
+                </div>
+                <div style="padding: 20px; max-height: calc(100vh - 150px); overflow-y: auto;">
+                    <div id="tutorial-modal-content" class="tutorial-content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
     <!-- Pack Selection Modal -->
     <div id="pack-modal" class="cart-modal">
         <div class="cart-modal-dialog" style="max-width: 480px;">

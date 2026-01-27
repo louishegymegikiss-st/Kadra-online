@@ -456,6 +456,7 @@ function handleClientOnlineReady() {
   // Portail : déplacer les modals en enfant direct de <body> dès le chargement
   ensureModalInBody('cart-modal');
   ensureModalInBody('promotions-modal');
+  ensureModalInBody('tutorial-modal');
   ensureModalInBody('saved-cart-code-modal');
   ensureModalInBody('order-info-modal');
   ensureModalInBody('pack-modal');
@@ -556,18 +557,8 @@ function handleClientOnlineReady() {
             }
             break;
           case 'tutorial':
-            const rightColumn = document.querySelector('.right-column');
-            if (rightColumn) {
-              // Ouvrir la colonne si elle est réduite
-              if (rightColumn.classList.contains('collapsed')) {
-                if (typeof toggleColumn === 'function') {
-                  toggleColumn('right');
-                }
-              }
-              // Attendre un peu que l'animation se termine puis scroller
-              setTimeout(() => {
-                rightColumn.scrollIntoView({behavior: 'smooth', block: 'start'});
-              }, 300);
+            if (typeof openTutorialModal === 'function') {
+              openTutorialModal();
             }
             break;
         }
