@@ -4429,30 +4429,40 @@ function handleEventFilterChange(availableEvents) {
  * Initialise le filtre d'événements
  */
 async function initEventFilter() {
-  const filterSelectMobile = document.getElementById('event-filter-mobile');
+  const filterSelectMobile = document.getElementById('event-filter-mobile') || document.getElementById('event-filter-header');
+  const filterSelectDesktop = document.getElementById('event-filter-desktop');
   
-  if (!filterSelectMobile) {
-    console.warn('Filtre d\'événements mobile introuvable dans le DOM');
+  if (!filterSelectMobile && !filterSelectDesktop) {
+    console.warn('Filtre d\'événements introuvable dans le DOM');
     return;
   }
   
   // Découvrir les événements disponibles
   const availableEvents = await discoverAvailableEvents();
   
-  // Vider le select (garder "Tous")
-  filterSelectMobile.innerHTML = '<option value="all" selected>Tous</option>';
+  // Fonction pour initialiser un select
+  const initSelect = (select) => {
+    if (!select) return;
+    select.innerHTML = '<option value="all" selected>Tous</option>';
+    for (const eventId of availableEvents) {
+      const option = document.createElement('option');
+      option.value = eventId;
+      option.textContent = eventId;
+      select.appendChild(option);
+    }
+    select.addEventListener('change', () => {
+      handleEventFilterChange(availableEvents);
+    });
+  };
   
-  // Ajouter les événements disponibles
-  for (const eventId of availableEvents) {
-    const option = document.createElement('option');
-    option.value = eventId;
-    option.textContent = eventId;
-    filterSelectMobile.appendChild(option);
-  }
+  // Initialiser les deux selects
+  initSelect(filterSelectMobile);
+  initSelect(filterSelectDesktop);
   
   // Si un seul événement, le sélectionner automatiquement
   if (availableEvents.length === 1) {
-    filterSelectMobile.value = availableEvents[0];
+    if (filterSelectMobile) filterSelectMobile.value = availableEvents[0];
+    if (filterSelectDesktop) filterSelectDesktop.value = availableEvents[0];
     selectedEventIds = [availableEvents[0]];
   } else if (availableEvents.length > 0) {
     // Par défaut, sélectionner "Tous"
