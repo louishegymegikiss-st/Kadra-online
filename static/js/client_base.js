@@ -4307,59 +4307,128 @@ window.resetInterface = resetInterface;
 async function discoverAvailableEvents() {
   const events = new Set();
   
-  // Méthode 1 : Essayer de charger un fichier events_list.json depuis R2
-  try {
-    const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
-    const eventsListUrl = `${r2Url}/events_list.json?t=${Date.now()}`;
-    const response = await fetch(eventsListUrl);
-    if (response.ok) {
-      const data = await response.json();
-      if (Array.isArray(data.events)) {
-        data.events.forEach(eventId => {
-          if (eventId && eventId !== 'UNKNOWN') {
-            events.add(eventId);
-          }
-        });
-        console.log(`✅ Liste d'événements chargée depuis events_list.json: ${events.size} événement(s)`);
-      } else if (Array.isArray(data)) {
-        data.forEach(eventId => {
-          if (eventId && eventId !== 'UNKNOWN') {
-            events.add(eventId);
-          }
-        });
-        console.log(`✅ Liste d'événements chargée depuis events_list.json: ${events.size} événement(s)`);
+  // Méthode 1 : Essayer l'API backend si disponible
+  if (API_BASE && API_BASE !== 'null' && API_BASE !== null) {
+    try {
+      const response = await fetch(`${API_BASE}/events?t=${Date.now()}`);
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data.events)) {
+          data.events.forEach(eventId => {
+            if (eventId && eventId !== 'UNKNOWN') {
+              events.add(eventId);
+            }
+          });
+          console.log(`✅ Liste d'événements chargée depuis API: ${events.size} événement(s)`);
+        } else if (Array.isArray(data)) {
+          data.forEach(eventId => {
+            if (eventId && eventId !== 'UNKNOWN') {
+              events.add(eventId);
+            }
+          });
+          console.log(`✅ Liste d'événements chargée depuis API: ${events.size} événement(s)`);
+        }
       }
+    } catch (e) {
+      console.debug('API events non disponible, utilisation de la méthode de découverte');
     }
-  } catch (e) {
-    console.debug('events_list.json non disponible, utilisation de la méthode de découverte');
   }
   
-  // Méthode 2 : Essayer les événements communs si pas de liste
+  // Méthode 2 : Essayer de charger un fichier events_list.json depuis R2
   if (events.size === 0) {
-    const commonEvents = ['BJ025'];
-    for (const eventId of commonEvents) {
-      try {
-        const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
-        const r2Key = `events/${eventId}/photos_index.json`;
-        const response = await fetch(`${r2Url}/${r2Key}?t=${Date.now()}`);
-        if (response.ok) {
-          const data = await response.json();
-          if (data.items && data.items.length > 0) {
-            events.add(eventId);
-            console.log(`✅ Événement trouvé: ${eventId} (${data.items.length} photos)`);
+    try {
+      const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
+      const eventsListUrl = `${r2Url}/events_list.json?t=${Date.now()}`;
+      const response = await fetch(eventsListUrl);
+      if (response.ok) {
+        const data = await response.json();
+        if (Array.isArray(data.events)) {
+          data.events.forEach(eventId => {
+            if (eventId && eventId !== 'UNKNOWN') {
+              events.add(eventId);
+            }
+          });
+          console.log(`✅ Liste d'événements chargée depuis events_list.json: ${events.size} événement(s)`);
+        } else if (Array.isArray(data)) {
+          data.forEach(eventId => {
+            if (eventId && eventId !== 'UNKNOWN') {
+              events.add(eventId);
+            }
+          });
+          console.log(`✅ Liste d'événements chargée depuis events_list.json: ${events.size} événement(s)`);
+        }
+      }
+    } catch (e) {
+      console.debug('events_list.json non disponible');
+    }
+  }
+  
+  // Méthode 3 : Détecter depuis les photos déjà chargées dans le cache
+  if (events.size === 0) {
+    // Vérifier dans le cache multi-événements
+    if (multiEventPhotosCache && Object.keys(multiEventPhotosCache).length > 0) {
+      Object.keys(multiEventPhotosCache).forEach(eventId => {
+        if (eventId && eventId !== 'UNKNOWN') {
+          events.add(eventId);
+        }
+      });
+      console.log(`✅ Événements détectés depuis le cache: ${events.size} événement(s)`);
+    }
+    
+    // Vérifier dans staticPhotosCache
+    if (staticPhotosCache && Array.isArray(staticPhotosCache) && staticPhotosCache.length > 0) {
+      staticPhotosCache.forEach(photo => {
+        const eventId = photo.event_id || photo.contest;
+        if (eventId && eventId !== 'UNKNOWN') {
+          events.add(eventId);
+        }
+      });
+      console.log(`✅ Événements détectés depuis staticPhotosCache: ${events.size} événement(s)`);
+    }
+  }
+  
+  // Méthode 4 : Essayer plusieurs patterns d'événements communs
+  if (events.size === 0) {
+    // Patterns à essayer : BJ025, BJ026, BJ027, etc. jusqu'à BJ099
+    const patternsToTry = [];
+    for (let i = 25; i <= 99; i++) {
+      patternsToTry.push(`BJ${i.toString().padStart(3, '0')}`);
+    }
+    
+    // Essayer en parallèle (limité à 10 simultanés pour ne pas surcharger)
+    const batchSize = 10;
+    for (let i = 0; i < patternsToTry.length; i += batchSize) {
+      const batch = patternsToTry.slice(i, i + batchSize);
+      const promises = batch.map(async (eventId) => {
+        try {
+          const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
+          const r2Key = `events/${eventId}/photos_index.json`;
+          const response = await fetch(`${r2Url}/${r2Key}?t=${Date.now()}`);
+          if (response.ok) {
+            const data = await response.json();
+            if (data.items && data.items.length > 0) {
+              events.add(eventId);
+              console.log(`✅ Événement trouvé: ${eventId} (${data.items.length} photos)`);
+              return eventId;
+            }
           }
-        } else if (response.status === 404) {
-          console.debug(`Événement ${eventId} non trouvé (404, normal)`);
+        } catch (e) {
+          // Ignorer les erreurs silencieusement
         }
-      } catch (e) {
-        if (e.message && !e.message.includes('404')) {
-          console.debug(`Événement ${eventId} non disponible:`, e);
-        }
+        return null;
+      });
+      
+      await Promise.all(promises);
+      
+      // Si on a trouvé des événements, on peut arrêter
+      if (events.size > 0 && i > 0) {
+        console.log(`✅ Arrêt de la recherche après avoir trouvé ${events.size} événement(s)`);
+        break;
       }
     }
   }
   
-  // Méthode 3 : Essayer de détecter depuis l'URL ou localStorage
+  // Méthode 5 : Essayer de détecter depuis l'URL ou localStorage
   const urlParams = new URLSearchParams(window.location.search);
   const urlEvent = urlParams.get('event');
   if (urlEvent && urlEvent !== 'UNKNOWN') {
