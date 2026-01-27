@@ -275,8 +275,12 @@ document.addEventListener('DOMContentLoaded', () => {
   });
   
   // Détecter mobile et charger le fichier mobile si nécessaire
-  if (detectAndLoadMobile()) {
+  const mobileLoaded = detectAndLoadMobile();
+  console.log('📱 detectAndLoadMobile() retourné:', mobileLoaded, '(largeur:', window.innerWidth, 'px)');
+  
+  if (mobileLoaded) {
     // Si on est sur mobile, le fichier mobile.js s'occupera de l'initialisation
+    console.log('📱 Mode mobile détecté, initialisation mobile en cours...');
     return;
   }
   
