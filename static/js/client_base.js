@@ -2545,7 +2545,7 @@ function updateCartPack(index, change) {
 function removeCartItem(index) {
   const item = cart[index];
   if (item.type === 'photo') {
-    removePhotoFromCart(item.filename);
+    removePhotoFromCart(item.photo_id || item.filename);
     } else {
     cart.splice(index, 1);
     updateCartUI();
