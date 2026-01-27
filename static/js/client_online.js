@@ -14,89 +14,16 @@ if (typeof pollIntervalMs === 'undefined') {
 const POLL_INTERVAL_ACTIVE = 5000; // 5 secondes quand l'utilisateur est actif
 const POLL_INTERVAL_INACTIVE = 30000; // 30 secondes quand l'utilisateur est inactif
 
-// Variables pour mobile search relocation
-const MOBILE_SEARCH_BREAKPOINT = 768;
-const MOBILE_SEARCH_SHELL_ID = 'mobile-search-shell';
-let mobileSearchResizeTimer = null;
-
 // ========== FONCTIONS MOBILE ==========
 
-function relocatePhotoSearchForMobile() {
-  // Chercher la search-box directement (peut être dans header ou mobile-shell)
-  const searchBox = document.querySelector('.search-box.header-search-box');
-  const headerSearch = document.querySelector('.header-search');
-  const mobileShell = document.getElementById(MOBILE_SEARCH_SHELL_ID);
-
-  if (!searchBox || !mobileShell) {
-    console.warn('⚠️ searchBox ou mobileShell non trouvé');
-    return;
-  }
-
-  const shouldUseMobileShell = window.innerWidth <= MOBILE_SEARCH_BREAKPOINT;
-  const isInMobileShell = mobileShell.contains(searchBox);
-  const isInHeader = headerSearch && headerSearch.contains(searchBox);
-
-  if (shouldUseMobileShell && !isInMobileShell) {
-    // Déplacer la barre de recherche dans le mobile shell (après le filtre d'événements)
-    const eventFilterMobile = document.getElementById('event-filter-container-mobile');
-    if (eventFilterMobile && eventFilterMobile.parentNode === mobileShell) {
-      // Insérer après le filtre d'événements
-      mobileShell.insertBefore(searchBox, eventFilterMobile.nextSibling);
-    } else {
-      // Si pas de filtre, insérer au début
-      mobileShell.insertBefore(searchBox, mobileShell.firstChild);
-    }
-    // S'assurer que le mobile shell est visible
-    mobileShell.style.display = 'flex';
-    // Afficher le filtre d'événements mobile
-    if (eventFilterMobile) {
-      eventFilterMobile.style.display = 'flex';
-    }
-    // S'assurer que la search-box est visible
-    searchBox.style.display = 'block';
-    const searchInput = searchBox.querySelector('input');
-    if (searchInput) {
-      searchInput.style.display = 'block';
-      searchInput.style.visibility = 'visible';
-    }
-    console.log('✅ Barre de recherche déplacée dans mobile-shell');
-  } else if (!shouldUseMobileShell && !isInHeader && headerSearch) {
-    // Remettre la barre de recherche dans le header
-    headerSearch.appendChild(searchBox);
-    // Cacher le mobile shell
-    mobileShell.style.display = 'none';
-    // Cacher le filtre d'événements mobile
-    const eventFilterMobile = document.getElementById('event-filter-container-mobile');
-    if (eventFilterMobile) {
-      eventFilterMobile.style.display = 'none';
-    }
-    console.log('✅ Barre de recherche remise dans header');
-  }
-}
-
-function initMobileSearchRelocation() {
-  // Fonction pour forcer la relocalisation
-  const forceRelocate = () => {
-    // Attendre un peu pour que le DOM soit prêt
-    setTimeout(() => {
-      relocatePhotoSearchForMobile();
-      // Vérifier à nouveau après un court délai
-      setTimeout(relocatePhotoSearchForMobile, 200);
-    }, 50);
-  };
+// Toggle menu burger mobile
+function toggleMobileMenu() {
+  const menu = document.getElementById('mobile-menu');
+  if (!menu) return;
   
-  // Appeler immédiatement si DOM déjà chargé
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', forceRelocate);
-  } else {
-    forceRelocate();
-  }
-  
-  // Écouter les changements de taille
-  window.addEventListener('resize', () => {
-    clearTimeout(mobileSearchResizeTimer);
-    mobileSearchResizeTimer = setTimeout(relocatePhotoSearchForMobile, 150);
-  });
+  const isOpen = menu.style.display === 'flex';
+  menu.style.display = isOpen ? 'none' : 'flex';
+  document.body.style.overflow = isOpen ? '' : 'hidden';
 }
 
 // Créer la bottom bar sticky pour le panier mobile
@@ -172,81 +99,70 @@ if (originalUpdateCartUI) {
   });
 }
 
-// Gérer le dropdown de langue sur mobile avec select natif
-function setupMobileLangDropdown() {
-  const headerRightSection = document.querySelector('.header > div > div:last-child');
+// Initialiser le filtre d'événements dans le header mobile
+function initMobileEventFilter() {
+  const eventFilter = document.getElementById('event-filter-header');
+  if (!eventFilter) return;
   
-  if (!headerRightSection) return;
-  
-  // Créer le select natif s'il n'existe pas déjà
-  let mobileSelect = document.getElementById('mobile-lang-select');
-  
-  if (window.innerWidth <= 768 && !mobileSelect) {
-    // Créer le select
-    mobileSelect = document.createElement('select');
-    mobileSelect.id = 'mobile-lang-select';
+  // Synchroniser avec le filtre principal si il existe
+  const mainFilter = document.getElementById('event-filter-mobile') || document.getElementById('event-filter');
+  if (mainFilter) {
+    // Copier les options
+    eventFilter.innerHTML = mainFilter.innerHTML;
+    eventFilter.value = mainFilter.value;
     
-    // Ajouter les options
-    const languages = [
-      { code: 'fr', label: 'FR' },
-      { code: 'en', label: 'EN' },
-      { code: 'es', label: 'ES' }
-    ];
-    
-    languages.forEach(lang => {
-      const option = document.createElement('option');
-      option.value = lang.code;
-      option.textContent = lang.label;
-      // Sélectionner la langue détectée automatiquement
-      if (lang.code === currentLanguage) {
-        option.selected = true;
+    // Synchroniser les changements
+    eventFilter.addEventListener('change', (e) => {
+      if (mainFilter) mainFilter.value = e.target.value;
+      if (typeof handleEventFilterChange === 'function') {
+        handleEventFilterChange(e);
       }
-      mobileSelect.appendChild(option);
     });
     
-    // Gérer le changement de langue
-    mobileSelect.addEventListener('change', (e) => {
-      const newLang = e.target.value;
-      currentLanguage = newLang;
-      
-      // Sauvegarder la préférence
-      try {
-        localStorage.setItem('preferred_language', newLang);
-      } catch (e) {
-        console.log('Impossible de sauvegarder la langue');
-      }
-      
-      updateInterfaceLanguage();
-      loadProducts();
-      if (cart.length > 0) {
-        renderCartItems();
-      }
-      
-      // Mettre à jour le bouton actif pour le desktop
-      document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === newLang);
+    if (mainFilter.addEventListener) {
+      mainFilter.addEventListener('change', (e) => {
+        eventFilter.value = e.target.value;
       });
-    });
-    
-    // Ajouter le select au header
-    headerRightSection.appendChild(mobileSelect);
-  } else if (window.innerWidth > 768 && mobileSelect) {
-    // Supprimer le select sur desktop
-    mobileSelect.remove();
+    }
   }
   
-  // Gérer le redimensionnement (une seule fois, pas à chaque appel)
-  if (!window.mobileResizeHandlerAdded) {
-    let resizeTimeout;
-    window.addEventListener('resize', () => {
-      clearTimeout(resizeTimeout);
-      resizeTimeout = setTimeout(() => {
-        setupMobileLangDropdown();
-        setupMobileCartBar();
-      }, 250);
-    });
-    window.mobileResizeHandlerAdded = true;
+  // Initialiser les événements disponibles
+  if (typeof initEventFilter === 'function') {
+    initEventFilter();
   }
+}
+
+// Gérer le select de langue dans le menu mobile
+function setupMobileMenuLangSelect() {
+  const langSelect = document.getElementById('mobile-lang-select-menu');
+  if (!langSelect) return;
+  
+  // Définir la langue actuelle
+  langSelect.value = currentLanguage || 'fr';
+  
+  // Gérer le changement de langue
+  langSelect.addEventListener('change', (e) => {
+    const newLang = e.target.value;
+    currentLanguage = newLang;
+    
+    // Sauvegarder la préférence
+    try {
+      localStorage.setItem('preferred_language', newLang);
+    } catch (e) {
+      console.log('Impossible de sauvegarder la langue');
+    }
+    
+    updateInterfaceLanguage();
+    loadProducts();
+    if (cart.length > 0) {
+      renderCartItems();
+    }
+    
+    // Mettre à jour les boutons langue desktop
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.lang === newLang);
+    });
+  });
 }
 
 // Gérer le hide/show du header au scroll sur mobile uniquement
@@ -418,7 +334,7 @@ async function checkPhotoUpdates() {
     // Si le hash a changé, il y a eu des modifications
     if (status.hash && status.hash !== lastPhotoStatusHash) {
       // Ne pas rafraîchir si l'utilisateur interagit activement
-    const lightbox = document.getElementById('lightbox');
+      const lightbox = document.getElementById('lightbox');
       const cartModal = document.getElementById('cart-modal');
       const isLightboxOpen = lightbox && lightbox.classList.contains('active');
       const isCartOpen = cartModal && cartModal.classList.contains('active');
@@ -462,7 +378,7 @@ async function refreshPhotosQuietly(query) {
     }
     
     // Mise à jour discrète : seulement si nécessaire
-  const container = document.getElementById('photos-results');
+    const container = document.getElementById('photos-results');
     if (container && container.style.display !== 'none') {
       // Sauvegarder la position de scroll
       const scrollPos = window.scrollY;
@@ -522,52 +438,6 @@ function updatePollingFrequency() {
 // ========== INITIALISATION ==========
 
 function handleClientOnlineReady() {
-  // Initialiser le relocalisation de la recherche mobile (doit être fait en premier)
-  initMobileSearchRelocation();
-  
-  // S'assurer que le champ de recherche est visible selon la taille d'écran
-  const checkSearchVisibility = () => {
-    const searchBox = document.querySelector('.search-box.header-search-box');
-    const mobileShell = document.getElementById(MOBILE_SEARCH_SHELL_ID);
-    const headerSearch = document.querySelector('.header-search');
-    
-    if (window.innerWidth <= 768) {
-      // Mobile : s'assurer que mobile-shell est visible
-      if (mobileShell) {
-        mobileShell.style.display = 'flex';
-      }
-      // S'assurer que search-box est visible
-      if (searchBox) {
-        searchBox.style.display = 'block';
-        const input = searchBox.querySelector('input');
-        if (input) {
-          input.style.display = 'block';
-          input.style.visibility = 'visible';
-        }
-      }
-    } else {
-      // Desktop : s'assurer que header-search est visible
-      if (headerSearch) {
-        headerSearch.style.display = 'flex';
-      }
-      // Cacher mobile-shell
-      if (mobileShell) {
-        mobileShell.style.display = 'none';
-      }
-    }
-  };
-  
-  // Vérifier immédiatement
-  checkSearchVisibility();
-  
-  // Vérifier aussi après un délai
-  setTimeout(checkSearchVisibility, 300);
-  
-  // Vérifier au resize
-  window.addEventListener('resize', () => {
-    setTimeout(checkSearchVisibility, 100);
-  });
-  
   // Portail : déplacer les modals en enfant direct de <body> dès le chargement
   ensureModalInBody('cart-modal');
   ensureModalInBody('promotions-modal');
@@ -594,8 +464,8 @@ function handleClientOnlineReady() {
       updateInterfaceLanguage();
       loadProducts();
       if (cart.length > 0) {
-  renderCartItems();
-}
+        renderCartItems();
+      }
     });
   });
   
@@ -630,8 +500,11 @@ function handleClientOnlineReady() {
   
   // Fonctions spécifiques mobile
   if (window.innerWidth <= 768) {
-    // Gérer le dropdown de langue sur mobile
-    setupMobileLangDropdown();
+    // Initialiser le filtre d'événements dans le header
+    initMobileEventFilter();
+    
+    // Gérer le select de langue dans le menu mobile
+    setupMobileMenuLangSelect();
     
     // Créer la bottom bar panier sur mobile
     setupMobileCartBar();
@@ -646,6 +519,18 @@ function handleClientOnlineReady() {
     
     // Gérer le header qui se cache au scroll sur mobile
     setupMobileHeaderScroll();
+  }
+  
+  // Synchroniser le code panier mobile avec le desktop
+  const cartCodeMobile = document.getElementById('cart-code-search-mobile');
+  const cartCodeDesktop = document.getElementById('cart-code-search');
+  if (cartCodeMobile && cartCodeDesktop) {
+    cartCodeMobile.addEventListener('input', (e) => {
+      cartCodeDesktop.value = e.target.value;
+    });
+    cartCodeDesktop.addEventListener('input', (e) => {
+      cartCodeMobile.value = e.target.value;
+    });
   }
   
   // Démarrer le polling intelligent
@@ -672,6 +557,6 @@ function handleClientOnlineReady() {
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', handleClientOnlineReady);
-            } else {
+} else {
   handleClientOnlineReady();
 }
