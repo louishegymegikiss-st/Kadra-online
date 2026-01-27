@@ -2,8 +2,12 @@
 // Polling intelligent pour détecter les changements de photos
 
 // Polling intelligent pour détecter les changements de photos
-let lastPhotoStatusHash = null;
-let photoPollingInterval = null;
+if (typeof lastPhotoStatusHash === 'undefined') {
+  var lastPhotoStatusHash = null;
+}
+if (typeof photoPollingInterval === 'undefined') {
+  var photoPollingInterval = null;
+}
 let pollIntervalMs = 5000; // 5 secondes par défaut (actif)
 const POLL_INTERVAL_ACTIVE = 5000; // 5 secondes quand l'utilisateur est actif
 const POLL_INTERVAL_INACTIVE = 30000; // 30 secondes quand l'utilisateur est inactif
@@ -153,7 +157,7 @@ function detectAndLoadMobile() {
 
   // Charger le fichier mobile
   const script = document.createElement('script');
-  script.src = '/static/js/client_online_mobile.js?v=1';
+  script.src = '/static/js/client_online_mobile.js?v=2';
   script.onload = () => {
     window.clientOnlineMobileScriptLoaded = true;
     window.clientOnlineMobileScriptLoading = false;
@@ -171,7 +175,7 @@ function detectAndLoadMobile() {
   if (!mobileCssLink) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '/static/css/client_online_mobile.css?v=1';
+    link.href = '/static/css/client_online_mobile.css?v=3';
     document.head.appendChild(link);
   }
   
