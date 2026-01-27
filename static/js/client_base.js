@@ -1617,54 +1617,71 @@ function detectCartPhotoOrientation(img) {
 
 // Gestion du Panier
 function toggleCartItem(filename, btn) {
+  // Empêcher la propagation pour éviter que le clic sur la carte se déclenche aussi
+  if (btn) {
+    btn.stopPropagation = true;
+  }
+  
   const index = cart.findIndex(item => item.type === 'photo' && item.filename === filename);
   
-  // Trouver la carte par filename (plus fiable que btn.closest)
-  const card = document.querySelector(`.photo-card[data-filename="${CSS.escape(filename)}"]`);
+  // Si déjà dans le panier, ne rien faire (le bouton + ne devrait pas être visible)
+  if (index !== -1) {
+    return;
+  }
+  
+  // Trouver la carte spécifique qui contient ce bouton (plus fiable)
+  const card = btn ? btn.closest('.photo-card') : document.querySelector(`.photo-card[data-filename="${CSS.escape(filename)}"]`);
   if (!card) {
     console.warn('Photo card non trouvée pour:', filename);
+    return;
+  }
+  
+  // Vérifier que cette carte correspond bien au filename
+  if (card.dataset.filename !== filename) {
+    console.warn('Filename mismatch:', card.dataset.filename, 'vs', filename);
     return;
   }
   
   const badge = card.querySelector('.photo-in-cart-badge');
   const addBtn = card.querySelector('.photo-add-btn');
   
-  if (index === -1) {
-    // Ajouter - récupérer rider_name et horse_name depuis currentSearchResults
-    const photoData = currentSearchResults.find(p => {
-      if (p.filename === filename) return true;
-      const pBasename = p.filename.split('/').pop();
-      const filenameBasename = filename.split('/').pop();
-      return pBasename === filenameBasename;
-    });
-    const riderName = photoData ? (photoData.rider_name || photoData.cavalier || '') : '';
-    const horseName = photoData ? (photoData.horse_name || photoData.cheval || '') : '';
-    const eventId = photoData ? (photoData.event_id || photoData.contest || null) : null;
-    const fileId = photoData ? (photoData.file_id || photoData.id || null) : null;
-    
-    cart.push({
-      type: 'photo',
-      filename: filename,
-      formats: {}, // { product_id: quantity }
-      rider_name: riderName,
-      horse_name: horseName,
-      event_id: eventId, // Stocker l'event_id dans le panier
-      file_id: fileId // Stocker le file_id dans le panier
-    });
-    
-    // Mettre à jour l'UI de TOUTES les cartes avec ce filename (au cas où il y en aurait plusieurs)
-    document.querySelectorAll(`.photo-card[data-filename="${CSS.escape(filename)}"]`).forEach(c => {
+  // Ajouter - récupérer rider_name et horse_name depuis currentSearchResults
+  const photoData = currentSearchResults.find(p => {
+    if (p.filename === filename) return true;
+    const pBasename = p.filename.split('/').pop();
+    const filenameBasename = filename.split('/').pop();
+    return pBasename === filenameBasename;
+  });
+  const riderName = photoData ? (photoData.rider_name || photoData.cavalier || '') : '';
+  const horseName = photoData ? (photoData.horse_name || photoData.cheval || '') : '';
+  const eventId = photoData ? (photoData.event_id || photoData.contest || null) : null;
+  const fileId = photoData ? (photoData.file_id || photoData.id || null) : null;
+  
+  cart.push({
+    type: 'photo',
+    filename: filename,
+    formats: {}, // { product_id: quantity }
+    rider_name: riderName,
+    horse_name: horseName,
+    event_id: eventId, // Stocker l'event_id dans le panier
+    file_id: fileId // Stocker le file_id dans le panier
+  });
+  
+  // Mettre à jour UNIQUEMENT cette carte spécifique
+  card.classList.add('in-cart');
+  if (badge) badge.style.display = 'flex';
+  if (addBtn) addBtn.style.display = 'none';
+  
+  // Mettre à jour aussi les autres cartes avec le même filename (au cas où il y en aurait plusieurs)
+  document.querySelectorAll(`.photo-card[data-filename="${CSS.escape(filename)}"]`).forEach(c => {
+    if (c !== card) {
       c.classList.add('in-cart');
       const b = c.querySelector('.photo-in-cart-badge');
       const a = c.querySelector('.photo-add-btn');
       if (b) b.style.display = 'flex';
       if (a) a.style.display = 'none';
-    });
-    
-  } else {
-    // Retirer (si clic sur le bouton + qui ne devrait plus être là, ou via autre mécanisme)
-    // Ici on gère l'ajout via le bouton +. Pour le retrait c'est via le badge ou le panier.
-  }
+    }
+  });
   
   updateCartUI();
   
@@ -2788,23 +2805,30 @@ function openLightbox(startFilename, photosList = null, fromCart = false) {
       lightbox.style.zIndex = '9998';
   }
   
-  // Trouver l'index de la photo à ouvrir (comparaison flexible)
+  // Trouver l'index de la photo à ouvrir (comparaison flexible mais précise)
   currentLightboxIndex = lightboxPhotos.findIndex(p => {
     // Comparaison exacte d'abord
     if (p.filename === startFilename) return true;
     // Comparaison par nom de fichier (sans le chemin)
     const pBasename = p.filename.split('/').pop();
     const startBasename = startFilename.split('/').pop();
-    if (pBasename === startBasename) return true;
-    // Comparaison par file_id si disponible
-    if (p.filename.includes(startFilename) || startFilename.includes(p.filename)) return true;
+    if (pBasename && startBasename && pBasename === startBasename) return true;
     return false;
   });
   
+  // Si toujours pas trouvé, chercher par inclusion (fallback)
+  if (currentLightboxIndex === -1) {
+    currentLightboxIndex = lightboxPhotos.findIndex(p => {
+      return p.filename.includes(startFilename) || startFilename.includes(p.filename);
+    });
+  }
+  
   // Si toujours pas trouvé, utiliser le premier
   if (currentLightboxIndex === -1) {
-    console.warn('Photo non trouvée dans lightboxPhotos, utilisation de la première:', startFilename);
+    console.warn('Photo non trouvée dans lightboxPhotos, utilisation de la première:', startFilename, 'Disponibles:', lightboxPhotos.map(p => p.filename));
     currentLightboxIndex = 0;
+  } else {
+    console.log('✅ Lightbox ouverte sur index:', currentLightboxIndex, 'pour:', startFilename);
   }
   
   updateLightboxContent();

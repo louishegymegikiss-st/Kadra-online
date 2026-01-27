@@ -2,8 +2,13 @@
 // Polling intelligent + fonctions spécifiques mobile
 
 // Polling intelligent pour détecter les changements de photos
-let lastPhotoStatusHash = null;
-let photoPollingInterval = null;
+// Vérifier si la variable n'est pas déjà déclarée (évite SyntaxError si chargé deux fois)
+if (typeof lastPhotoStatusHash === 'undefined') {
+  var lastPhotoStatusHash = null;
+}
+if (typeof photoPollingInterval === 'undefined') {
+  var photoPollingInterval = null;
+}
 let pollIntervalMs = 5000; // 5 secondes par défaut (actif)
 const POLL_INTERVAL_ACTIVE = 5000; // 5 secondes quand l'utilisateur est actif
 const POLL_INTERVAL_INACTIVE = 30000; // 30 secondes quand l'utilisateur est inactif
@@ -206,12 +211,24 @@ function updateMobileCartBar() {
 }
 
 // Surcharger updateCartUI pour mettre à jour la bar mobile
-const originalUpdateCartUI = window.updateCartUI || updateCartUI;
-function updateCartUI() {
-  originalUpdateCartUI();
-  updateMobileCartBar();
+const originalUpdateCartUI = window.updateCartUI;
+if (originalUpdateCartUI) {
+  window.updateCartUI = function() {
+    originalUpdateCartUI.apply(this, arguments);
+    updateMobileCartBar();
+  };
+} else {
+  // Si updateCartUI n'existe pas encore, l'attendre
+  window.addEventListener('DOMContentLoaded', () => {
+    if (window.updateCartUI) {
+      const original = window.updateCartUI;
+      window.updateCartUI = function() {
+        original.apply(this, arguments);
+        updateMobileCartBar();
+      };
+    }
+  });
 }
-window.updateCartUI = updateCartUI;
 
 // Gérer le dropdown de langue sur mobile avec select natif
 function setupMobileLangDropdown() {
