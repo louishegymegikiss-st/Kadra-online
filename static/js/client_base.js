@@ -1582,7 +1582,9 @@ function renderPhotos(photos) {
     // Gérer le clic sur la carte (ouvrir lightbox) - mais pas si on clique sur le bouton
     card.onclick = (e) => {
       // Ne pas ouvrir la lightbox si on clique sur le bouton + ou le badge
-      if (e.target.closest('.photo-add-btn') || e.target.closest('.photo-in-cart-badge')) {
+      if (e.target.closest('.photo-add-btn') || e.target.closest('.photo-in-cart-badge') || e.target.closest('.photo-blocked-badge')) {
+        e.stopPropagation();
+        e.preventDefault();
         return;
       }
       openLightbox(photo.filename, sortedPhotos);

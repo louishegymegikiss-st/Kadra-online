@@ -72,9 +72,9 @@
     will-change: auto !important;
   }
   
-  /* Ajouter un padding au body pour compenser le header fixed */
+  /* Ajouter un padding au body pour compenser le header fixed + mobile-search-shell */
   body {
-    padding-top: 70px !important;
+    padding-top: 170px !important; /* Header (70px) + mobile-search-shell (~100px) */
   }
   
   /* Header caché quand on scroll vers le bas - utiliser top négatif */
