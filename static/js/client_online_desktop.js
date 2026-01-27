@@ -257,6 +257,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   
+  // Charger le CSS mobile si nécessaire (même en mode responsive)
+  loadMobileCSSIfNeeded();
+  
+  // Écouter les changements de taille pour charger/décharger le CSS mobile
+  window.addEventListener('resize', () => {
+    loadMobileCSSIfNeeded();
+  });
+  
   // Détecter mobile et charger le fichier mobile si nécessaire
   if (detectAndLoadMobile()) {
     // Si on est sur mobile, le fichier mobile.js s'occupera de l'initialisation
