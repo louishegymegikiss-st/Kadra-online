@@ -136,6 +136,20 @@ function updatePollingFrequency() {
   }
 }
 
+// Charger le CSS mobile si largeur <= 768px (même en mode responsive)
+function loadMobileCSSIfNeeded() {
+  if (window.innerWidth <= 768) {
+    const mobileCssLink = document.querySelector('link[href*="client_online_mobile.css"]');
+    if (!mobileCssLink) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = '/static/css/client_online_mobile.css?v=4';
+      document.head.appendChild(link);
+      console.log('✅ CSS mobile chargé pour mode responsive (largeur <= 768px)');
+    }
+  }
+}
+
 // Détecter si on est sur mobile et charger le fichier mobile si nécessaire
 function detectAndLoadMobile() {
   // Détecter si on est sur mobile (largeur <= 768px ou User-Agent mobile)
