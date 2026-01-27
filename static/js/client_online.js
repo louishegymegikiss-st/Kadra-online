@@ -558,7 +558,16 @@ function handleClientOnlineReady() {
           case 'tutorial':
             const rightColumn = document.querySelector('.right-column');
             if (rightColumn) {
-              rightColumn.scrollIntoView({behavior: 'smooth'});
+              // Ouvrir la colonne si elle est réduite
+              if (rightColumn.classList.contains('collapsed')) {
+                if (typeof toggleColumn === 'function') {
+                  toggleColumn('right');
+                }
+              }
+              // Attendre un peu que l'animation se termine puis scroller
+              setTimeout(() => {
+                rightColumn.scrollIntoView({behavior: 'smooth', block: 'start'});
+              }, 300);
             }
             break;
         }

@@ -2430,7 +2430,7 @@ function renderCartItems() {
       
       row.innerHTML = `
         <div class="cart-photo-container">
-            <img src="${imageUrl}" class="cart-photo-large" onclick="openLightbox('${item.filename}', null, true)" onload="detectCartPhotoOrientation(this)" onerror="if(this.src !== '${fallbackUrl}') { this.src='${fallbackUrl}'; } else { this.style.display='none'; console.error('Image load error:', '${imageUrl}', 'fallback:', '${fallbackUrl}'); }">
+            <img src="${imageUrl}" class="cart-photo-large" onclick="openLightbox('${item.filename}', null, true)" onload="detectCartPhotoOrientation(this)" onerror="if(this.src !== '${fallbackUrl}') { this.onerror=null; this.src='${fallbackUrl}'; } else { this.style.display='none'; }">
             <div class="cart-photo-info" style="font-weight: 600; color: #2d3561; margin-top: 8px;">${displayName}</div>
             <button onclick="buyPackForPhoto('${riderName.replace(/'/g, "\\'")}', '${horseName.replace(/'/g, "\\'")}')" style="margin-top: 8px; padding: 8px 16px; background: #2d3561; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600; width: 100%;">
                 📦 ${t('buy_pack_btn')}
