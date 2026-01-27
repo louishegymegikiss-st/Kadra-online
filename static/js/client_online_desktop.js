@@ -140,21 +140,24 @@ function updatePollingFrequency() {
 function detectAndLoadMobile() {
   // Détecter si on est sur mobile (largeur <= 768px ou User-Agent mobile)
   // Aussi charger en mode responsive (même sur PC si largeur <= 768px)
-  const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const isMobileWidth = window.innerWidth <= 768;
+  const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+  const shouldLoadMobile = isMobileWidth || isMobileUA;
 
   // Toujours charger le CSS mobile si largeur <= 768px (même en mode responsive)
-  if (window.innerWidth <= 768) {
+  if (isMobileWidth) {
     const mobileCssLink = document.querySelector('link[href*="client_online_mobile.css"]');
     if (!mobileCssLink) {
       const link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = '/static/css/client_online_mobile.css?v=4';
       document.head.appendChild(link);
-      console.log('CSS mobile chargé pour mode responsive');
+      console.log('✅ CSS mobile chargé pour mode responsive (largeur <= 768px)');
     }
   }
 
-  if (!isMobile) {
+  // Charger le JS mobile si largeur <= 768px OU User-Agent mobile
+  if (!shouldLoadMobile) {
     return false;
   }
 
@@ -174,23 +177,15 @@ function detectAndLoadMobile() {
   script.onload = () => {
     window.clientOnlineMobileScriptLoaded = true;
     window.clientOnlineMobileScriptLoading = false;
-    console.log('Client online mobile JS chargé');
+    console.log('✅ Client online mobile JS chargé (largeur:', window.innerWidth, 'px)');
   };
   script.onerror = () => {
     window.clientOnlineMobileScriptLoading = false;
-    console.warn('Erreur chargement client_online_mobile.js');
+    console.error('❌ Erreur chargement client_online_mobile.js');
   };
   window.clientOnlineMobileScriptLoading = true;
   document.head.appendChild(script);
-  
-  // Charger aussi le CSS mobile si pas déjà chargé
-  const mobileCssLink = document.querySelector('link[href*="client_online_mobile.css"]');
-  if (!mobileCssLink) {
-    const link = document.createElement('link');
-    link.rel = 'stylesheet';
-    link.href = '/static/css/client_online_mobile.css?v=4';
-    document.head.appendChild(link);
-  }
+  console.log('📱 Chargement JS mobile initié (largeur:', window.innerWidth, 'px, UA mobile:', isMobileUA, ')');
   
   return true;
 }
