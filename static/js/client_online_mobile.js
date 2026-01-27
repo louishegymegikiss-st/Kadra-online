@@ -33,10 +33,18 @@ function relocatePhotoSearchForMobile() {
   if (shouldUseMobileShell && !isInMobileShell) {
     // Déplacer la barre de recherche dans le mobile shell
     mobileShell.insertBefore(searchBox, mobileShell.firstChild); // Insérer avant le filtre d'événements
+    // S'assurer que le mobile shell est visible
+    mobileShell.style.display = 'flex';
     // Afficher le filtre d'événements mobile
     const eventFilterMobile = document.getElementById('event-filter-container-mobile');
     if (eventFilterMobile) {
       eventFilterMobile.style.display = 'block';
+    }
+    // S'assurer que la search-box est visible
+    searchBox.style.display = 'block';
+    const searchInput = searchBox.querySelector('input');
+    if (searchInput) {
+      searchInput.style.display = 'block';
     }
   } else if (!shouldUseMobileShell && !isInHeader) {
     headerSearch.appendChild(searchBox);
