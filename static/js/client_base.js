@@ -1350,9 +1350,10 @@ async function searchPhotos(query) {
         
         // Tous les mots de la requête doivent être présents
         const matches = queryWords.every(word => searchText.includes(word));
-        if (matches) {
-          console.log('✅ Match trouvé:', { rider, horse, number, query: queryWords.join(' ') });
-        }
+        // Log désactivé pour éviter la répétition excessive
+        // if (matches) {
+        //   console.log('✅ Match trouvé:', { rider, horse, number, query: queryWords.join(' ') });
+        // }
         return matches;
       });
       
@@ -1529,9 +1530,16 @@ function renderPhotos(photos) {
   grid.className = 'photos-grid';
   
   sortedPhotos.forEach(photo => {
-    const imageUrl = photo.imageUrl || getPhotoUrlFromFilename(photo.filename);
+    // S'assurer que filename est défini
+    const filename = photo.filename || photo.rel_path || photo.photo_path || photo.path || photo.id || '';
+    if (!filename) {
+      console.warn('Photo sans filename, ignorée:', photo);
+      return;
+    }
+    
+    const imageUrl = photo.imageUrl || getPhotoUrlFromFilename(filename);
     if (!imageUrl) return;
-    const displayName = escapeHtml(photo.displayName || (photo.filename.split('/').pop() || ''));
+    const displayName = escapeHtml(photo.displayName || (filename.split('/').pop() || ''));
     
     // Créer un ID unique pour cette photo (priorité: file_id > combinaison unique > index)
     const fileId = photo.file_id || photo.id || null;
@@ -1554,7 +1562,7 @@ function renderPhotos(photos) {
     
     const card = document.createElement('div');
     card.className = 'photo-card';
-    card.dataset.filename = photo.filename;
+    card.dataset.filename = filename; // S'assurer que filename est toujours défini
     card.dataset.photoId = photoUniqueId;
     card.id = `photo-card-${photoUniqueId}`;
     
@@ -1576,7 +1584,7 @@ function renderPhotos(photos) {
       `this.onerror=null; this.src='${fallbackUrl.replace(/'/g, "\\'")}';` : '';
     
     // Échapper le filename pour éviter les problèmes avec les caractères spéciaux
-    const escapedFilename = photo.filename.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    const escapedFilename = filename.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     const escapedPhotoId = photoUniqueId.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     
     card.innerHTML = `
@@ -1594,7 +1602,7 @@ function renderPhotos(photos) {
         e.preventDefault();
         return;
       }
-      openLightbox(photo.filename, sortedPhotos);
+      openLightbox(filename, sortedPhotos);
     };
 
     grid.appendChild(card);
