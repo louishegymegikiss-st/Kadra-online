@@ -4307,31 +4307,55 @@ window.resetInterface = resetInterface;
 async function discoverAvailableEvents() {
   const events = new Set();
   
-  // Méthode 1 : Détecter depuis les photos déjà chargées dans le cache
-  // Vérifier dans le cache multi-événements
-  if (multiEventPhotosCache && Object.keys(multiEventPhotosCache).length > 0) {
-    Object.keys(multiEventPhotosCache).forEach(eventId => {
-      if (eventId && eventId !== 'UNKNOWN') {
-        events.add(eventId);
-      }
-    });
-    console.log(`✅ Événements détectés depuis multiEventPhotosCache: ${events.size} événement(s)`);
+  // Méthode 1 : Charger le fichier events_list.json depuis la racine de R2
+  try {
+    const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
+    const eventsListUrl = `${r2Url}/events_list.json?t=${Date.now()}`;
+    const response = await fetch(eventsListUrl);
+    if (response.ok) {
+      const data = await response.json();
+      // Accepter soit un tableau direct, soit un objet avec une propriété "events"
+      const eventsList = Array.isArray(data) ? data : (data.events || []);
+      eventsList.forEach(eventId => {
+        if (eventId && eventId !== 'UNKNOWN') {
+          events.add(eventId);
+        }
+      });
+      console.log(`✅ Liste d'événements chargée depuis events_list.json: ${events.size} événement(s)`);
+    } else {
+      console.debug('events_list.json non trouvé (404), utilisation des méthodes de fallback');
+    }
+  } catch (e) {
+    console.debug('Erreur chargement events_list.json:', e);
   }
   
-  // Vérifier dans staticPhotosCache
-  if (staticPhotosCache && Array.isArray(staticPhotosCache) && staticPhotosCache.length > 0) {
-    staticPhotosCache.forEach(photo => {
-      const eventId = photo.event_id || photo.contest;
-      if (eventId && eventId !== 'UNKNOWN') {
-        events.add(eventId);
+  // Méthode 2 : Détecter depuis les photos déjà chargées dans le cache (fallback)
+  if (events.size === 0) {
+    // Vérifier dans le cache multi-événements
+    if (multiEventPhotosCache && Object.keys(multiEventPhotosCache).length > 0) {
+      Object.keys(multiEventPhotosCache).forEach(eventId => {
+        if (eventId && eventId !== 'UNKNOWN') {
+          events.add(eventId);
+        }
+      });
+      console.log(`✅ Événements détectés depuis multiEventPhotosCache: ${events.size} événement(s)`);
+    }
+    
+    // Vérifier dans staticPhotosCache
+    if (staticPhotosCache && Array.isArray(staticPhotosCache) && staticPhotosCache.length > 0) {
+      staticPhotosCache.forEach(photo => {
+        const eventId = photo.event_id || photo.contest;
+        if (eventId && eventId !== 'UNKNOWN') {
+          events.add(eventId);
+        }
+      });
+      if (events.size > 0) {
+        console.log(`✅ Événements détectés depuis staticPhotosCache: ${events.size} événement(s)`);
       }
-    });
-    if (events.size > 0) {
-      console.log(`✅ Événements détectés depuis staticPhotosCache: ${events.size} événement(s)`);
     }
   }
   
-  // Méthode 2 : Essayer de détecter depuis l'URL ou localStorage
+  // Méthode 3 : Essayer de détecter depuis l'URL ou localStorage
   const urlParams = new URLSearchParams(window.location.search);
   const urlEvent = urlParams.get('event');
   if (urlEvent && urlEvent !== 'UNKNOWN') {
@@ -4343,35 +4367,6 @@ async function discoverAvailableEvents() {
     events.add(storedEvent);
   }
   
-  // Méthode 3 : Si aucun événement trouvé, essayer de charger BJ025 (événement de test connu)
-  // et détecter les événements depuis les photos chargées
-  if (events.size === 0) {
-    try {
-      const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
-      const testEventId = 'BJ025';
-      const r2Key = `events/${testEventId}/photos_index.json`;
-      const response = await fetch(`${r2Url}/${r2Key}?t=${Date.now()}`);
-      if (response.ok) {
-        const data = await response.json();
-        if (data.items && data.items.length > 0) {
-          events.add(testEventId);
-          console.log(`✅ Événement trouvé: ${testEventId} (${data.items.length} photos)`);
-          
-          // Extraire les event_id depuis les photos chargées
-          data.items.forEach(photo => {
-            const eventId = photo.event_id || photo.contest;
-            if (eventId && eventId !== 'UNKNOWN' && eventId !== testEventId) {
-              events.add(eventId);
-            }
-          });
-        }
-      }
-    } catch (e) {
-      console.debug('Erreur chargement événement test:', e);
-    }
-  }
-  
-  // Si toujours aucun événement, retourner un tableau vide (pas de fallback forcé)
   const sortedEvents = Array.from(events).sort();
   console.log(`📋 Événements disponibles: ${sortedEvents.length} événement(s)`, sortedEvents);
   
@@ -4491,5 +4486,4 @@ if (typeof document !== 'undefined') {
     // DOM déjà chargé
     setTimeout(initEventFilter, 100);
   }
-}
 }
