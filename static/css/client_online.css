@@ -6,6 +6,11 @@
   display: none !important;
 }
 
+/* S'assurer que le header-search est visible sur desktop par défaut */
+.header .header-search {
+  display: flex !important;
+}
+
 /* Désactiver les comportements web (zoom, selection, etc.) */
 @media (max-width: 768px) {
   * {
