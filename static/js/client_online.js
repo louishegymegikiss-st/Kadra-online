@@ -522,8 +522,51 @@ function updatePollingFrequency() {
 // ========== INITIALISATION ==========
 
 function handleClientOnlineReady() {
-  // Initialiser le relocalisation de la recherche mobile
+  // Initialiser le relocalisation de la recherche mobile (doit être fait en premier)
   initMobileSearchRelocation();
+  
+  // S'assurer que le champ de recherche est visible selon la taille d'écran
+  const checkSearchVisibility = () => {
+    const searchBox = document.querySelector('.search-box.header-search-box');
+    const mobileShell = document.getElementById(MOBILE_SEARCH_SHELL_ID);
+    const headerSearch = document.querySelector('.header-search');
+    
+    if (window.innerWidth <= 768) {
+      // Mobile : s'assurer que mobile-shell est visible
+      if (mobileShell) {
+        mobileShell.style.display = 'flex';
+      }
+      // S'assurer que search-box est visible
+      if (searchBox) {
+        searchBox.style.display = 'block';
+        const input = searchBox.querySelector('input');
+        if (input) {
+          input.style.display = 'block';
+          input.style.visibility = 'visible';
+        }
+      }
+    } else {
+      // Desktop : s'assurer que header-search est visible
+      if (headerSearch) {
+        headerSearch.style.display = 'flex';
+      }
+      // Cacher mobile-shell
+      if (mobileShell) {
+        mobileShell.style.display = 'none';
+      }
+    }
+  };
+  
+  // Vérifier immédiatement
+  checkSearchVisibility();
+  
+  // Vérifier aussi après un délai
+  setTimeout(checkSearchVisibility, 300);
+  
+  // Vérifier au resize
+  window.addEventListener('resize', () => {
+    setTimeout(checkSearchVisibility, 100);
+  });
   
   // Portail : déplacer les modals en enfant direct de <body> dès le chargement
   ensureModalInBody('cart-modal');
