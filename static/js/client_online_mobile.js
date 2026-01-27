@@ -33,14 +33,20 @@ function relocatePhotoSearchForMobile() {
   const isInHeader = headerSearch.contains(searchBox);
 
   if (shouldUseMobileShell && !isInMobileShell) {
-    // Déplacer la barre de recherche dans le mobile shell
-    mobileShell.insertBefore(searchBox, mobileShell.firstChild); // Insérer avant le filtre d'événements
+    // Déplacer la barre de recherche dans le mobile shell (après le filtre d'événements)
+    const eventFilterMobile = document.getElementById('event-filter-container-mobile');
+    if (eventFilterMobile && eventFilterMobile.parentNode === mobileShell) {
+      // Insérer après le filtre d'événements
+      mobileShell.insertBefore(searchBox, eventFilterMobile.nextSibling);
+    } else {
+      // Si pas de filtre, insérer au début
+      mobileShell.insertBefore(searchBox, mobileShell.firstChild);
+    }
     // S'assurer que le mobile shell est visible
     mobileShell.style.display = 'flex';
     // Afficher le filtre d'événements mobile
-    const eventFilterMobile = document.getElementById('event-filter-container-mobile');
     if (eventFilterMobile) {
-      eventFilterMobile.style.display = 'block';
+      eventFilterMobile.style.display = 'flex';
     }
     // S'assurer que la search-box est visible
     searchBox.style.display = 'block';
@@ -48,13 +54,18 @@ function relocatePhotoSearchForMobile() {
     if (searchInput) {
       searchInput.style.display = 'block';
     }
+    console.log('✅ Barre de recherche déplacée dans mobile-shell');
   } else if (!shouldUseMobileShell && !isInHeader) {
+    // Remettre la barre de recherche dans le header
     headerSearch.appendChild(searchBox);
+    // Cacher le mobile shell
+    mobileShell.style.display = 'none';
     // Cacher le filtre d'événements mobile
     const eventFilterMobile = document.getElementById('event-filter-container-mobile');
     if (eventFilterMobile) {
       eventFilterMobile.style.display = 'none';
     }
+    console.log('✅ Barre de recherche remise dans header');
   }
 }
 

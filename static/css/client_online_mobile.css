@@ -265,9 +265,10 @@
   /* Mobile search shell - visible sur mobile, APRÈS le header fixed */
   .mobile-search-shell {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important; /* Row pour avoir événement + recherche côte à côte */
+    align-items: center !important;
     width: 100% !important;
-    padding: 10px !important;
+    padding: 10px 15px !important;
     gap: 10px !important;
     background: rgba(45, 53, 97, 0.95) !important;
     position: fixed !important;
@@ -280,21 +281,25 @@
   
   /* Afficher le filtre d'événements mobile - largeur réduite */
   #event-filter-container-mobile {
-    display: block !important;
-    width: 100% !important;
-    margin-bottom: 5px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    width: auto !important;
+    min-width: 120px !important;
+    margin-bottom: 0 !important;
+    margin-right: 10px !important;
   }
   
   #event-filter-container-mobile label {
     color: white !important;
-    font-size: 0.8em !important;
+    font-size: 0.75em !important;
     font-weight: 600 !important;
     display: block !important;
     margin-bottom: 4px !important;
+    white-space: nowrap !important;
   }
   
   #event-filter-container-mobile select {
-    width: 40% !important; /* 60% plus court = 40% de largeur */
+    width: 100% !important;
     background: white !important;
     border: none !important;
     border-radius: 6px !important;
@@ -306,8 +311,10 @@
   
   /* Barre de recherche dans mobile-search-shell */
   .mobile-search-shell .search-box {
-    width: 100% !important;
+    flex: 1 !important; /* Prendre l'espace restant */
+    width: auto !important;
     max-width: none !important;
+    min-width: 0 !important; /* Permettre le shrink */
   }
   
   .mobile-search-shell .search-box input {
@@ -419,10 +426,11 @@
   
   .mobile-search-shell {
     display: flex !important;
-    flex-direction: column !important;
+    flex-direction: row !important; /* Row pour avoir événement + recherche côte à côte */
+    align-items: center !important;
     width: 100% !important;
-    margin-bottom: 15px !important;
-    justify-content: center !important;
+    margin-bottom: 0 !important;
+    justify-content: flex-start !important;
     gap: 10px !important;
   }
 
