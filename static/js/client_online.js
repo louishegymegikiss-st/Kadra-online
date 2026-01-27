@@ -22,17 +22,19 @@ let mobileSearchResizeTimer = null;
 // ========== FONCTIONS MOBILE ==========
 
 function relocatePhotoSearchForMobile() {
+  // Chercher la search-box directement (peut être dans header ou mobile-shell)
+  const searchBox = document.querySelector('.search-box.header-search-box');
   const headerSearch = document.querySelector('.header-search');
-  const searchBox = headerSearch?.querySelector('.search-box');
   const mobileShell = document.getElementById(MOBILE_SEARCH_SHELL_ID);
 
-  if (!headerSearch || !searchBox || !mobileShell) {
+  if (!searchBox || !mobileShell) {
+    console.warn('⚠️ searchBox ou mobileShell non trouvé');
     return;
   }
 
   const shouldUseMobileShell = window.innerWidth <= MOBILE_SEARCH_BREAKPOINT;
   const isInMobileShell = mobileShell.contains(searchBox);
-  const isInHeader = headerSearch.contains(searchBox);
+  const isInHeader = headerSearch && headerSearch.contains(searchBox);
 
   if (shouldUseMobileShell && !isInMobileShell) {
     // Déplacer la barre de recherche dans le mobile shell (après le filtre d'événements)
@@ -55,9 +57,10 @@ function relocatePhotoSearchForMobile() {
     const searchInput = searchBox.querySelector('input');
     if (searchInput) {
       searchInput.style.display = 'block';
+      searchInput.style.visibility = 'visible';
     }
     console.log('✅ Barre de recherche déplacée dans mobile-shell');
-  } else if (!shouldUseMobileShell && !isInHeader) {
+  } else if (!shouldUseMobileShell && !isInHeader && headerSearch) {
     // Remettre la barre de recherche dans le header
     headerSearch.appendChild(searchBox);
     // Cacher le mobile shell
@@ -72,16 +75,21 @@ function relocatePhotoSearchForMobile() {
 }
 
 function initMobileSearchRelocation() {
-  // Appeler immédiatement
-  relocatePhotoSearchForMobile();
+  // Fonction pour forcer la relocalisation
+  const forceRelocate = () => {
+    // Attendre un peu pour que le DOM soit prêt
+    setTimeout(() => {
+      relocatePhotoSearchForMobile();
+      // Vérifier à nouveau après un court délai
+      setTimeout(relocatePhotoSearchForMobile, 200);
+    }, 50);
+  };
   
-  // Attendre que le DOM soit complètement chargé
+  // Appeler immédiatement si DOM déjà chargé
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      setTimeout(relocatePhotoSearchForMobile, 100);
-    });
-    } else {
-    setTimeout(relocatePhotoSearchForMobile, 100);
+    document.addEventListener('DOMContentLoaded', forceRelocate);
+  } else {
+    forceRelocate();
   }
   
   // Écouter les changements de taille

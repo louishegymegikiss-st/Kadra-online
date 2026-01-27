@@ -119,9 +119,14 @@
     display: block;
   }
   
-  /* Cacher la recherche dans le header sur mobile */
+  /* Cacher la recherche dans le header sur mobile (sera déplacée dans mobile-shell) */
   .header .header-search {
     display: none !important;
+  }
+  
+  /* S'assurer que le mobile-search-shell est visible sur mobile */
+  .mobile-search-shell {
+    display: flex !important;
   }
   
   /* Afficher le bouton "Voir nos offres" sur mobile */
