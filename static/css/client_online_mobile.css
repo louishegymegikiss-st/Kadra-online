@@ -684,10 +684,10 @@
   
   /* Dialog centré dans le grid - plus large pour les photos */
   body.modal-open .cart-modal-dialog {
-    width: min(1300px, calc(100% - 32px)) !important; /* Ajusté pour photo 410px + formats 492px + gaps */
-    max-width: calc(100% - 32px) !important;
-    max-height: calc(100% - 32px) !important;
-    margin: 16px !important;
+    width: min(95vw, 1400px) !important; /* Plus large pour mobile */
+    max-width: calc(100% - 16px) !important;
+    max-height: calc(100% - 16px) !important;
+    margin: 8px !important;
     padding: 0 !important;
     box-sizing: border-box !important;
     position: relative !important;
@@ -705,15 +705,40 @@
   
   /* Scroll interne du contenu modal */
   .cart-modal.active .cart {
-    max-height: calc(100% - 32px) !important;
+    max-height: calc(100vh - 80px) !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
   }
   
   #cart-content {
-    overflow-y: visible !important; /* Enlever le scroll */
-    -webkit-overflow-scrolling: auto !important;
+    overflow-y: auto !important; /* Activer le scroll */
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+  }
+  
+  /* Colonnes du panier empilées verticalement sur mobile */
+  .cart-two-columns {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 20px !important;
+    padding: 12px !important;
+  }
+  
+  .cart-left-column {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  
+  .cart-right-column {
+    position: relative !important;
+    top: 0 !important;
+    width: 100% !important;
+    order: -1 !important; /* Mettre le récapitulatif en premier */
   }
   
   /* Diminuer uniquement la hauteur de chaque ligne produit (pas les colonnes) */
@@ -727,56 +752,73 @@
   
   /* Container photo : s'adapter à la taille réelle de la photo */
   .cart-photo-container {
-    width: fit-content !important; /* S'adapter à la taille réelle de la photo */
+    width: 100% !important; /* Prendre toute la largeur disponible */
     max-width: var(--cart-photo-w) !important; /* Limiter à la largeur maximale */
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    margin: 0 !important;
+    margin: 0 auto !important; /* Centrer */
     padding: 0 !important;
   }
   
-  /* Image : taille naturelle sans bandes */
+  /* Image : taille naturelle sans bandes - FORCER l'affichage */
   .cart-photo-large {
-    width: auto !important; /* Taille naturelle */
+    width: 100% !important; /* Prendre toute la largeur du container */
     max-width: var(--cart-photo-w) !important; /* Limiter la largeur max */
     max-height: var(--cart-photo-h) !important; /* Limiter la hauteur max */
     height: auto !important;
     object-fit: contain !important;
     display: block !important; /* Éviter les espaces inline */
+    visibility: visible !important; /* Forcer la visibilité */
+    opacity: 1 !important; /* Forcer l'opacité */
   }
   
-  /* Uniformiser la largeur des containers photo et formats pour rentrer dans 500px */
+  /* Uniformiser la largeur des containers photo et formats pour mobile - plus large et lisible */
+  .cart-photo-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
+  }
+  
   .cart-photo-row[data-photo-orientation="vertical"] {
-    --cart-photo-w: 400px !important; /* Augmenté pour colonne plus large */
-    --cart-photo-h: 600px !important; /* Ratio 2:3 (400 * 3/2) */
-    --cart-formats-h: 600px !important; /* Même hauteur que la photo */
-    --cart-formats-max-w: 389px !important; /* Réduit de 7% (418px * 0.93) */
+    --cart-photo-w: min(100%, 300px) !important; /* Adaptatif mais max 300px */
+    --cart-photo-h: 450px !important; /* Ratio 2:3 */
+    --cart-formats-h: auto !important; /* Hauteur automatique */
+    --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
   }
   
   .cart-photo-row[data-photo-orientation="horizontal"] {
-    --cart-photo-w: 400px !important; /* Augmenté pour colonne plus large */
-    --cart-photo-h: 267px !important; /* Ratio 3:2 (400 * 2/3) */
-    --cart-formats-h: 267px !important; /* Même hauteur que la photo */
-    --cart-formats-max-w: 389px !important; /* Réduit de 7% (418px * 0.93) */
+    --cart-photo-w: min(100%, 300px) !important; /* Adaptatif mais max 300px */
+    --cart-photo-h: 200px !important; /* Ratio 3:2 */
+    --cart-formats-h: auto !important; /* Hauteur automatique */
+    --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
   }
   
   .cart-photo-row[data-photo-orientation="square"] {
-    --cart-photo-w: 400px !important; /* Augmenté pour colonne plus large */
-    --cart-photo-h: 400px !important; /* Carré */
-    --cart-formats-h: 400px !important; /* Même hauteur que la photo */
-    --cart-formats-max-w: 389px !important; /* Réduit de 7% (418px * 0.93) */
+    --cart-photo-w: min(100%, 300px) !important; /* Adaptatif mais max 300px */
+    --cart-photo-h: 300px !important; /* Carré */
+    --cart-formats-h: auto !important; /* Hauteur automatique */
+    --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
   }
   
-  /* Enlever le scroll et afficher tout le contenu */
+  /* Si l'orientation n'est pas encore détectée, utiliser des valeurs par défaut */
+  .cart-photo-row:not([data-photo-orientation]) {
+    --cart-photo-w: min(100%, 300px) !important;
+    --cart-photo-h: 300px !important;
+    --cart-formats-max-w: 100% !important;
+  }
+  
+  /* Afficher tout le contenu des formats - largeur adaptée */
   .cart-formats-container {
-    gap: 6px !important; /* Réduire gap vertical de 8px à 6px */
-    overflow-y: visible !important; /* Enlever le scroll */
+    width: 100% !important; /* Prendre toute la largeur */
+    max-width: var(--cart-formats-max-w) !important;
+    gap: 8px !important;
+    overflow-y: visible !important; /* Pas de scroll interne */
     max-height: none !important; /* Pas de limite de hauteur */
     height: auto !important; /* Hauteur automatique pour tout afficher */
-    margin: 0 !important;
-    padding-left: 0 !important;
-    margin-left: 0 !important; /* Pas de marge négative, gap gère l'espacement */
+    margin: 0 auto !important; /* Centrer */
+    padding: 0 !important;
   }
   
   .cart-format-item {
@@ -799,19 +841,19 @@
   .cart-photo-row[data-photo-orientation="vertical"] .pack-btn,
   .cart-photo-row[data-photo-orientation="vertical"] .cart-btn-remove,
   .cart-photo-row[data-photo-orientation="vertical"] .cart-btn-remove-format {
-    max-width: 400px !important; /* Largeur photo verticale */
+    max-width: min(100%, 300px) !important; /* Largeur photo verticale */
   }
   
   .cart-photo-row[data-photo-orientation="horizontal"] .pack-btn,
   .cart-photo-row[data-photo-orientation="horizontal"] .cart-btn-remove,
   .cart-photo-row[data-photo-orientation="horizontal"] .cart-btn-remove-format {
-    max-width: 400px !important; /* Largeur photo horizontale */
+    max-width: min(100%, 300px) !important; /* Largeur photo horizontale */
   }
   
   .cart-photo-row[data-photo-orientation="square"] .pack-btn,
   .cart-photo-row[data-photo-orientation="square"] .cart-btn-remove,
   .cart-photo-row[data-photo-orientation="square"] .cart-btn-remove-format {
-    max-width: 400px !important; /* Largeur photo carrée */
+    max-width: min(100%, 300px) !important; /* Largeur photo carrée */
   }
   
   /* Header du panier centré */
