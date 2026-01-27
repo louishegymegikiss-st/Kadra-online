@@ -513,6 +513,30 @@ function handleClientOnlineReady() {
     });
   }
   
+  // Setup bouton burger mobile avec addEventListener (plus fiable que onclick)
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  if (mobileMenuBtn) {
+    mobileMenuBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      console.log('Bouton burger cliqué');
+      toggleMobileMenu();
+    });
+    console.log('Bouton burger initialisé');
+  } else {
+    console.warn('Bouton burger non trouvé');
+  }
+  
+  // Fermer le menu si on clique en dehors
+  const mobileMenu = document.getElementById('mobile-menu');
+  if (mobileMenu) {
+    mobileMenu.addEventListener('click', (e) => {
+      if (e.target === mobileMenu) {
+        toggleMobileMenu();
+      }
+    });
+  }
+  
   // Fonctions spécifiques mobile
   if (window.innerWidth <= 768) {
     // Initialiser le filtre d'événements dans le header
