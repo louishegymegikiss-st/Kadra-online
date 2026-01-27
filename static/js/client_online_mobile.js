@@ -9,7 +9,9 @@ if (typeof lastPhotoStatusHash === 'undefined') {
 if (typeof photoPollingInterval === 'undefined') {
   var photoPollingInterval = null;
 }
-let pollIntervalMs = 5000; // 5 secondes par défaut (actif)
+if (typeof pollIntervalMs === 'undefined') {
+  var pollIntervalMs = 5000; // 5 secondes par défaut (actif)
+}
 const POLL_INTERVAL_ACTIVE = 5000; // 5 secondes quand l'utilisateur est actif
 const POLL_INTERVAL_INACTIVE = 30000; // 30 secondes quand l'utilisateur est inactif
 

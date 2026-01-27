@@ -1400,9 +1400,23 @@ async function searchPhotos(query) {
 
 function normalizePhotosData(rawPhotos) {
   return (rawPhotos || []).map(photo => {
-    const filename = photo.rel_path || photo.photo_path || photo.path || photo.filename || photo.id || '';
+    // Construire le filename : priorité aux champs existants, sinon construire depuis file_id/event_id
+    let filename = photo.filename || photo.rel_path || photo.photo_path || photo.path || photo.id || '';
+    
+    // Si pas de filename mais qu'on a file_id et event_id, construire un filename
+    if (!filename && photo.file_id && photo.event_id) {
+      // Construire un filename basé sur les infos disponibles
+      const riderName = (photo.rider_name || photo.rider || photo.cavalier || '').replace(/[^a-zA-Z0-9]/g, '_');
+      const horseName = (photo.horse_name || photo.horse || photo.cheval || '').replace(/[^a-zA-Z0-9]/g, '_');
+      const riderNumber = photo.rider_number || photo.number || photo.bib || '';
+      filename = `${photo.event_id}/${riderNumber}_${riderName}_${horseName}/${photo.file_id.substring(0, 8)}.jpg`;
+    } else if (!filename && photo.file_id) {
+      // Fallback : utiliser juste le file_id
+      filename = `${photo.event_id || 'UNKNOWN'}/photos/${photo.file_id.substring(0, 8)}.jpg`;
+    }
+    
     const normalizedFilename = filename.replace(/\\/g, '/');
-    const displayName = photo.name || (normalizedFilename ? normalizedFilename.split('/').pop() : '');
+    const displayName = photo.name || photo.displayName || (normalizedFilename ? normalizedFilename.split('/').pop() : '') || `${photo.rider_name || ''} - ${photo.horse_name || ''}`.trim();
     
     // NOUVEAU : Utiliser les URLs R2 depuis l'index JSON R2 ou l'API
     let imageUrl = null;
@@ -1530,10 +1544,20 @@ function renderPhotos(photos) {
   grid.className = 'photos-grid';
   
   sortedPhotos.forEach(photo => {
-    // S'assurer que filename est défini
-    const filename = photo.filename || photo.rel_path || photo.photo_path || photo.path || photo.id || '';
+    // S'assurer que filename est défini - construire depuis file_id si nécessaire
+    let filename = photo.filename || photo.rel_path || photo.photo_path || photo.path || photo.id || '';
+    
+    // Si pas de filename mais qu'on a file_id, construire un filename
+    if (!filename && photo.file_id) {
+      const eventId = photo.event_id || photo.contest || 'UNKNOWN';
+      const riderName = (photo.rider_name || photo.rider || photo.cavalier || '').replace(/[^a-zA-Z0-9]/g, '_');
+      const horseName = (photo.horse_name || photo.horse || photo.cheval || '').replace(/[^a-zA-Z0-9]/g, '_');
+      const riderNumber = photo.rider_number || photo.number || photo.bib || '';
+      filename = `${eventId}/${riderNumber}_${riderName}_${horseName}/${photo.file_id.substring(0, 8)}.jpg`;
+    }
+    
     if (!filename) {
-      console.warn('Photo sans filename, ignorée:', photo);
+      console.warn('Photo sans filename ni file_id, ignorée:', photo);
       return;
     }
     
