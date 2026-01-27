@@ -555,16 +555,6 @@ function handleClientOnlineReady() {
               openPromotionsModal();
             }
             break;
-          case 'pack':
-            if (typeof handleBuyPack === 'function') {
-              handleBuyPack();
-            }
-            break;
-          case 'cart':
-            if (typeof toggleCart === 'function') {
-              toggleCart();
-            }
-            break;
           case 'tutorial':
             const rightColumn = document.querySelector('.right-column');
             if (rightColumn) {
@@ -575,6 +565,15 @@ function handleClientOnlineReady() {
       }, 300);
     });
   });
+  
+  // Setup logo dans le menu burger pour redirection
+  const mobileMenuLogo = document.querySelector('.mobile-menu-logo');
+  if (mobileMenuLogo) {
+    mobileMenuLogo.addEventListener('click', (e) => {
+      e.stopPropagation();
+      window.location.href = 'https://photoslesgarennes.com';
+    });
+  }
   
   // Setup code panier mobile
   const cartCodeMobile = document.getElementById('cart-code-search-mobile');

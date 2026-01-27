@@ -375,10 +375,28 @@
     max-width: 85vw !important;
     height: 100% !important;
     background: linear-gradient(135deg, #2d3561 0%, #1a1a2e 100%) !important;
-    padding: 20px 0 !important;
+    padding: 0 !important;
     overflow-y: auto !important;
     box-shadow: 2px 0 20px rgba(0, 0, 0, 0.3) !important;
     position: relative !important;
+  }
+  
+  .mobile-menu-logo {
+    display: flex !important;
+    align-items: center !important;
+    padding: 15px 20px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    cursor: pointer !important;
+    transition: background 0.2s !important;
+  }
+  
+  .mobile-menu-logo:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+  }
+  
+  .mobile-menu-logo img {
+    height: 40px !important;
+    filter: brightness(1.1) !important;
   }
   
   .mobile-menu-close {

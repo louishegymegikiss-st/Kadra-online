@@ -17,7 +17,7 @@
         <div class="header">
             <div class="header-content">
                 <!-- Desktop: Logo à gauche -->
-                <div class="logo-container desktop-only" style="display: flex; align-items: center; flex-shrink: 0; cursor: pointer;" onclick="resetInterface()">
+                <div class="logo-container desktop-only" style="display: flex; align-items: center; flex-shrink: 0; cursor: pointer;" onclick="window.location.href='https://photoslesgarennes.com'">
                     <img src="/static/logo/Photo Les Garennes.png" alt="Photos Les Garennes" class="logo" style="height: 50px; filter: brightness(1.1);">
                 </div>
                 
@@ -69,15 +69,17 @@
         <div id="mobile-menu" class="mobile-menu" style="display: none;">
             <div class="mobile-menu-content">
                 <button class="mobile-menu-close" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 5px;">×</button>
+                <!-- Logo en haut à gauche -->
+                <div class="mobile-menu-logo" style="padding: 15px 20px; border-bottom: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer;" onclick="window.location.href='https://photoslesgarennes.com'">
+                    <img src="/static/logo/Photo Les Garennes.png" alt="Photos Les Garennes" class="logo" style="height: 40px; filter: brightness(1.1);">
+                </div>
                 <div class="mobile-menu-items">
-                    <button class="mobile-menu-item" data-action="promotions" data-i18n="view_promotions">Voir nos offres</button>
-                    <button class="mobile-menu-item" data-action="pack">📦 Pack photos</button>
+                    <button class="mobile-menu-item" data-action="promotions">Nos offres</button>
                     <div class="mobile-menu-item" style="padding: 15px 20px;">
                         <label style="color: white; font-size: 0.9em; display: block; margin-bottom: 8px;" data-i18n="cart_code_placeholder">Code panier</label>
                         <input type="text" id="cart-code-search-mobile" placeholder="Code panier" autocomplete="off" maxlength="4" style="width: 100%; padding: 10px; border: none; border-radius: 6px; background: white; color: #2d3561; outline: none;">
                     </div>
-                    <button class="mobile-menu-item" data-action="cart" data-i18n="cart_title">Panier</button>
-                    <button class="mobile-menu-item" data-action="tutorial" data-i18n="view_tutorial">Tutoriel borne</button>
+                    <button class="mobile-menu-item" data-action="tutorial">Voir tuto</button>
                     <div class="mobile-menu-item" style="padding: 15px 20px;">
                         <label style="color: white; font-size: 0.9em; display: block; margin-bottom: 8px;">Langue</label>
                         <select id="mobile-lang-select-menu" style="width: 100%; padding: 10px; border: none; border-radius: 6px; background: white; color: #2d3561; cursor: pointer;">
