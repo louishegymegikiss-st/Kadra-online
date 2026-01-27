@@ -1565,14 +1565,24 @@ function renderPhotos(photos) {
     const imgErrorHandler = fallbackUrl && fallbackUrl !== imageUrl ? 
       `this.onerror=null; this.src='${fallbackUrl.replace(/'/g, "\\'")}';` : '';
     
+    // Échapper le filename pour éviter les problèmes avec les caractères spéciaux
+    const escapedFilename = photo.filename.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    
     card.innerHTML = `
-      <div class="photo-in-cart-badge" style="display: ${inCart ? 'flex' : 'none'}" onclick="event.stopPropagation(); removePhotoFromCart('${photo.filename}')">✓</div>
-      <button class="photo-add-btn" onclick="event.stopPropagation(); toggleCartItem('${photo.filename}', this)" style="display: ${inCart ? 'none' : 'flex'}">+</button>
+      <div class="photo-in-cart-badge" style="display: ${inCart ? 'flex' : 'none'}" onclick="event.stopPropagation(); event.preventDefault(); removePhotoFromCart('${escapedFilename}')">✓</div>
+      <button class="photo-add-btn" onclick="event.stopPropagation(); event.preventDefault(); toggleCartItem('${escapedFilename}', this)" style="display: ${inCart ? 'none' : 'flex'}">+</button>
       ${hasBlockedDigital ? `<div class="photo-blocked-badge" title="${escapeHtml(t('blocked_digital_badge_title'))}">📦</div>` : ''}
       <img src="${imageUrl}" class="photo-thumbnail" loading="lazy" alt="${displayName}" onload="detectPhotoOrientation(this)" ${imgErrorHandler ? `onerror="${imgErrorHandler}"` : ''}>
     `;
     
-    card.onclick = () => openLightbox(photo.filename, sortedPhotos);
+    // Gérer le clic sur la carte (ouvrir lightbox) - mais pas si on clique sur le bouton
+    card.onclick = (e) => {
+      // Ne pas ouvrir la lightbox si on clique sur le bouton + ou le badge
+      if (e.target.closest('.photo-add-btn') || e.target.closest('.photo-in-cart-badge')) {
+        return;
+      }
+      openLightbox(photo.filename, sortedPhotos);
+    };
 
     grid.appendChild(card);
   });
