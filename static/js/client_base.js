@@ -1532,7 +1532,14 @@ function renderPhotos(photos) {
     const imageUrl = photo.imageUrl || getPhotoUrlFromFilename(photo.filename);
     if (!imageUrl) return;
     const displayName = escapeHtml(photo.displayName || (photo.filename.split('/').pop() || ''));
-    const inCart = isInCart(photo.filename);
+    
+    // Créer un ID unique pour cette photo (priorité: file_id > combinaison unique > index)
+    const fileId = photo.file_id || photo.id || null;
+    const eventId = photo.event_id || photo.contest || 'UNKNOWN';
+    const photoUniqueId = fileId ? `${eventId}-${fileId}` : `photo-${sortedPhotos.indexOf(photo)}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`;
+    
+    // Vérifier si cette photo est déjà dans le panier (par photo_id unique)
+    const inCart = isInCartByPhotoId(photoUniqueId);
     
     // Récupérer les infos rider/horse de la photo
     const riderName = photo.rider_name || photo.cavalier || '';
@@ -1548,6 +1555,9 @@ function renderPhotos(photos) {
     const card = document.createElement('div');
     card.className = 'photo-card';
     card.dataset.filename = photo.filename;
+    card.dataset.photoId = photoUniqueId;
+    card.id = `photo-card-${photoUniqueId}`;
+    
     if (inCart) {
       card.classList.add('in-cart');
     }
@@ -1567,14 +1577,11 @@ function renderPhotos(photos) {
     
     // Échapper le filename pour éviter les problèmes avec les caractères spéciaux
     const escapedFilename = photo.filename.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-    // Utiliser un identifiant unique pour cette carte (index dans le tableau)
-    const cardIndex = sortedPhotos.indexOf(photo);
-    const cardId = `photo-card-${cardIndex}-${Math.random().toString(36).substr(2, 9)}`;
-    card.id = cardId;
+    const escapedPhotoId = photoUniqueId.replace(/'/g, "\\'").replace(/"/g, '&quot;');
     
     card.innerHTML = `
-      <div class="photo-in-cart-badge" style="display: ${inCart ? 'flex' : 'none'}" onclick="event.stopPropagation(); event.preventDefault(); removePhotoFromCart('${escapedFilename}')">✓</div>
-      <button class="photo-add-btn" onclick="event.stopPropagation(); event.preventDefault(); toggleCartItem('${escapedFilename}', this)" style="display: ${inCart ? 'none' : 'flex'}">+</button>
+      <div class="photo-in-cart-badge" style="display: ${inCart ? 'flex' : 'none'}" onclick="event.stopPropagation(); event.preventDefault(); removePhotoFromCart('${escapedPhotoId}')">✓</div>
+      <button class="photo-add-btn" onclick="event.stopPropagation(); event.preventDefault(); toggleCartItem('${escapedPhotoId}', this)" style="display: ${inCart ? 'none' : 'flex'}">+</button>
       ${hasBlockedDigital ? `<div class="photo-blocked-badge" title="${escapeHtml(t('blocked_digital_badge_title'))}">📦</div>` : ''}
       <img src="${imageUrl}" class="photo-thumbnail" loading="lazy" alt="${displayName}" onload="detectPhotoOrientation(this)" ${imgErrorHandler ? `onerror="${imgErrorHandler}"` : ''}>
     `;
@@ -1632,19 +1639,11 @@ function detectCartPhotoOrientation(img) {
 }
 
 // Gestion du Panier
-function toggleCartItem(filename, btn) {
+function toggleCartItem(photoId, btn) {
   // Empêcher toute propagation d'événement
   if (typeof event !== 'undefined') {
     event.stopPropagation();
     event.preventDefault();
-  }
-  
-  const index = cart.findIndex(item => item.type === 'photo' && item.filename === filename);
-  
-  // Si déjà dans le panier, ne rien faire (le bouton + ne devrait pas être visible)
-  if (index !== -1) {
-    console.log('Photo déjà dans le panier:', filename);
-    return;
   }
   
   // Trouver la carte spécifique qui contient ce bouton
@@ -1655,24 +1654,44 @@ function toggleCartItem(filename, btn) {
   
   const card = btn.closest('.photo-card');
   if (!card) {
-    console.warn('Photo card non trouvée pour:', filename.substring(0, 50));
+    console.warn('Photo card non trouvée pour photoId:', photoId?.substring(0, 50));
     return;
   }
   
-  // Vérifier que cette carte correspond bien au filename EXACT
-  const cardFilename = card.dataset.filename;
-  if (cardFilename !== filename) {
-    console.warn('Filename mismatch:', cardFilename?.substring(0, 50), 'vs', filename.substring(0, 50));
+  // Vérifier que cette carte correspond bien au photoId EXACT
+  const cardPhotoId = card.dataset.photoId;
+  if (cardPhotoId !== photoId) {
+    console.warn('PhotoId mismatch:', cardPhotoId?.substring(0, 50), 'vs', photoId?.substring(0, 50));
     return;
   }
   
-  console.log('✅ Ajout photo au panier:', filename.substring(0, 50), 'Card ID:', card.id);
+  // Récupérer le filename depuis la carte
+  const filename = card.dataset.filename;
+  if (!filename) {
+    console.warn('Filename manquant sur la carte');
+    return;
+  }
+  
+  // Vérifier si cette photo est déjà dans le panier (par photoId unique)
+  const index = cart.findIndex(item => item.type === 'photo' && item.photo_id === photoId);
+  
+  // Si déjà dans le panier, ne rien faire (le bouton + ne devrait pas être visible)
+  if (index !== -1) {
+    console.log('Photo déjà dans le panier (photoId):', photoId.substring(0, 50));
+    return;
+  }
+  
+  console.log('✅ Ajout photo au panier:', filename.substring(0, 50), 'Photo ID:', photoId.substring(0, 50), 'Card ID:', card.id);
   
   const badge = card.querySelector('.photo-in-cart-badge');
   const addBtn = card.querySelector('.photo-add-btn');
   
   // Ajouter - récupérer rider_name et horse_name depuis currentSearchResults
   const photoData = currentSearchResults.find(p => {
+    const pFileId = p.file_id || p.id || null;
+    const pEventId = p.event_id || p.contest || 'UNKNOWN';
+    const pPhotoId = pFileId ? `${pEventId}-${pFileId}` : null;
+    if (pPhotoId && pPhotoId === photoId) return true;
     if (p.filename === filename) return true;
     const pBasename = p.filename.split('/').pop();
     const filenameBasename = filename.split('/').pop();
@@ -1685,6 +1704,7 @@ function toggleCartItem(filename, btn) {
   
   cart.push({
     type: 'photo',
+    photo_id: photoId, // ID unique de la photo
     filename: filename,
     formats: {}, // { product_id: quantity }
     rider_name: riderName,
@@ -1693,21 +1713,13 @@ function toggleCartItem(filename, btn) {
     file_id: fileId // Stocker le file_id dans le panier
   });
   
-  // Mettre à jour UNIQUEMENT cette carte spécifique
+  // Mettre à jour UNIQUEMENT cette carte spécifique (par photoId unique)
   card.classList.add('in-cart');
   if (badge) badge.style.display = 'flex';
   if (addBtn) addBtn.style.display = 'none';
   
-  // Mettre à jour aussi les autres cartes avec le même filename EXACT (au cas où il y en aurait plusieurs)
-  document.querySelectorAll(`.photo-card[data-filename="${CSS.escape(filename)}"]`).forEach(c => {
-    if (c !== card && c.dataset.filename === filename) {
-      c.classList.add('in-cart');
-      const b = c.querySelector('.photo-in-cart-badge');
-      const a = c.querySelector('.photo-add-btn');
-      if (b) b.style.display = 'flex';
-      if (a) a.style.display = 'none';
-    }
-  });
+  // NE PAS mettre à jour d'autres cartes - chaque photo est unique par son photoId
+  // (même si elles ont le même filename, elles ont des photoId différents)
   
   updateCartUI();
   
@@ -1720,17 +1732,19 @@ function toggleCartItem(filename, btn) {
 }
 
 // Pour retirer via le badge ou lightbox
-function removePhotoFromCart(filename) {
-  cart = cart.filter(item => !(item.type === 'photo' && item.filename === filename));
+function removePhotoFromCart(photoId) {
+  // Retirer de la carte par photo_id (unique)
+  cart = cart.filter(item => !(item.type === 'photo' && item.photo_id === photoId));
   
-  // Mettre à jour l'UI de TOUTES les cartes avec ce filename
-  document.querySelectorAll(`.photo-card[data-filename="${CSS.escape(filename)}"]`).forEach(card => {
+  // Mettre à jour UNIQUEMENT la carte avec ce photoId
+  const card = document.querySelector(`.photo-card[data-photo-id="${CSS.escape(photoId)}"]`);
+  if (card) {
     card.classList.remove('in-cart');
     const addBtn = card.querySelector('.photo-add-btn');
     const badge = card.querySelector('.photo-in-cart-badge');
     if (addBtn) addBtn.style.display = 'flex';
     if (badge) badge.style.display = 'none';
-  });
+  }
   
   updateCartUI();
 }
@@ -1949,7 +1963,12 @@ function removePhotosBlockedByPack(packProductId, packDisplayName) {
 }
 
 function isInCart(filename) {
+  // Fonction legacy - utiliser isInCartByPhotoId de préférence
   return cart.some(item => item.type === 'photo' && item.filename === filename);
+}
+
+function isInCartByPhotoId(photoId) {
+  return cart.some(item => item.type === 'photo' && item.photo_id === photoId);
 }
 
 function updateCartUI() {
@@ -2384,7 +2403,7 @@ function renderCartItems() {
             <button onclick="buyPackForPhoto('${riderName.replace(/'/g, "\\'")}', '${horseName.replace(/'/g, "\\'")}')" style="margin-top: 8px; padding: 8px 16px; background: #2d3561; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600; width: 100%;">
                 📦 ${t('buy_pack_btn')}
             </button>
-            <button onclick="removePhotoFromCart('${item.filename}')" style="margin-top: 8px; padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600; width: 100%;">
+            <button onclick="removePhotoFromCart('${item.photo_id || item.filename}')" style="margin-top: 8px; padding: 8px 16px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600; width: 100%;">
                 ${t('cart_remove_btn')}
             </button>
         </div>
