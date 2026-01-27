@@ -22,7 +22,7 @@
                 </div>
                 
                 <!-- Mobile: Menu burger à gauche -->
-                <button id="mobile-menu-btn" class="mobile-only" onclick="toggleMobileMenu()" style="display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 8px; flex-shrink: 0;">
+                <button id="mobile-menu-btn" class="mobile-only" style="display: none; background: none; border: none; color: white; font-size: 24px; cursor: pointer; padding: 8px; flex-shrink: 0;">
                     ☰
                 </button>
                 
@@ -68,16 +68,16 @@
         <!-- Menu mobile (burger) -->
         <div id="mobile-menu" class="mobile-menu" style="display: none;">
             <div class="mobile-menu-content">
-                <button class="mobile-menu-close" onclick="toggleMobileMenu()" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 5px;">×</button>
+                <button class="mobile-menu-close" style="position: absolute; top: 15px; right: 15px; background: none; border: none; color: white; font-size: 28px; cursor: pointer; padding: 5px;">×</button>
                 <div class="mobile-menu-items">
-                    <button class="mobile-menu-item" onclick="openPromotionsModal(); toggleMobileMenu();" data-i18n="view_promotions">Voir nos offres</button>
-                    <button class="mobile-menu-item" onclick="handleBuyPack(); toggleMobileMenu();">📦 Pack photos</button>
+                    <button class="mobile-menu-item" data-action="promotions" data-i18n="view_promotions">Voir nos offres</button>
+                    <button class="mobile-menu-item" data-action="pack">📦 Pack photos</button>
                     <div class="mobile-menu-item" style="padding: 15px 20px;">
                         <label style="color: white; font-size: 0.9em; display: block; margin-bottom: 8px;" data-i18n="cart_code_placeholder">Code panier</label>
-                        <input type="text" id="cart-code-search-mobile" placeholder="Code panier" autocomplete="off" maxlength="4" onkeypress="if(event.key === 'Enter') { loadSavedCart(); toggleMobileMenu(); }" style="width: 100%; padding: 10px; border: none; border-radius: 6px; background: white; color: #2d3561; outline: none;">
+                        <input type="text" id="cart-code-search-mobile" placeholder="Code panier" autocomplete="off" maxlength="4" style="width: 100%; padding: 10px; border: none; border-radius: 6px; background: white; color: #2d3561; outline: none;">
                     </div>
-                    <button class="mobile-menu-item" onclick="toggleCart(); toggleMobileMenu();" data-i18n="cart_title">Panier</button>
-                    <button class="mobile-menu-item" onclick="document.querySelector('.right-column').scrollIntoView({behavior: 'smooth'}); toggleMobileMenu();" data-i18n="view_tutorial">Tutoriel borne</button>
+                    <button class="mobile-menu-item" data-action="cart" data-i18n="cart_title">Panier</button>
+                    <button class="mobile-menu-item" data-action="tutorial" data-i18n="view_tutorial">Tutoriel borne</button>
                     <div class="mobile-menu-item" style="padding: 15px 20px;">
                         <label style="color: white; font-size: 0.9em; display: block; margin-bottom: 8px;">Langue</label>
                         <select id="mobile-lang-select-menu" style="width: 100%; padding: 10px; border: none; border-radius: 6px; background: white; color: #2d3561; cursor: pointer;">
