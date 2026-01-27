@@ -519,6 +519,14 @@ function handleClientOnlineMobileReady() {
   // Créer la bottom bar panier sur mobile
   setupMobileCartBar();
   
+  // S'assurer que updateMobileCartBar est appelé après chaque updateCartUI
+  // Vérifier périodiquement que le bandeau est à jour
+  setInterval(() => {
+    if (window.innerWidth <= 768) {
+      updateMobileCartBar();
+    }
+  }, 1000);
+  
   // Gérer le header qui se cache au scroll sur mobile
   setupMobileHeaderScroll();
   

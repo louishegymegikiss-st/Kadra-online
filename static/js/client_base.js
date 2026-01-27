@@ -1946,6 +1946,11 @@ function updateCartUI() {
     refreshPackModalButtons();
     updatePackModalPrices();
   }
+  
+  // Mettre à jour le bandeau panier mobile si la fonction existe
+  if (typeof updateMobileCartBar === 'function') {
+    updateMobileCartBar();
+  }
 }
 
 function toggleCart() {
