@@ -19,12 +19,27 @@ const POLL_INTERVAL_INACTIVE = 30000; // 30 secondes quand l'utilisateur est ina
 // Toggle menu burger mobile
 function toggleMobileMenu() {
   const menu = document.getElementById('mobile-menu');
-  if (!menu) return;
+  if (!menu) {
+    console.error('Menu mobile non trouvé');
+    return;
+  }
   
-  const isOpen = menu.style.display === 'flex';
-  menu.style.display = isOpen ? 'none' : 'flex';
-  document.body.style.overflow = isOpen ? '' : 'hidden';
+  // Vérifier si le menu est ouvert en regardant la classe active
+  const isOpen = menu.classList.contains('active');
+  
+  if (isOpen) {
+    menu.classList.remove('active');
+    document.body.style.overflow = '';
+  } else {
+    menu.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  console.log('Menu mobile toggled:', isOpen ? 'fermé' : 'ouvert');
 }
+
+// S'assurer que la fonction est accessible globalement
+window.toggleMobileMenu = toggleMobileMenu;
 
 // Créer la bottom bar sticky pour le panier mobile
 function setupMobileCartBar() {
