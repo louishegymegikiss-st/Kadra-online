@@ -18,6 +18,37 @@
   }
 }
 
+/* Desktop: Layout header avec tous les éléments sur une ligne */
+@media (min-width: 769px) {
+  .header .header-content {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    gap: 20px !important;
+  }
+  
+  .header .logo-container {
+    flex-shrink: 0 !important;
+  }
+  
+  .header .header-center {
+    flex: 1 !important;
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    padding: 0 15px !important;
+  }
+  
+  .header .header-right {
+    display: flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    flex-shrink: 0 !important;
+  }
+}
+
 /* Désactiver les comportements web (zoom, selection, etc.) */
 @media (max-width: 768px) {
   * {
@@ -127,6 +158,10 @@
     flex-shrink: 0 !important;
     width: 40px !important;
     height: 40px !important;
+    z-index: 1001 !important;
+    position: relative !important;
+    pointer-events: auto !important;
+    cursor: pointer !important;
   }
   
   /* Centre: Dropdown événement + Recherche */
