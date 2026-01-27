@@ -1567,6 +1567,10 @@ function renderPhotos(photos) {
     
     // Échapper le filename pour éviter les problèmes avec les caractères spéciaux
     const escapedFilename = photo.filename.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    // Utiliser un identifiant unique pour cette carte (index dans le tableau)
+    const cardIndex = sortedPhotos.indexOf(photo);
+    const cardId = `photo-card-${cardIndex}-${Math.random().toString(36).substr(2, 9)}`;
+    card.id = cardId;
     
     card.innerHTML = `
       <div class="photo-in-cart-badge" style="display: ${inCart ? 'flex' : 'none'}" onclick="event.stopPropagation(); event.preventDefault(); removePhotoFromCart('${escapedFilename}')">✓</div>
