@@ -1,6 +1,11 @@
 /* Client Online CSS - Interface online (desktop + mobile unifié) */
 /* Ce fichier contient tous les styles pour desktop et mobile */
 
+/* Cacher le mobile-search-shell sur desktop par défaut */
+.mobile-search-shell {
+  display: none !important;
+}
+
 /* Désactiver les comportements web (zoom, selection, etc.) */
 @media (max-width: 768px) {
   * {
