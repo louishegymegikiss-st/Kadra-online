@@ -157,7 +157,7 @@ function detectAndLoadMobile() {
 
   // Charger le fichier mobile
   const script = document.createElement('script');
-  script.src = '/static/js/client_online_mobile.js?v=2';
+  script.src = '/static/js/client_online_mobile.js?v=3';
   script.onload = () => {
     window.clientOnlineMobileScriptLoaded = true;
     window.clientOnlineMobileScriptLoading = false;
@@ -175,7 +175,7 @@ function detectAndLoadMobile() {
   if (!mobileCssLink) {
     const link = document.createElement('link');
     link.rel = 'stylesheet';
-    link.href = '/static/css/client_online_mobile.css?v=3';
+    link.href = '/static/css/client_online_mobile.css?v=4';
     document.head.appendChild(link);
   }
   

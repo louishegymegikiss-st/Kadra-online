@@ -57,7 +57,19 @@ function relocatePhotoSearchForMobile() {
 }
 
 function initMobileSearchRelocation() {
+  // Appeler immédiatement
   relocatePhotoSearchForMobile();
+  
+  // Attendre que le DOM soit complètement chargé
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimeout(relocatePhotoSearchForMobile, 100);
+    });
+  } else {
+    setTimeout(relocatePhotoSearchForMobile, 100);
+  }
+  
+  // Écouter les changements de taille
   window.addEventListener('resize', () => {
     clearTimeout(mobileSearchResizeTimer);
     mobileSearchResizeTimer = setTimeout(relocatePhotoSearchForMobile, 150);
