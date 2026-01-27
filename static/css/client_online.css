@@ -111,17 +111,13 @@
     justify-content: space-between !important;
   }
   
-  /* Logo à gauche */
+  /* Logo à gauche - MASQUÉ sur mobile pour plus de place */
   .header .logo-container {
-    flex-shrink: 0 !important;
-    width: auto !important;
-    order: 1;
-    margin-right: auto !important;
+    display: none !important;
   }
   
   .header .logo {
-    height: 40px !important;
-    display: block;
+    display: none !important;
   }
   
   /* Cacher la recherche dans le header sur mobile (sera déplacée dans mobile-shell) */
