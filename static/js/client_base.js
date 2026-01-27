@@ -2958,31 +2958,41 @@ function toggleCurrentLightboxPhoto() {
   const photo = lightboxPhotos[currentLightboxIndex];
   if (photo) {
       const filename = photo.filename;
+      // Construire le photoId unique pour cette photo
+      const fileId = photo.file_id || photo.id || null;
+      const eventId = photo.event_id || photo.contest || 'UNKNOWN';
+      const photoId = fileId ? `${eventId}-${fileId}` : filename;
       
-      if (isInCart(filename)) {
+      if (isInCartByPhotoId(photoId)) {
           // Retirer du panier
-          removePhotoFromCart(filename);
+          removePhotoFromCart(photoId);
       } else {
           // Ajouter au panier - récupérer rider_name et horse_name
           const photoData = lightboxPhotos[currentLightboxIndex];
           const riderName = photoData ? (photoData.rider_name || photoData.cavalier || '') : '';
           const horseName = photoData ? (photoData.horse_name || photoData.cheval || '') : '';
+          const eventIdData = photoData ? (photoData.event_id || photoData.contest || null) : null;
+          const fileIdData = photoData ? (photoData.file_id || photoData.id || null) : null;
           
           cart.push({
               type: 'photo',
+              photo_id: photoId, // ID unique de la photo
               filename: filename,
               formats: {},
               rider_name: riderName,
-              horse_name: horseName
+              horse_name: horseName,
+              event_id: eventIdData,
+              file_id: fileIdData
           });
-          // Mettre à jour l'UI de TOUTES les cartes avec ce filename
-          document.querySelectorAll(`.photo-card[data-filename="${CSS.escape(filename)}"]`).forEach(card => {
+          // Mettre à jour l'UI de la carte correspondante (par photoId unique)
+          const card = document.querySelector(`.photo-card[data-photo-id="${CSS.escape(photoId)}"]`);
+          if (card) {
             card.classList.add('in-cart');
             const addBtn = card.querySelector('.photo-add-btn');
             const badge = card.querySelector('.photo-in-cart-badge');
             if (addBtn) addBtn.style.display = 'none';
             if (badge) badge.style.display = 'flex';
-          });
+          }
           updateCartUI();
       }
       updateLightboxContent();
