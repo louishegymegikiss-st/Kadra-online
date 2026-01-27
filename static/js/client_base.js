@@ -1627,30 +1627,35 @@ function detectCartPhotoOrientation(img) {
 
 // Gestion du Panier
 function toggleCartItem(filename, btn) {
-  // Empêcher la propagation pour éviter que le clic sur la carte se déclenche aussi
-  if (btn) {
-    btn.stopPropagation = true;
+  // Empêcher toute propagation d'événement
+  if (typeof event !== 'undefined') {
+    event.stopPropagation();
+    event.preventDefault();
   }
   
   const index = cart.findIndex(item => item.type === 'photo' && item.filename === filename);
   
   // Si déjà dans le panier, ne rien faire (le bouton + ne devrait pas être visible)
   if (index !== -1) {
+    console.log('Photo déjà dans le panier:', filename);
     return;
   }
   
-  // Trouver la carte spécifique qui contient ce bouton (plus fiable)
-  const card = btn ? btn.closest('.photo-card') : document.querySelector(`.photo-card[data-filename="${CSS.escape(filename)}"]`);
+  // Trouver la carte spécifique qui contient ce bouton
+  const card = btn ? btn.closest('.photo-card') : null;
   if (!card) {
     console.warn('Photo card non trouvée pour:', filename);
     return;
   }
   
-  // Vérifier que cette carte correspond bien au filename
-  if (card.dataset.filename !== filename) {
-    console.warn('Filename mismatch:', card.dataset.filename, 'vs', filename);
+  // Vérifier que cette carte correspond bien au filename EXACT
+  const cardFilename = card.dataset.filename;
+  if (cardFilename !== filename) {
+    console.warn('Filename mismatch:', cardFilename, 'vs', filename);
     return;
   }
+  
+  console.log('✅ Ajout photo au panier:', filename.substring(0, 50), 'Card:', card);
   
   const badge = card.querySelector('.photo-in-cart-badge');
   const addBtn = card.querySelector('.photo-add-btn');
@@ -1682,9 +1687,9 @@ function toggleCartItem(filename, btn) {
   if (badge) badge.style.display = 'flex';
   if (addBtn) addBtn.style.display = 'none';
   
-  // Mettre à jour aussi les autres cartes avec le même filename (au cas où il y en aurait plusieurs)
+  // Mettre à jour aussi les autres cartes avec le même filename EXACT (au cas où il y en aurait plusieurs)
   document.querySelectorAll(`.photo-card[data-filename="${CSS.escape(filename)}"]`).forEach(c => {
-    if (c !== card) {
+    if (c !== card && c.dataset.filename === filename) {
       c.classList.add('in-cart');
       const b = c.querySelector('.photo-in-cart-badge');
       const a = c.querySelector('.photo-add-btn');
