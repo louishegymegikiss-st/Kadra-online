@@ -740,15 +740,19 @@
     display: flex !important;
     flex-direction: column !important;
     gap: 12px !important; /* Réduire gap */
-    padding: 0 !important; /* Pas de padding sur cart-two-columns pour aligner avec récapitulatif */
+    padding: 0 !important; /* Pas de padding sur cart-two-columns */
+    width: 100% !important; /* Prendre toute la largeur de cart-content */
+    min-width: 0 !important; /* Permettre le rétrécissement */
+    max-width: 100% !important;
     box-sizing: border-box !important;
   }
   
+  /* cart-left-column doit suivre la largeur de .cart (qui suit .cart-modal-dialog) */
   html body .cart-left-column,
   body .cart-left-column {
-    width: 100% !important;
+    width: 100% !important; /* Prendre toute la largeur disponible de cart-two-columns */
     min-width: 0 !important; /* Permettre le rétrécissement */
-    max-width: 100% !important; /* Même largeur que récapitulatif */
+    max-width: 100% !important; /* Pas de limite fixe, suivre le parent */
     max-height: none !important;
     overflow: visible !important;
     box-sizing: border-box !important;
@@ -785,32 +789,32 @@
   }
   
   /* Layout des lignes du panier sur mobile - colonnes empilées - FORCER avec spécificité maximale */
-  /* Padding aligné avec le padding interne du récapitulatif (20px) */
+  /* Padding symétrique pour centrer les containers */
   html body .cart-photo-row,
   body .cart-photo-row {
     display: flex !important;
     flex-direction: column !important;
     gap: 8px !important; /* Réduire gap */
-    width: 100% !important;
+    width: 100% !important; /* Prendre toute la largeur de cart-left-column */
     min-width: 0 !important; /* Permettre le rétrécissement */
-    max-width: 100% !important;
+    max-width: 100% !important; /* Suivre la largeur du parent */
     padding-top: 6px !important; /* Réduire padding vertical */
     padding-bottom: 6px !important;
-    padding-left: 20px !important; /* Padding horizontal aligné avec récapitulatif (20px) */
-    padding-right: 20px !important;
+    padding-left: 20px !important; /* Padding horizontal symétrique */
+    padding-right: 20px !important; /* Padding horizontal symétrique */
     box-sizing: border-box !important;
   }
   
-  /* Container photo : s'adapter à la largeur du parent (cart-left-column) */
+  /* Container photo : s'adapter à la largeur du parent (cart-photo-row) avec padding */
   html body .cart-photo-container,
   body .cart-photo-container {
-    width: 100% !important; /* Prendre toute la largeur disponible du parent */
+    width: 100% !important; /* Prendre toute la largeur disponible (moins le padding de cart-photo-row) */
     min-width: 0 !important; /* Pas de min-width pour permettre le rétrécissement */
-    max-width: 100% !important; /* Suivre la largeur du parent, pas de limite absolue */
+    max-width: 100% !important; /* Suivre la largeur du parent */
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
-    margin: 0 auto !important; /* Centrer */
+    margin: 0 !important; /* Pas de margin, le padding est géré par cart-photo-row */
     padding: 0 !important;
     box-sizing: border-box !important;
   }
@@ -858,14 +862,14 @@
   /* Afficher tout le contenu des formats - largeur adaptée - suivre la largeur du parent */
   html body .cart-formats-container,
   body .cart-formats-container {
-    width: 100% !important; /* Prendre toute la largeur du parent */
+    width: 100% !important; /* Prendre toute la largeur disponible (moins le padding de cart-photo-row) */
     min-width: 0 !important; /* Pas de min-width pour permettre le rétrécissement */
-    max-width: 100% !important; /* Suivre la largeur du parent, pas de limite absolue */
+    max-width: 100% !important; /* Suivre la largeur du parent */
     gap: 6px !important; /* Réduire gap */
     overflow-y: visible !important; /* Pas de scroll interne */
     max-height: none !important; /* Pas de limite de hauteur */
     height: auto !important; /* Hauteur automatique pour tout afficher */
-    margin: 0 auto !important; /* Centrer */
+    margin: 0 !important; /* Pas de margin, le padding est géré par cart-photo-row */
     padding: 0 !important;
     box-sizing: border-box !important;
   }
