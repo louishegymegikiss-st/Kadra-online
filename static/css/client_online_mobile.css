@@ -740,7 +740,7 @@
     display: flex !important;
     flex-direction: column !important;
     gap: 12px !important; /* Réduire gap */
-    padding: 8px !important; /* Padding uniforme */
+    padding: 0 !important; /* Pas de padding sur cart-two-columns pour aligner avec récapitulatif */
     box-sizing: border-box !important;
   }
   
@@ -763,15 +763,25 @@
     box-sizing: border-box !important;
   }
   
-  /* S'assurer que le récapitulatif a la même largeur */
+  /* S'assurer que le récapitulatif a la même largeur et padding */
   html body .cart-summary,
   body .cart-summary {
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
+    padding: 20px !important; /* Garder le padding du récapitulatif */
+  }
+  
+  /* S'assurer que cart-items a le même padding que le récapitulatif */
+  html body #cart-items,
+  body #cart-items {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
   }
   
   /* Layout des lignes du panier sur mobile - colonnes empilées - FORCER avec spécificité maximale */
+  /* Padding aligné avec le padding interne du récapitulatif (20px) */
   html body .cart-photo-row,
   body .cart-photo-row {
     display: flex !important;
@@ -780,8 +790,8 @@
     width: 100% !important;
     padding-top: 6px !important; /* Réduire padding vertical */
     padding-bottom: 6px !important;
-    padding-left: 8px !important; /* Padding horizontal aligné avec récapitulatif */
-    padding-right: 8px !important;
+    padding-left: 20px !important; /* Padding horizontal aligné avec récapitulatif (20px) */
+    padding-right: 20px !important;
     box-sizing: border-box !important;
   }
   
@@ -810,38 +820,38 @@
     opacity: 1 !important; /* Forcer l'opacité */
   }
   
-  /* Uniformiser la largeur des containers photo et formats pour mobile - même largeur que récapitulatif - FORCER */
-  /* Le récapitulatif prend 100% moins padding (8px de chaque côté = 16px), donc on aligne sur ça */
+  /* Uniformiser la largeur des containers photo et formats pour mobile - même largeur que CONTENU du récapitulatif - FORCER */
+  /* Calcul : Modal (100vw - 20px) - padding colonnes (16px) - padding récapitulatif (40px) = 100vw - 76px */
   html body .cart-photo-row[data-photo-orientation="vertical"],
   body .cart-photo-row[data-photo-orientation="vertical"] {
-    --cart-photo-w: calc(100vw - 36px) !important; /* Même largeur que récapitulatif : 100vw - 20px (modal) - 16px (padding colonnes) */
+    --cart-photo-w: calc(100vw - 76px) !important; /* Même largeur que contenu visible du récapitulatif */
     --cart-photo-h: 250px !important; /* Réduit pour mobile */
     --cart-formats-h: auto !important; /* Hauteur automatique */
-    --cart-formats-max-w: calc(100vw - 36px) !important; /* Même largeur que photo */
+    --cart-formats-max-w: calc(100vw - 76px) !important; /* Même largeur que photo */
   }
   
   html body .cart-photo-row[data-photo-orientation="horizontal"],
   body .cart-photo-row[data-photo-orientation="horizontal"] {
-    --cart-photo-w: calc(100vw - 36px) !important; /* Même largeur que récapitulatif */
+    --cart-photo-w: calc(100vw - 76px) !important; /* Même largeur que contenu visible du récapitulatif */
     --cart-photo-h: 120px !important; /* Réduit pour mobile */
     --cart-formats-h: auto !important; /* Hauteur automatique */
-    --cart-formats-max-w: calc(100vw - 36px) !important; /* Même largeur que photo */
+    --cart-formats-max-w: calc(100vw - 76px) !important; /* Même largeur que photo */
   }
   
   html body .cart-photo-row[data-photo-orientation="square"],
   body .cart-photo-row[data-photo-orientation="square"] {
-    --cart-photo-w: calc(100vw - 36px) !important; /* Même largeur que récapitulatif */
-    --cart-photo-h: calc(100vw - 36px) !important; /* Carré adaptatif */
+    --cart-photo-w: calc(100vw - 76px) !important; /* Même largeur que contenu visible du récapitulatif */
+    --cart-photo-h: calc(100vw - 76px) !important; /* Carré adaptatif */
     --cart-formats-h: auto !important; /* Hauteur automatique */
-    --cart-formats-max-w: calc(100vw - 36px) !important; /* Même largeur que photo */
+    --cart-formats-max-w: calc(100vw - 76px) !important; /* Même largeur que photo */
   }
   
   /* Si l'orientation n'est pas encore détectée, utiliser des valeurs par défaut */
   html body .cart-photo-row:not([data-photo-orientation]),
   body .cart-photo-row:not([data-photo-orientation]) {
-    --cart-photo-w: calc(100vw - 36px) !important;
+    --cart-photo-w: calc(100vw - 76px) !important;
     --cart-photo-h: 180px !important; /* Réduit */
-    --cart-formats-max-w: calc(100vw - 36px) !important;
+    --cart-formats-max-w: calc(100vw - 76px) !important;
   }
   
   /* Afficher tout le contenu des formats - largeur adaptée - même largeur que récapitulatif */
