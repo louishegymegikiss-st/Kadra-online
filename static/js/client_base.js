@@ -1337,16 +1337,16 @@ async function searchPhotos(query) {
         // Construire le texte de recherche avec tous les champs possibles
         const searchText = `${rider} ${horse} ${number}`.toLowerCase();
         
-        // Debug : afficher les données de la photo pour diagnostic
-        if (queryWords.length > 0 && queryWords[0].length > 2) {
-          console.debug('Photo data:', {
-            rider_name: photo.rider_name,
-            horse_name: photo.horse_name,
-            rider_number: photo.rider_number,
-            searchText: searchText,
-            query: queryWords.join(' ')
-          });
-        }
+        // Debug désactivé pour éviter les logs répétitifs
+        // if (queryWords.length > 0 && queryWords[0].length > 2) {
+        //   console.debug('Photo data:', {
+        //     rider_name: photo.rider_name,
+        //     horse_name: photo.horse_name,
+        //     rider_number: photo.rider_number,
+        //     searchText: searchText,
+        //     query: queryWords.join(' ')
+        //   });
+        // }
         
         // Tous les mots de la requête doivent être présents
         const matches = queryWords.every(word => searchText.includes(word));

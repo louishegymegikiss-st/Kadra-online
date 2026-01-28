@@ -282,7 +282,8 @@
     color: white;
     font-weight: 600;
     gap: 12px;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition: opacity 0.2s ease; /* Enlever transition transform pour éviter bounce */
+    transform: none !important; /* Forcer pas de transform */
   }
   
   #mobile-cart-bar.active {

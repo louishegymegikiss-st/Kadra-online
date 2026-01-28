@@ -84,13 +84,13 @@ function updateMobileCartBar() {
     const text = count === 1 ? '1 photo sélectionnée' : `${count} photos sélectionnées`;
     if (cartText) cartText.textContent = text;
     
-    // Animation pop
-    cartBar.style.transform = 'scale(1.02)';
-    setTimeout(() => cartBar.style.transform = 'scale(1)', 200);
+    // Pas d'animation bounce - enlever l'effet permanent
+    cartBar.style.transform = 'none';
   } else {
     cartBar.classList.remove('active');
     document.body.classList.remove('has-cart-bar');
     if (cartText) cartText.textContent = '0 photo sélectionnée';
+    cartBar.style.transform = 'none';
   }
 }
 

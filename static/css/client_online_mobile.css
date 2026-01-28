@@ -192,7 +192,8 @@
     color: white;
     font-weight: 600;
     gap: 12px;
-    transition: transform 0.2s ease, opacity 0.2s ease;
+    transition: opacity 0.2s ease; /* Enlever transition transform pour éviter bounce */
+    transform: none !important; /* Forcer pas de transform */
   }
   
   #mobile-cart-bar.active {
@@ -774,13 +775,6 @@
   }
   
   /* Uniformiser la largeur des containers photo et formats pour mobile - plus large et lisible */
-  .cart-photo-row {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 12px !important;
-    width: 100% !important;
-  }
-  
   .cart-photo-row[data-photo-orientation="vertical"] {
     --cart-photo-w: min(100%, 300px) !important; /* Adaptatif mais max 300px */
     --cart-photo-h: 450px !important; /* Ratio 2:3 */
