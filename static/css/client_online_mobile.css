@@ -799,6 +799,7 @@
   html body .cart-photo-container,
   body .cart-photo-container {
     width: 100% !important; /* Prendre toute la largeur disponible */
+    min-width: 0 !important; /* Pas de min-width pour permettre le rétrécissement */
     max-width: var(--cart-photo-w) !important; /* Limiter à la largeur maximale (même que récapitulatif) */
     display: flex !important;
     flex-direction: column !important;
@@ -809,8 +810,10 @@
   }
   
   /* Image : taille naturelle sans bandes - FORCER l'affichage */
-  .cart-photo-large {
+  html body .cart-photo-large,
+  body .cart-photo-large {
     width: 100% !important; /* Prendre toute la largeur du container */
+    min-width: 0 !important; /* Pas de min-width pour permettre le rétrécissement */
     max-width: var(--cart-photo-w) !important; /* Limiter la largeur max */
     max-height: var(--cart-photo-h) !important; /* Limiter la hauteur max */
     height: auto !important;
@@ -858,6 +861,7 @@
   html body .cart-formats-container,
   body .cart-formats-container {
     width: 100% !important; /* Prendre toute la largeur */
+    min-width: 0 !important; /* Pas de min-width pour permettre le rétrécissement */
     max-width: var(--cart-formats-max-w) !important;
     gap: 6px !important; /* Réduire gap */
     overflow-y: visible !important; /* Pas de scroll interne */
