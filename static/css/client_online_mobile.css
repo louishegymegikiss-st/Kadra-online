@@ -742,13 +742,16 @@
     order: -1 !important; /* Mettre le récapitulatif en premier */
   }
   
-  /* Diminuer uniquement la hauteur de chaque ligne produit (pas les colonnes) */
+  /* Layout des lignes du panier sur mobile - colonnes empilées */
   .cart-photo-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    width: 100% !important;
     padding-top: 6px !important; /* Réduire padding vertical */
     padding-bottom: 6px !important;
     padding-left: 12px !important; /* Garder padding horizontal */
     padding-right: 12px !important;
-    gap: 6px !important; /* Gap entre photo et formats */
   }
   
   /* Container photo : s'adapter à la taille réelle de la photo */
