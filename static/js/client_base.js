@@ -2849,6 +2849,7 @@ let lightboxPhotos = [];
 let currentLightboxIndex = 0;
 
 function openLightbox(startFilename, photosList = null, fromCart = false) {
+  ensureModalInBody('lightbox');
   const lightbox = document.getElementById('lightbox');
   const img = document.getElementById('lightbox-img');
   const caption = document.getElementById('lightbox-caption');
