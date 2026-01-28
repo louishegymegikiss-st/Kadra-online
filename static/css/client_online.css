@@ -55,11 +55,13 @@
     -webkit-user-select: none;
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
+    user-select: none;
   }
   
   /* Autoriser la sélection uniquement pour les inputs */
   input, textarea {
     -webkit-user-select: text !important;
+    user-select: text !important;
   }
   
   /* Autoriser les clics sur les suggestions */
@@ -70,6 +72,7 @@
     pointer-events: auto !important;
     touch-action: manipulation !important;
     cursor: pointer !important;
+    user-select: none !important;
   }
 }
 
@@ -688,7 +691,7 @@
     top: 0 !important;
     width: 100% !important;
     max-width: 100% !important;
-    order: -1 !important;
+    order: 1 !important; /* Mettre le récapitulatif en bas */
     box-sizing: border-box !important;
   }
   
@@ -752,24 +755,24 @@
     box-sizing: border-box !important;
   }
   
-  /* Ajustements hauteur selon orientation */
+  /* Ajustements hauteur selon orientation - photos plus grosses pour remplir le container */
   .cart-photo-row[data-photo-orientation="vertical"] {
-    --cart-photo-h: 250px !important;
+    --cart-photo-h: 400px !important; /* Augmenté pour remplir le container */
     --cart-formats-h: auto !important;
   }
   
   .cart-photo-row[data-photo-orientation="horizontal"] {
-    --cart-photo-h: 120px !important;
+    --cart-photo-h: 250px !important; /* Augmenté pour remplir le container */
     --cart-formats-h: auto !important;
   }
   
   .cart-photo-row[data-photo-orientation="square"] {
-    --cart-photo-h: 100% !important;
+    --cart-photo-h: 100% !important; /* Prendre toute la largeur disponible */
     --cart-formats-h: auto !important;
   }
   
   .cart-photo-row:not([data-photo-orientation]) {
-    --cart-photo-h: 180px !important;
+    --cart-photo-h: 300px !important; /* Augmenté pour remplir le container */
   }
   
   /* Container formats : suivre la largeur du parent */
@@ -982,6 +985,8 @@
   
   /* NOTE: Les règles du panier mobile sont dans client_online_mobile.css */
   /* Ici on garde seulement les règles communes ou desktop */
+  body.modal-open .cart-modal-dialog,
+  body.modal-open #pack-modal .cart-modal-dialog {
     max-width: 480px !important; /* Augmenté de 20% */
     width: 480px !important;
   }
