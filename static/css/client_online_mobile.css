@@ -683,9 +683,10 @@
     z-index: 0 !important;
   }
   
-  /* Dialog centré dans le grid - optimisé pour mobile */
+  /* Dialog centré dans le grid - optimisé pour mobile - FORCER avec spécificité maximale */
+  html body.modal-open .cart-modal-dialog,
   body.modal-open .cart-modal-dialog {
-    width: calc(100% - 20px) !important; /* Prendre presque toute la largeur avec marges */
+    width: calc(100vw - 20px) !important; /* Prendre presque toute la largeur avec marges */
     max-width: calc(100vw - 20px) !important;
     max-height: calc(100vh - 20px) !important;
     margin: 10px !important;
