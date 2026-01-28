@@ -2419,7 +2419,7 @@ function renderCartItems() {
       const applyAllBtnHtml = (index === firstPhotoIndex) ? `
         <div style="margin-bottom: 12px;">
           <button
-            onclick="applyFirstPhotoChoiceToAll('${item.filename}')"
+            onclick="applyFirstPhotoChoiceToAll('${filename}')"
             style="width: 100%; padding: 10px 12px; background: #f1f5f9; color: #1a1a2e; border: 1px solid #cbd5e1; border-radius: 8px; cursor: pointer; font-weight: 700;"
           >
             ${t('apply_choice_all_photos')}
@@ -2427,17 +2427,19 @@ function renderCartItems() {
         </div>
       ` : '';
       
-      // Construire l'URL de l'image avec file_id et event_id si disponibles
-      const imageUrl = getPhotoUrlFromFilename(item.filename, null, null, fileId, eventId, 'preview');
+      // Construire l'URL de l'image - MÊME SYSTÈME QUE LA LIGHTBOX
+      // Utiliser directement imageUrl/previewUrl de la photo normalisée (comme la lightbox)
+      let imageUrl = photo.previewUrl || photo.imageUrl || null;
       
-      // Fallback : essayer aussi avec les données de photoData si disponible
+      // Si pas d'URL directe, construire avec file_id et event_id (comme la lightbox)
+      if (!imageUrl) {
+        imageUrl = getPhotoUrlFromFilename(filename, null, null, fileId, eventId, 'preview');
+      }
+      
+      // Fallback : essayer avec les données de l'item
       let fallbackUrl = imageUrl;
-      if (photoData) {
-        const photoDataFileId = photoData.file_id || photoData.id;
-        const photoDataEventId = photoData.event_id || photoData.contest;
-        if (photoDataFileId && photoDataEventId) {
-          fallbackUrl = getPhotoUrlFromFilename(item.filename, null, null, photoDataFileId, photoDataEventId, 'preview');
-        }
+      if (!imageUrl && fileId && eventId) {
+        fallbackUrl = getPhotoUrlFromFilename(filename, null, null, fileId, eventId, 'preview');
       }
       
       row.innerHTML = `
