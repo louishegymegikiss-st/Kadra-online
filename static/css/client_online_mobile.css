@@ -723,6 +723,10 @@
     min-height: 0 !important;
     max-height: calc(100vh - 250px) !important; /* Limiter la hauteur pour permettre le scroll */
     position: relative !important;
+    width: 100% !important; /* Prendre toute la largeur de .cart */
+    min-width: 0 !important; /* Permettre le rétrécissement */
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
   
   /* Dialog optimisé pour mobile - FORCER avec spécificité maximale */
