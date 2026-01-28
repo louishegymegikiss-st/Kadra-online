@@ -726,6 +726,7 @@
     width: 100% !important; /* Prendre toute la largeur de .cart */
     min-width: 0 !important; /* Permettre le rétrécissement */
     max-width: 100% !important;
+    padding: 12px !important; /* Réduire padding sur mobile pour petits écrans */
     box-sizing: border-box !important;
   }
   
@@ -778,7 +779,7 @@
     width: 100% !important;
     max-width: 100% !important;
     box-sizing: border-box !important;
-    padding: 20px !important; /* Garder le padding du récapitulatif */
+    padding: 12px !important; /* Réduire padding sur mobile pour petits écrans */
   }
   
   /* S'assurer que cart-items a le même padding que le récapitulatif */
@@ -793,7 +794,7 @@
   }
   
   /* Layout des lignes du panier sur mobile - colonnes empilées - FORCER avec spécificité maximale */
-  /* Padding symétrique pour centrer les containers */
+  /* Padding symétrique pour centrer les containers - réduit sur très petits écrans */
   html body .cart-photo-row,
   body .cart-photo-row {
     display: flex !important;
@@ -804,9 +805,10 @@
     max-width: 100% !important; /* Suivre la largeur du parent */
     padding-top: 6px !important; /* Réduire padding vertical */
     padding-bottom: 6px !important;
-    padding-left: 20px !important; /* Padding horizontal symétrique */
-    padding-right: 20px !important; /* Padding horizontal symétrique */
+    padding-left: 12px !important; /* Padding horizontal réduit pour petits écrans */
+    padding-right: 12px !important; /* Padding horizontal réduit pour petits écrans */
     box-sizing: border-box !important;
+    overflow-x: hidden !important; /* Empêcher le débordement horizontal */
   }
   
   /* Container photo : s'adapter à la largeur du parent (cart-photo-row) avec padding */
@@ -821,6 +823,7 @@
     margin: 0 !important; /* Pas de margin, le padding est géré par cart-photo-row */
     padding: 0 !important;
     box-sizing: border-box !important;
+    overflow: hidden !important; /* Empêcher le débordement */
   }
   
   /* Image : taille naturelle sans bandes - FORCER l'affichage */
@@ -835,6 +838,7 @@
     display: block !important; /* Éviter les espaces inline */
     visibility: visible !important; /* Forcer la visibilité */
     opacity: 1 !important; /* Forcer l'opacité */
+    box-sizing: border-box !important; /* Inclure border dans la largeur */
   }
   
   /* Uniformiser la largeur des containers photo et formats pour mobile - suivre la largeur du parent */
@@ -871,6 +875,7 @@
     max-width: 100% !important; /* Suivre la largeur du parent */
     gap: 6px !important; /* Réduire gap */
     overflow-y: visible !important; /* Pas de scroll interne */
+    overflow-x: hidden !important; /* Empêcher le débordement horizontal */
     max-height: none !important; /* Pas de limite de hauteur */
     height: auto !important; /* Hauteur automatique pour tout afficher */
     margin: 0 !important; /* Pas de margin, le padding est géré par cart-photo-row */
@@ -886,6 +891,10 @@
     padding-right: 6px !important;
     box-sizing: border-box !important;
     font-size: 0.9em !important; /* Réduire taille texte */
+    width: 100% !important; /* Prendre toute la largeur du parent */
+    min-width: 0 !important; /* Permettre le rétrécissement */
+    max-width: 100% !important; /* Suivre la largeur du parent */
+    overflow-x: hidden !important; /* Empêcher le débordement */
   }
   
   /* Limiter la largeur des boutons à la largeur du parent */
