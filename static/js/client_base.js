@@ -2076,50 +2076,55 @@ function renderCartItems() {
     row.className = 'cart-photo-row';
     
     if (item.type === 'photo') {
-      // Affichage Photo
-      const filename = item.filename.split('/').pop();
+      // Affichage Photo - MÊME SYSTÈME QUE LA LIGHTBOX
+      // Trouver la photo dans currentSearchResults en utilisant photoId (comme la lightbox)
+      let photo = null;
       
-      // Extraire cavalier et cheval : utiliser les données stockées dans l'item, sinon depuis currentSearchResults
-      let riderName = item.rider_name || '';
-      let horseName = item.horse_name || '';
-      let fileId = item.file_id || null;
-      let eventId = item.event_id || null;
-      
-      // Si pas stocké dans l'item, essayer de récupérer depuis currentSearchResults
-      // PRIORITÉ : chercher par photoId unique d'abord
-      const photoData = currentSearchResults.find(p => {
-        // Priorité 1 : correspondance exacte par photoId (unique)
-        if (item.photo_id) {
+      if (item.photo_id) {
+        // Priorité 1 : chercher par photoId unique (comme la lightbox)
+        photo = currentSearchResults.find(p => {
           const pFileId = p.file_id || p.id || null;
           const pEventId = p.event_id || p.contest || 'UNKNOWN';
           const pPhotoId = pFileId ? `${pEventId}-${pFileId}` : null;
-          if (pPhotoId && pPhotoId === item.photo_id) return true;
-        }
-        // Fallback : comparaison par filename (moins fiable)
-        if (p.filename === item.filename) return true;
-        const pBasename = p.filename ? p.filename.split('/').pop() : '';
-        const itemBasename = item.filename ? item.filename.split('/').pop() : '';
-        return pBasename && pBasename === itemBasename;
-      });
-      
-      if (photoData) {
-        if (!riderName) {
-          riderName = photoData.rider_name || photoData.cavalier || '';
-          horseName = photoData.horse_name || photoData.cheval || '';
-          // Sauvegarder dans l'item pour la prochaine fois
-          item.rider_name = riderName;
-          item.horse_name = horseName;
-        }
-        // Récupérer file_id et event_id si disponibles
-        if (!fileId && photoData.file_id) {
-          fileId = photoData.file_id;
-          item.file_id = fileId;
-        }
-        if (!eventId) {
-          eventId = photoData.event_id || photoData.contest || null;
-          if (eventId) item.event_id = eventId;
-        }
+          return pPhotoId && pPhotoId === item.photo_id;
+        });
       }
+      
+      // Fallback : chercher par filename (comme la lightbox)
+      if (!photo) {
+        photo = currentSearchResults.find(p => {
+          if (p.filename === item.filename) return true;
+          const pBasename = p.filename ? p.filename.split('/').pop() : '';
+          const itemBasename = item.filename ? item.filename.split('/').pop() : '';
+          return pBasename && pBasename === itemBasename;
+        });
+      }
+      
+      // Si toujours pas trouvé, utiliser les données de l'item
+      if (!photo) {
+        console.warn('Photo non trouvée dans currentSearchResults, utilisation des données de l\'item:', item.photo_id);
+        photo = {
+          filename: item.filename,
+          rider_name: item.rider_name || '',
+          horse_name: item.horse_name || '',
+          file_id: item.file_id || null,
+          event_id: item.event_id || null
+        };
+      }
+      
+      // Utiliser les données de la photo normalisée (comme la lightbox)
+      const filename = photo.filename || item.filename;
+      const riderName = photo.rider_name || photo.cavalier || item.rider_name || '';
+      const horseName = photo.horse_name || photo.cheval || item.horse_name || '';
+      const fileId = photo.file_id || photo.id || item.file_id || null;
+      const eventId = photo.event_id || photo.contest || item.event_id || null;
+      
+      // Sauvegarder dans l'item pour la prochaine fois
+      item.filename = filename;
+      item.rider_name = riderName;
+      item.horse_name = horseName;
+      item.file_id = fileId;
+      item.event_id = eventId;
       
       // Construire le nom d'affichage
       let displayName = '';
@@ -2437,7 +2442,7 @@ function renderCartItems() {
       
       row.innerHTML = `
         <div class="cart-photo-container">
-            <img src="${imageUrl}" class="cart-photo-large" onclick="openLightbox('${item.filename}', null, true)" onload="detectCartPhotoOrientation(this)" onerror="if(this.src !== '${fallbackUrl}') { this.onerror=null; this.src='${fallbackUrl}'; } else { this.style.display='none'; }">
+            <img src="${imageUrl}" class="cart-photo-large" onclick="openLightbox('${filename}', null, true)" onload="detectCartPhotoOrientation(this)" onerror="if(this.src !== '${fallbackUrl}') { this.onerror=null; this.src='${fallbackUrl}'; } else { this.style.display='none'; }">
             <div class="cart-photo-info" style="font-weight: 600; color: #2d3561; margin-top: 8px;">${displayName}</div>
             <button onclick="buyPackForPhoto('${riderName.replace(/'/g, "\\'")}', '${horseName.replace(/'/g, "\\'")}')" style="margin-top: 8px; padding: 8px 16px; background: #2d3561; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600; width: 100%;">
                 📦 ${t('buy_pack_btn')}
