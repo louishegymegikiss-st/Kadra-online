@@ -704,20 +704,27 @@
     width: min(90%, calc(100% - 32px), 1200px) !important;
   }
   
-  /* Scroll interne du contenu modal */
+  /* Scroll interne du contenu modal - MOBILE UNIQUEMENT */
   .cart-modal.active .cart {
-    max-height: calc(100vh - 80px) !important;
+    max-height: calc(100vh - 60px) !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
   }
   
   #cart-content {
-    overflow-y: auto !important; /* Activer le scroll */
+    overflow-y: auto !important; /* Activer le scroll sur mobile */
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     flex: 1 !important;
     min-height: 0 !important;
+    max-height: calc(100vh - 200px) !important; /* Limiter la hauteur pour permettre le scroll */
+  }
+  
+  /* Dialog plus large sur mobile pour meilleure lisibilité */
+  body.modal-open .cart-modal-dialog {
+    width: min(98vw, 1400px) !important; /* Encore plus large sur mobile */
+    max-height: calc(100vh - 20px) !important; /* Prendre presque toute la hauteur */
   }
   
   /* Colonnes du panier empilées verticalement sur mobile */

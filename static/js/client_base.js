@@ -1719,15 +1719,14 @@ function toggleCartItem(photoId, btn) {
   const addBtn = card.querySelector('.photo-add-btn');
   
   // Ajouter - récupérer rider_name et horse_name depuis currentSearchResults
+  // PRIORITÉ : chercher par photoId unique d'abord
   const photoData = currentSearchResults.find(p => {
     const pFileId = p.file_id || p.id || null;
     const pEventId = p.event_id || p.contest || 'UNKNOWN';
     const pPhotoId = pFileId ? `${pEventId}-${pFileId}` : null;
+    // Priorité 1 : correspondance exacte par photoId
     if (pPhotoId && pPhotoId === photoId) return true;
-    if (p.filename === filename) return true;
-    const pBasename = p.filename.split('/').pop();
-    const filenameBasename = filename.split('/').pop();
-    return pBasename === filenameBasename;
+    return false; // Ne pas utiliser filename comme fallback, car plusieurs photos peuvent avoir le même filename
   });
   const riderName = photoData ? (photoData.rider_name || photoData.cavalier || '') : '';
   const horseName = photoData ? (photoData.horse_name || photoData.cheval || '') : '';
