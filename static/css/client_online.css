@@ -900,8 +900,15 @@
   }
   
   /* === LIGHTBOX MOBILE RESPONSIVE === */
+  .lightbox {
+    z-index: 11000 !important;
+  }
+
   .lightbox.active {
+    display: flex !important;
     padding: 50px 10px 90px 10px !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
   
   .lightbox-image-container {
