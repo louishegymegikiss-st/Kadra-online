@@ -2868,16 +2868,17 @@ function openLightbox(startFilename, photosList = null, fromCart = false) {
             const iBasename = i.filename.split('/').pop();
             return pBasename === iBasename;
           });
-          // Utiliser file_id et event_id stockés dans l'item, ou depuis photoData
           const fileId = i.file_id || (photoData ? (photoData.file_id || photoData.id || null) : null);
           const eventId = i.event_id || (photoData ? (photoData.event_id || photoData.contest || null) : null);
-          const imageUrl = getPhotoUrlFromFilename(i.filename, null, null, fileId, eventId, 'preview');
+          const imageUrl = photoData?.previewUrl || photoData?.imageUrl || getPhotoUrlFromFilename(i.filename, null, null, fileId, eventId, 'preview');
           return {
             filename: i.filename,
             imageUrl: imageUrl,
             displayName: i.filename.split('/').pop(),
             rider_name: i.rider_name || (photoData ? (photoData.rider_name || photoData.cavalier || '') : ''),
-            horse_name: i.horse_name || (photoData ? (photoData.horse_name || photoData.cheval || '') : '')
+            horse_name: i.horse_name || (photoData ? (photoData.horse_name || photoData.cheval || '') : ''),
+            file_id: fileId,
+            event_id: eventId
           };
         });
       
