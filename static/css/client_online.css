@@ -552,6 +552,14 @@
     width: 100% !important;
     padding: 0 !important;
   }
+
+  body {
+    padding-top: 0 !important;
+  }
+
+  .content {
+    margin-top: 70px !important;
+  }
   
   .content {
     padding: 10px !important;
