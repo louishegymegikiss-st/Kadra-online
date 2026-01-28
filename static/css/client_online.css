@@ -664,7 +664,7 @@
     -webkit-overflow-scrolling: touch !important;
     flex: 1 !important;
     min-height: 0 !important;
-    max-height: calc(100vh - 250px) !important;
+    max-height: calc(100vh - 220px) !important;
     padding: 12px !important;
     width: 100% !important;
     min-width: 0 !important;
