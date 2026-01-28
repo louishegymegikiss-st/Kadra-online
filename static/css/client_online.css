@@ -630,6 +630,185 @@
     margin: 0 !important;
   }
   
+  /* === CART MODAL MOBILE === */
+  /* Dialog optimisé pour mobile */
+  body.modal-open .cart-modal-dialog {
+    width: calc(100vw - 20px) !important;
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100vh - 20px) !important;
+    margin: 10px !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+  
+  .cart-modal.active .cart {
+    max-height: calc(100vh - 80px) !important;
+    overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  #cart-content {
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    flex: 1 !important;
+    min-height: 0 !important;
+    max-height: calc(100vh - 250px) !important;
+    padding: 12px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Colonnes empilées sur mobile */
+  .cart-two-columns {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    padding: 0 !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+  
+  .cart-left-column {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+  }
+  
+  .cart-right-column {
+    position: relative !important;
+    top: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    order: -1 !important;
+    box-sizing: border-box !important;
+  }
+  
+  .cart-summary {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 12px !important;
+  }
+  
+  #cart-items {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Layout des lignes du panier sur mobile - colonnes empilées */
+  .cart-photo-row {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    box-sizing: border-box !important;
+    overflow-x: hidden !important;
+  }
+  
+  /* Container photo : suivre la largeur du parent */
+  .cart-photo-container {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+  
+  /* Image : suivre la largeur du parent */
+  .cart-photo-large {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    max-height: var(--cart-photo-h) !important;
+    height: auto !important;
+    object-fit: contain !important;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    box-sizing: border-box !important;
+  }
+  
+  /* Ajustements hauteur selon orientation */
+  .cart-photo-row[data-photo-orientation="vertical"] {
+    --cart-photo-h: 250px !important;
+    --cart-formats-h: auto !important;
+  }
+  
+  .cart-photo-row[data-photo-orientation="horizontal"] {
+    --cart-photo-h: 120px !important;
+    --cart-formats-h: auto !important;
+  }
+  
+  .cart-photo-row[data-photo-orientation="square"] {
+    --cart-photo-h: 100% !important;
+    --cart-formats-h: auto !important;
+  }
+  
+  .cart-photo-row:not([data-photo-orientation]) {
+    --cart-photo-h: 180px !important;
+  }
+  
+  /* Container formats : suivre la largeur du parent */
+  .cart-formats-container {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    gap: 6px !important;
+    overflow-y: visible !important;
+    overflow-x: hidden !important;
+    max-height: none !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+  }
+  
+  .cart-format-item {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+    box-sizing: border-box !important;
+    font-size: 0.9em !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+  
+  .pack-btn,
+  .cart-btn-remove,
+  .cart-btn-remove-format {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
   /* === GRILLE PHOTOS 1 COLONNE === */
   .photos-grid {
     display: flex !important;
