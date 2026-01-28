@@ -2885,7 +2885,7 @@ function openLightbox(startFilename, photosList = null, fromCart = false) {
       lightbox.dataset.fromCart = 'true';
       lightbox.dataset.fromPack = 'false';
       // Passer le lightbox au-dessus du panier
-      lightbox.style.zIndex = '10000';
+      lightbox.style.zIndex = '12000';
   } else {
       // Si photosList est fourni, l'utiliser, sinon utiliser currentSearchResults
       const sourcePhotos = photosList || currentSearchResults || [];
@@ -2899,7 +2899,7 @@ function openLightbox(startFilename, photosList = null, fromCart = false) {
       lightbox.dataset.fromCart = 'false';
       lightbox.dataset.fromPack = 'false';
       // Remettre le z-index normal
-      lightbox.style.zIndex = '9998';
+      lightbox.style.zIndex = '';
   }
   
   // Trouver l'index de la photo à ouvrir (comparaison flexible mais précise)
@@ -3063,6 +3063,8 @@ function closeLightbox() {
       }
   }
   
+  lightbox.style.zIndex = '';
+
   // Réinitialiser les flags
   lightbox.dataset.fromCart = 'false';
   lightbox.dataset.fromPack = 'false';
