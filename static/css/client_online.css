@@ -584,6 +584,11 @@
     gap: 10px !important;
   }
 
+  #pack-btn {
+    width: calc(100% - 24px) !important;
+    margin-top: 5px !important;
+  }
+
   .mobile-search-shell .search-box {
     width: 100% !important;
     max-width: none !important;
@@ -628,9 +633,11 @@
     padding: 10px 24px !important;
     box-shadow: none !important;
     order: 2 !important;
-    width: auto !important;
-    max-width: none !important;
-    margin: 0 !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    width: min(360px, 100%) !important;
+    max-width: 100% !important;
+    margin: 0 auto 15px !important;
   }
   
   /* === CART MODAL MOBILE === */
