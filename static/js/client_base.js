@@ -2086,12 +2086,20 @@ function renderCartItems() {
       let eventId = item.event_id || null;
       
       // Si pas stocké dans l'item, essayer de récupérer depuis currentSearchResults
+      // PRIORITÉ : chercher par photoId unique d'abord
       const photoData = currentSearchResults.find(p => {
-        // Comparaison flexible : exacte d'abord, puis par basename
+        // Priorité 1 : correspondance exacte par photoId (unique)
+        if (item.photo_id) {
+          const pFileId = p.file_id || p.id || null;
+          const pEventId = p.event_id || p.contest || 'UNKNOWN';
+          const pPhotoId = pFileId ? `${pEventId}-${pFileId}` : null;
+          if (pPhotoId && pPhotoId === item.photo_id) return true;
+        }
+        // Fallback : comparaison par filename (moins fiable)
         if (p.filename === item.filename) return true;
-        const pBasename = p.filename.split('/').pop();
-        const itemBasename = item.filename.split('/').pop();
-        return pBasename === itemBasename;
+        const pBasename = p.filename ? p.filename.split('/').pop() : '';
+        const itemBasename = item.filename ? item.filename.split('/').pop() : '';
+        return pBasename && pBasename === itemBasename;
       });
       
       if (photoData) {
