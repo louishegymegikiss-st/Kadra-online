@@ -683,12 +683,12 @@
     z-index: 0 !important;
   }
   
-  /* Dialog centré dans le grid - plus large pour les photos */
+  /* Dialog centré dans le grid - optimisé pour mobile */
   body.modal-open .cart-modal-dialog {
-    width: min(95vw, 1400px) !important; /* Plus large pour mobile */
-    max-width: calc(100% - 16px) !important;
-    max-height: calc(100% - 16px) !important;
-    margin: 8px !important;
+    width: calc(100% - 20px) !important; /* Prendre presque toute la largeur avec marges */
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100vh - 20px) !important;
+    margin: 10px !important;
     padding: 0 !important;
     box-sizing: border-box !important;
     position: relative !important;
@@ -731,8 +731,9 @@
   .cart-two-columns {
     display: flex !important;
     flex-direction: column !important;
-    gap: 20px !important;
-    padding: 12px !important;
+    gap: 15px !important; /* Réduire gap */
+    padding: 8px !important; /* Réduire padding */
+    box-sizing: border-box !important;
   }
   
   .cart-left-column {
@@ -753,12 +754,13 @@
   .cart-photo-row {
     display: flex !important;
     flex-direction: column !important;
-    gap: 12px !important;
+    gap: 10px !important; /* Réduire gap */
     width: 100% !important;
-    padding-top: 6px !important; /* Réduire padding vertical */
-    padding-bottom: 6px !important;
-    padding-left: 12px !important; /* Garder padding horizontal */
-    padding-right: 12px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    padding-left: 8px !important; /* Réduire padding horizontal */
+    padding-right: 8px !important;
+    box-sizing: border-box !important;
   }
   
   /* Container photo : s'adapter à la taille réelle de la photo */
@@ -770,6 +772,7 @@
     align-items: center !important;
     margin: 0 auto !important; /* Centrer */
     padding: 0 !important;
+    box-sizing: border-box !important;
   }
   
   /* Image : taille naturelle sans bandes - FORCER l'affichage */
@@ -784,32 +787,32 @@
     opacity: 1 !important; /* Forcer l'opacité */
   }
   
-  /* Uniformiser la largeur des containers photo et formats pour mobile - plus large et lisible */
+  /* Uniformiser la largeur des containers photo et formats pour mobile - optimisé pour largeur mobile */
   .cart-photo-row[data-photo-orientation="vertical"] {
-    --cart-photo-w: min(100%, 300px) !important; /* Adaptatif mais max 300px */
-    --cart-photo-h: 450px !important; /* Ratio 2:3 */
+    --cart-photo-w: calc(100vw - 60px) !important; /* Largeur adaptée au viewport mobile moins marges */
+    --cart-photo-h: 400px !important; /* Ratio 2:3 réduit */
     --cart-formats-h: auto !important; /* Hauteur automatique */
     --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
   }
   
   .cart-photo-row[data-photo-orientation="horizontal"] {
-    --cart-photo-w: min(100%, 300px) !important; /* Adaptatif mais max 300px */
-    --cart-photo-h: 200px !important; /* Ratio 3:2 */
+    --cart-photo-w: calc(100vw - 60px) !important; /* Largeur adaptée au viewport mobile moins marges */
+    --cart-photo-h: 180px !important; /* Ratio 3:2 réduit */
     --cart-formats-h: auto !important; /* Hauteur automatique */
     --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
   }
   
   .cart-photo-row[data-photo-orientation="square"] {
-    --cart-photo-w: min(100%, 300px) !important; /* Adaptatif mais max 300px */
-    --cart-photo-h: 300px !important; /* Carré */
+    --cart-photo-w: calc(100vw - 60px) !important; /* Largeur adaptée au viewport mobile moins marges */
+    --cart-photo-h: calc(100vw - 60px) !important; /* Carré adaptatif */
     --cart-formats-h: auto !important; /* Hauteur automatique */
     --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
   }
   
   /* Si l'orientation n'est pas encore détectée, utiliser des valeurs par défaut */
   .cart-photo-row:not([data-photo-orientation]) {
-    --cart-photo-w: min(100%, 300px) !important;
-    --cart-photo-h: 300px !important;
+    --cart-photo-w: calc(100vw - 60px) !important;
+    --cart-photo-h: 250px !important;
     --cart-formats-max-w: 100% !important;
   }
   
@@ -826,10 +829,11 @@
   }
   
   .cart-format-item {
-    padding-top: 4px !important; /* Réduire padding vertical */
-    padding-bottom: 4px !important;
-    padding-left: 10px !important; /* Garder padding horizontal */
-    padding-right: 10px !important;
+    padding-top: 6px !important;
+    padding-bottom: 6px !important;
+    padding-left: 8px !important; /* Réduire padding horizontal */
+    padding-right: 8px !important;
+    box-sizing: border-box !important;
   }
   
   /* Limiter la largeur des boutons à la largeur des photos */
