@@ -734,27 +734,41 @@
     margin: 10px !important;
   }
   
-  /* Colonnes du panier empilées verticalement sur mobile */
-  .cart-two-columns {
+  /* Colonnes du panier empilées verticalement sur mobile - même largeur pour toutes */
+  html body .cart-two-columns,
+  body .cart-two-columns {
     display: flex !important;
     flex-direction: column !important;
-    gap: 15px !important; /* Réduire gap */
-    padding: 8px !important; /* Réduire padding */
+    gap: 12px !important; /* Réduire gap */
+    padding: 8px !important; /* Padding uniforme */
     box-sizing: border-box !important;
   }
   
-  .cart-left-column {
+  html body .cart-left-column,
+  body .cart-left-column {
     width: 100% !important;
-    max-width: 100% !important;
+    max-width: 100% !important; /* Même largeur que récapitulatif */
     max-height: none !important;
     overflow: visible !important;
+    box-sizing: border-box !important;
   }
   
-  .cart-right-column {
+  html body .cart-right-column,
+  body .cart-right-column {
     position: relative !important;
     top: 0 !important;
-    width: 100% !important;
+    width: 100% !important; /* Même largeur que colonne gauche */
+    max-width: 100% !important;
     order: -1 !important; /* Mettre le récapitulatif en premier */
+    box-sizing: border-box !important;
+  }
+  
+  /* S'assurer que le récapitulatif a la même largeur */
+  html body .cart-summary,
+  body .cart-summary {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
   }
   
   /* Layout des lignes du panier sur mobile - colonnes empilées - FORCER avec spécificité maximale */
@@ -762,19 +776,20 @@
   body .cart-photo-row {
     display: flex !important;
     flex-direction: column !important;
-    gap: 10px !important; /* Réduire gap */
+    gap: 8px !important; /* Réduire gap */
     width: 100% !important;
-    padding-top: 8px !important;
-    padding-bottom: 8px !important;
-    padding-left: 8px !important; /* Réduire padding horizontal */
+    padding-top: 6px !important; /* Réduire padding vertical */
+    padding-bottom: 6px !important;
+    padding-left: 8px !important; /* Padding horizontal aligné avec récapitulatif */
     padding-right: 8px !important;
     box-sizing: border-box !important;
   }
   
-  /* Container photo : s'adapter à la taille réelle de la photo */
-  .cart-photo-container {
+  /* Container photo : s'adapter à la taille réelle de la photo - même largeur que récapitulatif */
+  html body .cart-photo-container,
+  body .cart-photo-container {
     width: 100% !important; /* Prendre toute la largeur disponible */
-    max-width: var(--cart-photo-w) !important; /* Limiter à la largeur maximale */
+    max-width: var(--cart-photo-w) !important; /* Limiter à la largeur maximale (même que récapitulatif) */
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -795,57 +810,62 @@
     opacity: 1 !important; /* Forcer l'opacité */
   }
   
-  /* Uniformiser la largeur des containers photo et formats pour mobile - optimisé pour largeur mobile - FORCER */
+  /* Uniformiser la largeur des containers photo et formats pour mobile - même largeur que récapitulatif - FORCER */
+  /* Le récapitulatif prend 100% moins padding (8px de chaque côté = 16px), donc on aligne sur ça */
   html body .cart-photo-row[data-photo-orientation="vertical"],
   body .cart-photo-row[data-photo-orientation="vertical"] {
-    --cart-photo-w: calc(100vw - 40px) !important; /* Largeur adaptée au viewport mobile moins marges (20px modal + 20px padding) */
-    --cart-photo-h: 350px !important; /* Ratio 2:3 réduit */
+    --cart-photo-w: calc(100vw - 36px) !important; /* Même largeur que récapitulatif : 100vw - 20px (modal) - 16px (padding colonnes) */
+    --cart-photo-h: 250px !important; /* Réduit pour mobile */
     --cart-formats-h: auto !important; /* Hauteur automatique */
-    --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
+    --cart-formats-max-w: calc(100vw - 36px) !important; /* Même largeur que photo */
   }
   
   html body .cart-photo-row[data-photo-orientation="horizontal"],
   body .cart-photo-row[data-photo-orientation="horizontal"] {
-    --cart-photo-w: calc(100vw - 40px) !important; /* Largeur adaptée au viewport mobile moins marges */
-    --cart-photo-h: 160px !important; /* Ratio 3:2 réduit */
+    --cart-photo-w: calc(100vw - 36px) !important; /* Même largeur que récapitulatif */
+    --cart-photo-h: 120px !important; /* Réduit pour mobile */
     --cart-formats-h: auto !important; /* Hauteur automatique */
-    --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
+    --cart-formats-max-w: calc(100vw - 36px) !important; /* Même largeur que photo */
   }
   
   html body .cart-photo-row[data-photo-orientation="square"],
   body .cart-photo-row[data-photo-orientation="square"] {
-    --cart-photo-w: calc(100vw - 40px) !important; /* Largeur adaptée au viewport mobile moins marges */
-    --cart-photo-h: calc(100vw - 40px) !important; /* Carré adaptatif */
+    --cart-photo-w: calc(100vw - 36px) !important; /* Même largeur que récapitulatif */
+    --cart-photo-h: calc(100vw - 36px) !important; /* Carré adaptatif */
     --cart-formats-h: auto !important; /* Hauteur automatique */
-    --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
+    --cart-formats-max-w: calc(100vw - 36px) !important; /* Même largeur que photo */
   }
   
   /* Si l'orientation n'est pas encore détectée, utiliser des valeurs par défaut */
   html body .cart-photo-row:not([data-photo-orientation]),
   body .cart-photo-row:not([data-photo-orientation]) {
-    --cart-photo-w: calc(100vw - 40px) !important;
-    --cart-photo-h: 220px !important;
-    --cart-formats-max-w: 100% !important;
+    --cart-photo-w: calc(100vw - 36px) !important;
+    --cart-photo-h: 180px !important; /* Réduit */
+    --cart-formats-max-w: calc(100vw - 36px) !important;
   }
   
-  /* Afficher tout le contenu des formats - largeur adaptée */
-  .cart-formats-container {
+  /* Afficher tout le contenu des formats - largeur adaptée - même largeur que récapitulatif */
+  html body .cart-formats-container,
+  body .cart-formats-container {
     width: 100% !important; /* Prendre toute la largeur */
     max-width: var(--cart-formats-max-w) !important;
-    gap: 8px !important;
+    gap: 6px !important; /* Réduire gap */
     overflow-y: visible !important; /* Pas de scroll interne */
     max-height: none !important; /* Pas de limite de hauteur */
     height: auto !important; /* Hauteur automatique pour tout afficher */
     margin: 0 auto !important; /* Centrer */
     padding: 0 !important;
+    box-sizing: border-box !important;
   }
   
-  .cart-format-item {
-    padding-top: 6px !important;
-    padding-bottom: 6px !important;
-    padding-left: 8px !important; /* Réduire padding horizontal */
-    padding-right: 8px !important;
+  html body .cart-format-item,
+  body .cart-format-item {
+    padding-top: 4px !important; /* Réduire padding vertical */
+    padding-bottom: 4px !important;
+    padding-left: 6px !important; /* Réduire padding horizontal */
+    padding-right: 6px !important;
     box-sizing: border-box !important;
+    font-size: 0.9em !important; /* Réduire taille texte */
   }
   
   /* Limiter la largeur des boutons à la largeur des photos */
