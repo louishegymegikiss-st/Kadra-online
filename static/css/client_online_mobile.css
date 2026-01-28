@@ -704,27 +704,33 @@
     width: min(90%, calc(100% - 32px), 1200px) !important;
   }
   
-  /* Scroll interne du contenu modal - MOBILE UNIQUEMENT */
-  .cart-modal.active .cart {
-    max-height: calc(100vh - 60px) !important;
+  /* Scroll interne du contenu modal - MOBILE UNIQUEMENT - FORCER avec spécificité maximale */
+  html body .cart-modal.active .cart,
+  body .cart-modal.active .cart {
+    max-height: calc(100vh - 80px) !important;
     overflow: hidden !important;
     display: flex !important;
     flex-direction: column !important;
   }
   
-  #cart-content {
+  html body #cart-content,
+  body #cart-content {
     overflow-y: auto !important; /* Activer le scroll sur mobile */
     overflow-x: hidden !important;
     -webkit-overflow-scrolling: touch !important;
     flex: 1 !important;
     min-height: 0 !important;
-    max-height: calc(100vh - 200px) !important; /* Limiter la hauteur pour permettre le scroll */
+    max-height: calc(100vh - 250px) !important; /* Limiter la hauteur pour permettre le scroll */
+    position: relative !important;
   }
   
-  /* Dialog plus large sur mobile pour meilleure lisibilité */
+  /* Dialog optimisé pour mobile - FORCER avec spécificité maximale */
+  html body.modal-open .cart-modal-dialog,
   body.modal-open .cart-modal-dialog {
-    width: min(98vw, 1400px) !important; /* Encore plus large sur mobile */
-    max-height: calc(100vh - 20px) !important; /* Prendre presque toute la hauteur */
+    width: calc(100vw - 20px) !important; /* Prendre presque toute la largeur */
+    max-width: calc(100vw - 20px) !important;
+    max-height: calc(100vh - 20px) !important;
+    margin: 10px !important;
   }
   
   /* Colonnes du panier empilées verticalement sur mobile */
@@ -750,8 +756,9 @@
     order: -1 !important; /* Mettre le récapitulatif en premier */
   }
   
-  /* Layout des lignes du panier sur mobile - colonnes empilées */
-  .cart-photo-row {
+  /* Layout des lignes du panier sur mobile - colonnes empilées - FORCER avec spécificité maximale */
+  html body .cart-photo-row,
+  body .cart-photo-row {
     display: flex !important;
     flex-direction: column !important;
     gap: 10px !important; /* Réduire gap */
@@ -787,32 +794,36 @@
     opacity: 1 !important; /* Forcer l'opacité */
   }
   
-  /* Uniformiser la largeur des containers photo et formats pour mobile - optimisé pour largeur mobile */
-  .cart-photo-row[data-photo-orientation="vertical"] {
-    --cart-photo-w: calc(100vw - 60px) !important; /* Largeur adaptée au viewport mobile moins marges */
-    --cart-photo-h: 400px !important; /* Ratio 2:3 réduit */
+  /* Uniformiser la largeur des containers photo et formats pour mobile - optimisé pour largeur mobile - FORCER */
+  html body .cart-photo-row[data-photo-orientation="vertical"],
+  body .cart-photo-row[data-photo-orientation="vertical"] {
+    --cart-photo-w: calc(100vw - 40px) !important; /* Largeur adaptée au viewport mobile moins marges (20px modal + 20px padding) */
+    --cart-photo-h: 350px !important; /* Ratio 2:3 réduit */
     --cart-formats-h: auto !important; /* Hauteur automatique */
     --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
   }
   
-  .cart-photo-row[data-photo-orientation="horizontal"] {
-    --cart-photo-w: calc(100vw - 60px) !important; /* Largeur adaptée au viewport mobile moins marges */
-    --cart-photo-h: 180px !important; /* Ratio 3:2 réduit */
+  html body .cart-photo-row[data-photo-orientation="horizontal"],
+  body .cart-photo-row[data-photo-orientation="horizontal"] {
+    --cart-photo-w: calc(100vw - 40px) !important; /* Largeur adaptée au viewport mobile moins marges */
+    --cart-photo-h: 160px !important; /* Ratio 3:2 réduit */
     --cart-formats-h: auto !important; /* Hauteur automatique */
     --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
   }
   
-  .cart-photo-row[data-photo-orientation="square"] {
-    --cart-photo-w: calc(100vw - 60px) !important; /* Largeur adaptée au viewport mobile moins marges */
-    --cart-photo-h: calc(100vw - 60px) !important; /* Carré adaptatif */
+  html body .cart-photo-row[data-photo-orientation="square"],
+  body .cart-photo-row[data-photo-orientation="square"] {
+    --cart-photo-w: calc(100vw - 40px) !important; /* Largeur adaptée au viewport mobile moins marges */
+    --cart-photo-h: calc(100vw - 40px) !important; /* Carré adaptatif */
     --cart-formats-h: auto !important; /* Hauteur automatique */
     --cart-formats-max-w: 100% !important; /* Prendre toute la largeur */
   }
   
   /* Si l'orientation n'est pas encore détectée, utiliser des valeurs par défaut */
-  .cart-photo-row:not([data-photo-orientation]) {
-    --cart-photo-w: calc(100vw - 60px) !important;
-    --cart-photo-h: 250px !important;
+  html body .cart-photo-row:not([data-photo-orientation]),
+  body .cart-photo-row:not([data-photo-orientation]) {
+    --cart-photo-w: calc(100vw - 40px) !important;
+    --cart-photo-h: 220px !important;
     --cart-formats-max-w: 100% !important;
   }
   
