@@ -747,6 +747,7 @@
   html body .cart-left-column,
   body .cart-left-column {
     width: 100% !important;
+    min-width: 0 !important; /* Permettre le rétrécissement */
     max-width: 100% !important; /* Même largeur que récapitulatif */
     max-height: none !important;
     overflow: visible !important;
@@ -775,6 +776,9 @@
   /* S'assurer que cart-items a le même padding que le récapitulatif */
   html body #cart-items,
   body #cart-items {
+    width: 100% !important;
+    min-width: 0 !important; /* Permettre le rétrécissement */
+    max-width: 100% !important;
     padding-left: 0 !important;
     padding-right: 0 !important;
     box-sizing: border-box !important;
@@ -788,6 +792,8 @@
     flex-direction: column !important;
     gap: 8px !important; /* Réduire gap */
     width: 100% !important;
+    min-width: 0 !important; /* Permettre le rétrécissement */
+    max-width: 100% !important;
     padding-top: 6px !important; /* Réduire padding vertical */
     padding-bottom: 6px !important;
     padding-left: 20px !important; /* Padding horizontal aligné avec récapitulatif (20px) */
@@ -795,12 +801,12 @@
     box-sizing: border-box !important;
   }
   
-  /* Container photo : s'adapter à la taille réelle de la photo - même largeur que récapitulatif */
+  /* Container photo : s'adapter à la largeur du parent (cart-left-column) */
   html body .cart-photo-container,
   body .cart-photo-container {
-    width: 100% !important; /* Prendre toute la largeur disponible */
+    width: 100% !important; /* Prendre toute la largeur disponible du parent */
     min-width: 0 !important; /* Pas de min-width pour permettre le rétrécissement */
-    max-width: var(--cart-photo-w) !important; /* Limiter à la largeur maximale (même que récapitulatif) */
+    max-width: 100% !important; /* Suivre la largeur du parent, pas de limite absolue */
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -814,7 +820,7 @@
   body .cart-photo-large {
     width: 100% !important; /* Prendre toute la largeur du container */
     min-width: 0 !important; /* Pas de min-width pour permettre le rétrécissement */
-    max-width: var(--cart-photo-w) !important; /* Limiter la largeur max */
+    max-width: 100% !important; /* Suivre la largeur du parent */
     max-height: var(--cart-photo-h) !important; /* Limiter la hauteur max */
     height: auto !important;
     object-fit: contain !important;
@@ -823,46 +829,38 @@
     opacity: 1 !important; /* Forcer l'opacité */
   }
   
-  /* Uniformiser la largeur des containers photo et formats pour mobile - même largeur que CONTENU du récapitulatif - FORCER */
-  /* Calcul : Modal (100vw - 20px) - padding colonnes (16px) - padding récapitulatif (40px) = 100vw - 76px */
+  /* Uniformiser la largeur des containers photo et formats pour mobile - suivre la largeur du parent */
+  /* Les containers suivent maintenant la largeur de cart-left-column qui se rétrécit */
   html body .cart-photo-row[data-photo-orientation="vertical"],
   body .cart-photo-row[data-photo-orientation="vertical"] {
-    --cart-photo-w: calc(100vw - 76px) !important; /* Même largeur que contenu visible du récapitulatif */
     --cart-photo-h: 250px !important; /* Réduit pour mobile */
     --cart-formats-h: auto !important; /* Hauteur automatique */
-    --cart-formats-max-w: calc(100vw - 76px) !important; /* Même largeur que photo */
   }
   
   html body .cart-photo-row[data-photo-orientation="horizontal"],
   body .cart-photo-row[data-photo-orientation="horizontal"] {
-    --cart-photo-w: calc(100vw - 76px) !important; /* Même largeur que contenu visible du récapitulatif */
     --cart-photo-h: 120px !important; /* Réduit pour mobile */
     --cart-formats-h: auto !important; /* Hauteur automatique */
-    --cart-formats-max-w: calc(100vw - 76px) !important; /* Même largeur que photo */
   }
   
   html body .cart-photo-row[data-photo-orientation="square"],
   body .cart-photo-row[data-photo-orientation="square"] {
-    --cart-photo-w: calc(100vw - 76px) !important; /* Même largeur que contenu visible du récapitulatif */
-    --cart-photo-h: calc(100vw - 76px) !important; /* Carré adaptatif */
+    --cart-photo-h: 100% !important; /* Carré adaptatif - suivre la largeur */
     --cart-formats-h: auto !important; /* Hauteur automatique */
-    --cart-formats-max-w: calc(100vw - 76px) !important; /* Même largeur que photo */
   }
   
   /* Si l'orientation n'est pas encore détectée, utiliser des valeurs par défaut */
   html body .cart-photo-row:not([data-photo-orientation]),
   body .cart-photo-row:not([data-photo-orientation]) {
-    --cart-photo-w: calc(100vw - 76px) !important;
     --cart-photo-h: 180px !important; /* Réduit */
-    --cart-formats-max-w: calc(100vw - 76px) !important;
   }
   
-  /* Afficher tout le contenu des formats - largeur adaptée - même largeur que récapitulatif */
+  /* Afficher tout le contenu des formats - largeur adaptée - suivre la largeur du parent */
   html body .cart-formats-container,
   body .cart-formats-container {
-    width: 100% !important; /* Prendre toute la largeur */
+    width: 100% !important; /* Prendre toute la largeur du parent */
     min-width: 0 !important; /* Pas de min-width pour permettre le rétrécissement */
-    max-width: var(--cart-formats-max-w) !important;
+    max-width: 100% !important; /* Suivre la largeur du parent, pas de limite absolue */
     gap: 6px !important; /* Réduire gap */
     overflow-y: visible !important; /* Pas de scroll interne */
     max-height: none !important; /* Pas de limite de hauteur */
@@ -882,32 +880,17 @@
     font-size: 0.9em !important; /* Réduire taille texte */
   }
   
-  /* Limiter la largeur des boutons à la largeur des photos */
-  .pack-btn,
-  .cart-btn-remove,
-  .cart-btn-remove-format {
-    max-width: var(--cart-photo-w) !important; /* Même largeur que les photos */
-    width: 100% !important; /* Prendre toute la largeur disponible jusqu'à max-width */
+  /* Limiter la largeur des boutons à la largeur du parent */
+  html body .pack-btn,
+  body .pack-btn,
+  html body .cart-btn-remove,
+  body .cart-btn-remove,
+  html body .cart-btn-remove-format,
+  body .cart-btn-remove-format {
+    width: 100% !important; /* Prendre toute la largeur disponible du parent */
+    min-width: 0 !important; /* Permettre le rétrécissement */
+    max-width: 100% !important; /* Suivre la largeur du parent */
     box-sizing: border-box !important;
-  }
-  
-  /* Ajuster selon l'orientation de la photo */
-  .cart-photo-row[data-photo-orientation="vertical"] .pack-btn,
-  .cart-photo-row[data-photo-orientation="vertical"] .cart-btn-remove,
-  .cart-photo-row[data-photo-orientation="vertical"] .cart-btn-remove-format {
-    max-width: min(100%, 300px) !important; /* Largeur photo verticale */
-  }
-  
-  .cart-photo-row[data-photo-orientation="horizontal"] .pack-btn,
-  .cart-photo-row[data-photo-orientation="horizontal"] .cart-btn-remove,
-  .cart-photo-row[data-photo-orientation="horizontal"] .cart-btn-remove-format {
-    max-width: min(100%, 300px) !important; /* Largeur photo horizontale */
-  }
-  
-  .cart-photo-row[data-photo-orientation="square"] .pack-btn,
-  .cart-photo-row[data-photo-orientation="square"] .cart-btn-remove,
-  .cart-photo-row[data-photo-orientation="square"] .cart-btn-remove-format {
-    max-width: min(100%, 300px) !important; /* Largeur photo carrée */
   }
   
   /* Header du panier centré */
