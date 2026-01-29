@@ -8,6 +8,14 @@ const path = require('path');
 const fs = require('fs');
 const crypto = require('crypto');
 
+// Charger les variables depuis .env si présent (utile quand on n'a que SSH)
+try {
+  // eslint-disable-next-line global-require
+  require('dotenv').config({ path: path.join(__dirname, '.env') });
+} catch (e) {
+  // dotenv non installé ou .env absent → OK, on dépendra des variables d'env système
+}
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
