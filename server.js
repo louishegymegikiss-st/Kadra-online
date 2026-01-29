@@ -320,33 +320,9 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
     const amount_total_cents = computeCartTotalCents(cart, products);
     console.log(`💰 Total calculated: ${amount_total_cents} cents`);
     
-    if (!Number.isInteger(amount_total_cents) || amount_total_cents < 0) {
+    if (!Number.isInteger(amount_total_cents) || amount_total_cents <= 0) {
       console.error('❌ Invalid amount:', amount_total_cents);
       return res.status(400).json({ error: 'Invalid amount' });
-    }
-
-    if (amount_total_cents === 0) {
-      console.log('💰 Free checkout detected (0€ total). Bypassing Stripe.');
-      const freeOrder = upsertStripeOrder({
-        order_id,
-        event_id: eventId || null,
-        stripe_session_id: null,
-        status: 'paid',
-        payment_mode: 'online',
-        fulfillment: fulfillment || '',
-        amount_total_cents,
-        currency,
-        payment_status: 'paid',
-        paid_at: new Date().toISOString(),
-        order_payload: order || null,
-      });
-      console.log(`✅ Free order saved: ${freeOrder.order_id}`);
-      return res.json({
-        free_checkout: true,
-        order_id,
-        amount_total_cents,
-        currency,
-      });
     }
 
     const baseUrl = getPublicBaseUrl(req);

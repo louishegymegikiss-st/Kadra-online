@@ -4061,16 +4061,6 @@ async function submitOrder(e, options = {}) {
         }
 
         const data = await response.json();
-        if (data.free_checkout) {
-          console.log('✅ Free checkout validated (0€).', data);
-          await showCustomAlert(
-            'Commande gratuite enregistrée.',
-            'success',
-            'Commande gratuite'
-          );
-          location.reload();
-          return;
-        }
         if (!data.checkout_url) throw new Error('Missing checkout_url');
 
         window.location.href = data.checkout_url;
