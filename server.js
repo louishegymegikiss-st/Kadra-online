@@ -88,11 +88,20 @@ function safeReadJson(filePath, fallback) {
 }
 
 function safeWriteJsonAtomic(filePath, data) {
-  const dir = path.dirname(filePath);
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
-  const tmp = `${filePath}.tmp`;
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
-  fs.renameSync(tmp, filePath);
+  try {
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) {
+      console.log(`📁 Creating directory: ${dir}`);
+      fs.mkdirSync(dir, { recursive: true });
+    }
+    const tmp = `${filePath}.tmp`;
+    fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
+    fs.renameSync(tmp, filePath);
+    console.log(`✅ File written: ${filePath}`);
+  } catch (e) {
+    console.error(`❌ Error writing file ${filePath}:`, e);
+    throw e;
+  }
 }
 
 const STRIPE_ORDERS_PATH = path.join(ROOT, 'api', 'orders', 'stripe_orders.json');
@@ -281,13 +290,32 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
   try {
     console.log('📥 POST /api/stripe/create-checkout-session');
     const { order, cart, currency = 'eur', event_id, fulfillment } = req.body || {};
-    console.log('📦 Request body:', JSON.stringify({ order: order?.order_id, cart_length: Array.isArray(cart) ? cart.length : 0, event_id, fulfillment }, null, 2));
+    console.log('📦 Request body summary:', JSON.stringify({ 
+      order_id: order?.order_id, 
+      cart_type: Array.isArray(cart) ? 'array' : typeof cart,
+      cart_length: Array.isArray(cart) ? cart.length : (cart ? Object.keys(cart).length : 0), 
+      event_id, 
+      fulfillment 
+    }, null, 2));
+    
+    if (cart && Array.isArray(cart) && cart.length > 0) {
+      console.log('📋 Cart sample (first item):', JSON.stringify(cart[0], null, 2));
+    } else if (cart) {
+      console.log('📋 Cart (not array):', JSON.stringify(cart, null, 2));
+    } else {
+      console.warn('⚠️ Cart is missing or empty!');
+    }
     
     const order_id = (order && order.order_id) ? String(order.order_id) : crypto.randomUUID();
     const eventId = String(event_id || order?.event_id || '').trim();
 
     const products = loadProductsFromStatic();
     console.log(`📊 Products loaded: ${products.length}`);
+    
+    if (!cart || (Array.isArray(cart) && cart.length === 0)) {
+      console.error('❌ Cart is empty or invalid');
+      return res.status(400).json({ error: 'Cart is empty' });
+    }
     
     const amount_total_cents = computeCartTotalCents(cart, products);
     console.log(`💰 Total calculated: ${amount_total_cents} cents`);
@@ -329,18 +357,23 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
     console.log(`✅ Stripe session created: ${session.id}`);
 
     console.log('💾 Saving order to local store...');
-    upsertStripeOrder({
-      order_id,
-      event_id: eventId || null,
-      stripe_session_id: session.id,
-      status: 'pending',
-      payment_mode: 'online',
-      fulfillment: fulfillment || '',
-      amount_total_cents,
-      currency,
-      order_payload: order || null,
-    });
-    console.log(`✅ Order saved: ${order_id}`);
+    try {
+      upsertStripeOrder({
+        order_id,
+        event_id: eventId || null,
+        stripe_session_id: session.id,
+        status: 'pending',
+        payment_mode: 'online',
+        fulfillment: fulfillment || '',
+        amount_total_cents,
+        currency,
+        order_payload: order || null,
+      });
+      console.log(`✅ Order saved: ${order_id}`);
+    } catch (saveError) {
+      console.error('❌ Error saving order (non-fatal):', saveError);
+      // Continue même si la sauvegarde échoue
+    }
 
     return res.json({ checkout_url: session.url, order_id, amount_total_cents });
   } catch (e) {
