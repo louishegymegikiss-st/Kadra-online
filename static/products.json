@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "count": 8,
+  "count": 9,
   "products": [
     {
       "id": 16,
@@ -239,6 +239,32 @@
       "badge_text_fr": "Envoyé chez vous",
       "badge_text_en": "Postal delivery",
       "badge_text_es": "Envio postal"
+    },
+    {
+      "id": 22,
+      "name": "Format Test 0€",
+      "name_fr": "Format Test 0€",
+      "name_en": "Test format €0",
+      "name_es": "Formato prueba 0€",
+      "description": "Produit fictif gratuit pour valider les workflows de paiement.",
+      "description_fr": "Produit fictif gratuit pour valider les workflows de paiement.",
+      "description_en": "Free mock product for payment workflow checks.",
+      "description_es": "Producto ficticio gratuito para pruebas de pago.",
+      "price": 0.0,
+      "promo_price": null,
+      "category": "numérique",
+      "email_delivery": true,
+      "pricing_rules": null,
+      "pack_formats": null,
+      "featured_position": 9,
+      "cart_order": 9,
+      "requires_address": false,
+      "special_promo_rule": null,
+      "delivery_method": null,
+      "reduced_price_with_print": null,
+      "badge_text_fr": "Gratuit pour les tests",
+      "badge_text_en": "Free testing option",
+      "badge_text_es": "Gratis para pruebas"
     }
   ]
 }
