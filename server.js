@@ -292,7 +292,7 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
           quantity: 1,
         },
       ],
-      customer_email: order?.email || undefined,
+      customer_email: order?.client_email || undefined,
       success_url: `${baseUrl}/success?order_id=${encodeURIComponent(order_id)}`,
       cancel_url: `${baseUrl}/cancel?order_id=${encodeURIComponent(order_id)}`,
       ...(fulfillment === 'shipping'

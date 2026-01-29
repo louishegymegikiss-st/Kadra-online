@@ -262,6 +262,9 @@ const translations = {
     total_label: 'Total',
     cancel_order_btn: 'Annuler la commande',
     submit_order_btn: 'Valider ma commande',
+    pay_now_btn: 'Payer maintenant',
+    pay_on_site_btn: 'Payer sur place',
+    shipping_btn: 'Livraison (paiement)',
     personal_info_title: 'Informations personnelles',
     last_name_label: 'Nom *',
     last_name_placeholder: 'Nom',
@@ -393,6 +396,9 @@ const translations = {
     total_label: 'Total',
     cancel_order_btn: 'Cancel order',
     submit_order_btn: 'Validate order',
+    pay_now_btn: 'Pay now',
+    pay_on_site_btn: 'Pay on site',
+    shipping_btn: 'Shipping (pay now)',
     personal_info_title: 'Personal Information',
     last_name_label: 'Last Name *',
     last_name_placeholder: 'Last Name',
@@ -523,6 +529,9 @@ const translations = {
     total_label: 'Total',
     cancel_order_btn: 'Cancelar pedido',
     submit_order_btn: 'Validar mi pedido',
+    pay_now_btn: 'Pagar ahora',
+    pay_on_site_btn: 'Pagar en el lugar',
+    shipping_btn: 'Envío (pago)',
     personal_info_title: 'Información personal',
     last_name_label: 'Apellido *',
     last_name_placeholder: 'Apellido',
@@ -1024,6 +1033,16 @@ function setupEventListeners() {
   const orderForm = document.getElementById('order-form');
   if (orderForm) {
     orderForm.addEventListener('submit', submitOrder);
+  }
+
+  const payOnSiteBtn = document.getElementById('pay-on-site-btn');
+  if (payOnSiteBtn) {
+    payOnSiteBtn.addEventListener('click', () => submitOrder(null, { payment_mode: 'on_site', button_id: 'pay-on-site-btn' }));
+  }
+
+  const shippingBtn = document.getElementById('shipping-btn');
+  if (shippingBtn) {
+    shippingBtn.addEventListener('click', () => submitOrder(null, { payment_mode: 'online', fulfillment: 'shipping', button_id: 'shipping-btn' }));
   }
 
   // Lightbox events
@@ -3687,10 +3706,42 @@ function getPriceForPosition(product, position, hasPrintForSamePhoto = false) {
   return standardPrice;
 }
 
-async function submitOrder(e) {
-  e.preventDefault();
+function detectFulfillmentFromCart() {
+  let hasDigital = false;
+  let hasPaperPickup = false;
+  let hasPaperShipping = false;
+
+  cart.forEach(item => {
+    if (item.type === 'photo') {
+      for (const [pid, qty] of Object.entries(item.formats || {})) {
+        if (!qty || qty <= 0) continue;
+        const product = products.find(p => p.id == pid);
+        if (!product) continue;
+        if (product.category === 'numérique') hasDigital = true;
+        if (product.category === 'impression') {
+          if (product.delivery_method === 'shipping') hasPaperShipping = true;
+          else hasPaperPickup = true;
+        }
+      }
+    } else if (item.type === 'pack') {
+      hasDigital = true;
+    }
+  });
+
+  if (hasPaperShipping) return 'shipping';
+  if (hasPaperPickup) return 'pickup';
+  if (hasDigital) return 'digital';
+  return 'digital';
+}
+
+async function submitOrder(e, options = {}) {
+  if (e && typeof e.preventDefault === 'function') e.preventDefault();
+
+  const payment_mode = options.payment_mode || 'online'; // online (Stripe) by default
+  const fulfillment = options.fulfillment || detectFulfillmentFromCart();
+  const buttonId = options.button_id || 'submit-btn';
   
-  const submitBtn = document.getElementById('submit-btn');
+  const submitBtn = document.getElementById(buttonId) || document.getElementById('submit-btn');
   submitBtn.disabled = true;
   submitBtn.textContent = 'Validation...';
   
@@ -3981,13 +4032,42 @@ async function submitOrder(e) {
         order_id: orderId, // Format: web + 4 chiffres (ex: web2556)
         event_id: eventId,
         created_at: new Date().toISOString(),
-        status: 'pending'
+        status: payment_mode === 'on_site' ? 'pending_payment_on_site' : 'pending_payment_online',
+        payment_mode,
+        fulfillment,
+        amount_total_cents: Math.round(calculatedTotal * 100),
+        currency: 'eur'
       };
       
       console.log('📦 OrderWithId avant envoi:', JSON.stringify(orderWithId, null, 2));
       
-      // Envoyer vers endpoint public Infomaniak (qui écrit dans R2)
-      // Cet endpoint sera créé côté serveur Infomaniak (PHP/Node)
+      // Stripe Checkout (paiement en ligne)
+      if (payment_mode === 'online') {
+        const response = await fetch('/api/stripe/create-checkout-session', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            order: orderWithId,
+            cart,
+            event_id: eventId,
+            currency: 'eur',
+            fulfillment
+          })
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error || 'Stripe session creation failed');
+        }
+
+        const data = await response.json();
+        if (!data.checkout_url) throw new Error('Missing checkout_url');
+
+        window.location.href = data.checkout_url;
+        return;
+      }
+
+      // Paiement sur place : envoyer vers endpoint public Infomaniak (R2)
       const publicApiUrl = window.PUBLIC_API_URL || '/api/orders/snapshot';
       
       try {
@@ -4034,7 +4114,7 @@ async function submitOrder(e) {
       await showCustomAlert('Erreur lors de l\'enregistrement: ' + error.message, 'error', 'Erreur');
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = t('submit_order_btn');
+      submitBtn.textContent = t(buttonId === 'submit-btn' ? 'pay_now_btn' : (buttonId === 'pay-on-site-btn' ? 'pay_on_site_btn' : 'shipping_btn'));
     }
     return;
   }
