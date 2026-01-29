@@ -6,12 +6,10 @@
 const express = require('express');
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
-// Middleware pour parser JSON
-app.use(express.json());
 
 // CORS pour permettre les requêtes depuis le frontend
 app.use((req, res, next) => {
@@ -38,6 +36,293 @@ if (!fs.existsSync(indexPath)) {
 } else {
   console.log('✅ index.html trouvé, serveur prêt');
 }
+
+// -----------------------
+// Stripe (Checkout + Webhook)
+// IMPORTANT: Le webhook Stripe doit recevoir le RAW body.
+// On déclare donc la route webhook AVANT express.json().
+// -----------------------
+const STRIPE_SECRET_KEY = process.env.STRIPE_SECRET_KEY || '';
+const STRIPE_WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
+
+let stripe = null;
+if (STRIPE_SECRET_KEY) {
+  try {
+    // eslint-disable-next-line global-require
+    const Stripe = require('stripe');
+    stripe = new Stripe(STRIPE_SECRET_KEY, {
+      apiVersion: '2024-06-20',
+    });
+    console.log('✅ Stripe initialisé');
+  } catch (e) {
+    console.error('❌ Erreur init Stripe:', e);
+  }
+} else {
+  console.warn('⚠️ STRIPE_SECRET_KEY non défini: endpoints Stripe désactivés');
+}
+
+function getPublicBaseUrl(req) {
+  const envUrl = process.env.PUBLIC_BASE_URL;
+  if (envUrl) return envUrl.replace(/\/$/, '');
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  const proto = (req.headers['x-forwarded-proto'] || req.protocol || 'https').toString();
+  return `${proto}://${host}`;
+}
+
+function safeReadJson(filePath, fallback) {
+  try {
+    if (!fs.existsSync(filePath)) return fallback;
+    const raw = fs.readFileSync(filePath, 'utf8');
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) {
+    return fallback;
+  }
+}
+
+function safeWriteJsonAtomic(filePath, data) {
+  const dir = path.dirname(filePath);
+  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  const tmp = `${filePath}.tmp`;
+  fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
+  fs.renameSync(tmp, filePath);
+}
+
+const STRIPE_ORDERS_PATH = path.join(ROOT, 'api', 'orders', 'stripe_orders.json');
+
+function upsertStripeOrder(order) {
+  const store = safeReadJson(STRIPE_ORDERS_PATH, { orders: [] });
+  const orders = Array.isArray(store.orders) ? store.orders : [];
+  const idx = orders.findIndex(o => o.order_id && order.order_id && o.order_id === order.order_id);
+  const now = new Date().toISOString();
+  const next = { ...order, updated_at: now, created_at: order.created_at || now };
+  if (idx >= 0) orders[idx] = { ...orders[idx], ...next };
+  else orders.push(next);
+  safeWriteJsonAtomic(STRIPE_ORDERS_PATH, { orders });
+  return next;
+}
+
+app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+  if (!stripe || !STRIPE_WEBHOOK_SECRET) {
+    return res.status(503).send('Stripe not configured');
+  }
+
+  let event;
+  try {
+    const sig = req.headers['stripe-signature'];
+    event = stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET);
+  } catch (err) {
+    console.error('❌ Stripe webhook signature verification failed:', err.message);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
+  }
+
+  try {
+    if (event.type === 'checkout.session.completed') {
+      const session = event.data.object;
+      const order_id = session.metadata?.order_id || null;
+      const event_id = session.metadata?.event_id || null;
+
+      if (order_id) {
+        upsertStripeOrder({
+          order_id,
+          event_id,
+          stripe_session_id: session.id,
+          stripe_payment_intent: session.payment_intent || null,
+          amount_total_cents: session.amount_total || null,
+          currency: session.currency || 'eur',
+          status: 'paid',
+          payment_mode: 'online',
+          fulfillment: session.metadata?.fulfillment || '',
+          paid_at: new Date().toISOString(),
+        });
+        console.log('✅ Stripe PAID:', order_id, session.id);
+      }
+    }
+
+    return res.json({ received: true });
+  } catch (e) {
+    console.error('❌ Webhook handler error:', e);
+    return res.status(500).json({ received: true });
+  }
+});
+
+// Middleware pour parser JSON (après le webhook Stripe)
+app.use(express.json());
+
+function loadProductsFromStatic() {
+  const productsPath = path.join(ROOT, 'static', 'products.json');
+  const data = safeReadJson(productsPath, null);
+  if (!data || !Array.isArray(data.products)) return [];
+  return data.products;
+}
+
+function getUnitPrice(product, position, hasPrintForSamePhoto = false) {
+  const isDigital = product.category === 'numérique';
+  let basePrice = product.price;
+  if (isDigital && hasPrintForSamePhoto && product.reduced_price_with_print) {
+    basePrice = product.reduced_price_with_print;
+  }
+
+  const useReducedPrice = isDigital && hasPrintForSamePhoto && product.reduced_price_with_print;
+  if (useReducedPrice) return product.reduced_price_with_print;
+
+  let specialPromoPosition = null;
+  let specialPromoPrice = null;
+  if (product.special_promo_rule) {
+    const match = String(product.special_promo_rule).match(/(\d+)\s*=\s*(\d+)/);
+    if (match) {
+      specialPromoPosition = parseInt(match[1], 10);
+      specialPromoPrice = parseFloat(match[2]);
+    }
+  }
+
+  if (specialPromoPosition && position === specialPromoPosition) {
+    return specialPromoPrice;
+  }
+
+  if (product.pricing_rules && typeof product.pricing_rules === 'object') {
+    const rules = product.pricing_rules;
+    const hasNumericKeys = Object.keys(rules).some(k => !Number.isNaN(parseInt(k, 10)));
+    const hasDefault = Object.prototype.hasOwnProperty.call(rules, 'default');
+
+    if (hasNumericKeys || hasDefault) {
+      const defaultPriceBase = parseFloat(rules.default || product.price);
+      const defaultPrice = defaultPriceBase;
+
+      const numericKeys = Object.keys(rules)
+        .filter(k => !Number.isNaN(parseInt(k, 10)))
+        .map(k => parseInt(k, 10))
+        .sort((a, b) => a - b);
+      const firstDefinedRank = numericKeys.length > 0 ? numericKeys[0] : 0;
+      const lastDefinedRank = numericKeys.length > 0 ? numericKeys[numericKeys.length - 1] : 0;
+      const lastDefinedPriceBase = lastDefinedRank > 0 ? parseFloat(rules[lastDefinedRank.toString()]) : defaultPrice;
+      const lastDefinedPrice = lastDefinedPriceBase;
+
+      const rankPrice = rules[position.toString()];
+      if (rankPrice !== undefined) {
+        return parseFloat(rankPrice);
+      }
+      if (position < firstDefinedRank) return basePrice;
+      return lastDefinedPrice;
+    }
+  }
+
+  const standardPrice = (product.promo_price && product.promo_price < product.price)
+    ? product.promo_price
+    : basePrice;
+  return standardPrice;
+}
+
+function computeCartTotalCents(cart, products) {
+  const productById = new Map(products.map(p => [String(p.id), p]));
+  const positions = new Map(); // productId -> current position
+  let total = 0;
+
+  const impressionProductIds = new Set(
+    products.filter(p => p.category === 'impression').map(p => String(p.id))
+  );
+
+  (Array.isArray(cart) ? cart : []).forEach(item => {
+    if (!item) return;
+
+    if (item.type === 'pack') {
+      const pid = String(item.product_id);
+      const product = productById.get(pid);
+      if (!product) return;
+      const qty = Number(item.quantity || 1);
+      for (let i = 0; i < qty; i += 1) {
+        const pos = (positions.get(pid) || 0) + 1;
+        positions.set(pid, pos);
+        const unit = getUnitPrice(product, pos, false);
+        total += unit;
+      }
+      return;
+    }
+
+    if (item.type === 'photo') {
+      const formats = item.formats && typeof item.formats === 'object' ? item.formats : {};
+      const hasPrintForSamePhoto = Object.entries(formats).some(([pid, qty]) => (
+        impressionProductIds.has(String(pid)) && Number(qty) > 0
+      ));
+
+      Object.entries(formats).forEach(([pidRaw, qtyRaw]) => {
+        const pid = String(pidRaw);
+        const product = productById.get(pid);
+        if (!product) return;
+        const qty = Number(qtyRaw || 0);
+        if (!Number.isFinite(qty) || qty <= 0) return;
+
+        for (let i = 0; i < qty; i += 1) {
+          const pos = (positions.get(pid) || 0) + 1;
+          positions.set(pid, pos);
+          const unit = getUnitPrice(product, pos, hasPrintForSamePhoto);
+          total += unit;
+        }
+      });
+    }
+  });
+
+  return Math.round(total * 100);
+}
+
+app.post('/api/stripe/create-checkout-session', async (req, res) => {
+  if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
+
+  try {
+    const { order, cart, currency = 'eur', event_id, fulfillment } = req.body || {};
+    const order_id = (order && order.order_id) ? String(order.order_id) : crypto.randomUUID();
+    const eventId = String(event_id || order?.event_id || '').trim();
+
+    const products = loadProductsFromStatic();
+    const amount_total_cents = computeCartTotalCents(cart, products);
+    if (!Number.isInteger(amount_total_cents) || amount_total_cents <= 0) {
+      return res.status(400).json({ error: 'Invalid amount' });
+    }
+
+    const baseUrl = getPublicBaseUrl(req);
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      automatic_payment_methods: { enabled: true },
+      line_items: [
+        {
+          price_data: {
+            currency,
+            product_data: { name: eventId ? `Commande ${eventId}` : 'Commande' },
+            unit_amount: amount_total_cents,
+          },
+          quantity: 1,
+        },
+      ],
+      customer_email: order?.email || undefined,
+      success_url: `${baseUrl}/success?order_id=${encodeURIComponent(order_id)}`,
+      cancel_url: `${baseUrl}/cancel?order_id=${encodeURIComponent(order_id)}`,
+      ...(fulfillment === 'shipping'
+        ? { shipping_address_collection: { allowed_countries: ['FR', 'BE', 'CH'] } }
+        : {}),
+      metadata: {
+        order_id,
+        event_id: eventId || '',
+        fulfillment: fulfillment || '',
+      },
+    });
+
+    upsertStripeOrder({
+      order_id,
+      event_id: eventId || null,
+      stripe_session_id: session.id,
+      status: 'pending',
+      payment_mode: 'online',
+      fulfillment: fulfillment || '',
+      amount_total_cents,
+      currency,
+      order_payload: order || null,
+    });
+
+    return res.json({ checkout_url: session.url, order_id, amount_total_cents });
+  } catch (e) {
+    console.error('❌ create-checkout-session failed:', e);
+    return res.status(500).json({ error: 'Stripe session creation failed' });
+  }
+});
 
 // Endpoint pour créer snapshot des commandes dans R2
 app.post('/api/orders/snapshot', async (req, res) => {
@@ -106,15 +391,21 @@ app.post('/api/orders/snapshot', async (req, res) => {
       // Fichier n'existe pas encore, c'est normal
     }
     
-    // Merger avec les nouvelles commandes (éviter doublons par order_id)
+    // Merger avec upsert par order_id (permet de mettre à jour un statut, ex: pending -> paid)
     let allOrders = orders;
-    if (existingSnapshot) {
-      const existingOrderIds = new Set(
-        existingSnapshot.orders.map(o => o.order_id).filter(Boolean)
-      );
-      const newOrders = orders.filter(o => o.order_id && !existingOrderIds.has(o.order_id));
-      allOrders = [...existingSnapshot.orders, ...newOrders];
-      console.log(`🔄 Merge: ${newOrders.length} nouvelle(s) commande(s) sur ${orders.length} reçue(s)`);
+    if (existingSnapshot && Array.isArray(existingSnapshot.orders)) {
+      const byId = new Map();
+      const withoutId = [];
+      existingSnapshot.orders.forEach(o => {
+        if (o && o.order_id) byId.set(o.order_id, o);
+        else withoutId.push(o);
+      });
+      orders.forEach(o => {
+        if (o && o.order_id) byId.set(o.order_id, o);
+        else withoutId.push(o);
+      });
+      allOrders = [...Array.from(byId.values()), ...withoutId];
+      console.log(`🔄 Upsert: ${orders.length} commande(s) reçue(s), total=${allOrders.length}`);
     }
     
     // Créer le snapshot
