@@ -273,20 +273,34 @@ function computeCartTotalCents(cart, products) {
 }
 
 app.post('/api/stripe/create-checkout-session', async (req, res) => {
-  if (!stripe) return res.status(503).json({ error: 'Stripe not configured' });
+  if (!stripe) {
+    console.error('❌ Stripe not configured - STRIPE_SECRET_KEY missing');
+    return res.status(503).json({ error: 'Stripe not configured' });
+  }
 
   try {
+    console.log('📥 POST /api/stripe/create-checkout-session');
     const { order, cart, currency = 'eur', event_id, fulfillment } = req.body || {};
+    console.log('📦 Request body:', JSON.stringify({ order: order?.order_id, cart_length: Array.isArray(cart) ? cart.length : 0, event_id, fulfillment }, null, 2));
+    
     const order_id = (order && order.order_id) ? String(order.order_id) : crypto.randomUUID();
     const eventId = String(event_id || order?.event_id || '').trim();
 
     const products = loadProductsFromStatic();
+    console.log(`📊 Products loaded: ${products.length}`);
+    
     const amount_total_cents = computeCartTotalCents(cart, products);
+    console.log(`💰 Total calculated: ${amount_total_cents} cents`);
+    
     if (!Number.isInteger(amount_total_cents) || amount_total_cents <= 0) {
+      console.error('❌ Invalid amount:', amount_total_cents);
       return res.status(400).json({ error: 'Invalid amount' });
     }
 
     const baseUrl = getPublicBaseUrl(req);
+    console.log(`🌐 Base URL: ${baseUrl}`);
+    
+    console.log('🔄 Creating Stripe checkout session...');
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       automatic_payment_methods: { enabled: true },
@@ -312,7 +326,9 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
         fulfillment: fulfillment || '',
       },
     });
+    console.log(`✅ Stripe session created: ${session.id}`);
 
+    console.log('💾 Saving order to local store...');
     upsertStripeOrder({
       order_id,
       event_id: eventId || null,
@@ -324,11 +340,19 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
       currency,
       order_payload: order || null,
     });
+    console.log(`✅ Order saved: ${order_id}`);
 
     return res.json({ checkout_url: session.url, order_id, amount_total_cents });
   } catch (e) {
     console.error('❌ create-checkout-session failed:', e);
-    return res.status(500).json({ error: 'Stripe session creation failed' });
+    console.error('❌ Error stack:', e.stack);
+    console.error('❌ Error message:', e.message);
+    if (e.type) console.error('❌ Error type:', e.type);
+    if (e.code) console.error('❌ Error code:', e.code);
+    return res.status(500).json({ 
+      error: 'Stripe session creation failed',
+      message: process.env.NODE_ENV === 'development' ? e.message : undefined
+    });
   }
 });
 
