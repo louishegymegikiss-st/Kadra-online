@@ -24,7 +24,8 @@ const s3Client = new S3Client({
   }
 });
 
-// Configuration CORS
+// Configuration CORS pour R2
+// Note: R2 utilise l'API S3 mais avec quelques différences
 const corsConfig = {
   CORSRules: [
     {
@@ -34,8 +35,19 @@ const corsConfig = {
         'http://localhost:8080'
       ],
       AllowedMethods: ['GET', 'HEAD', 'OPTIONS'],
-      AllowedHeaders: ['*'],
-      ExposeHeaders: ['ETag', 'Content-Length', 'Content-Type'],
+      AllowedHeaders: [
+        'Content-Type',
+        'Authorization',
+        'X-Requested-With',
+        'Origin',
+        'Accept'
+      ],
+      ExposeHeaders: [
+        'ETag',
+        'Content-Length',
+        'Content-Type',
+        'Last-Modified'
+      ],
       MaxAgeSeconds: 3600
     }
   ]
