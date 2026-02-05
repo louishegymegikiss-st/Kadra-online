@@ -4454,7 +4454,7 @@ async function discoverAvailableEvents() {
   
   // Méthode 1 : Charger le fichier events_list.json depuis la racine de R2
   try {
-    const r2Url = window.R2_PUBLIC_URL || 'https://galerie.smarttrailerapp.com';
+    const r2Url = window.R2_PUBLIC_URL || 'https://cdnphotoslesgarennes.com';
     const eventsListUrl = `${r2Url}/events_list.json?t=${Date.now()}`;
     const response = await fetch(eventsListUrl);
     if (response.ok) {
