@@ -51,10 +51,10 @@ try {
     }
     
     // Configuration R2 depuis variables d'environnement ou valeurs par défaut
-    $r2Endpoint = getenv('R2_ENDPOINT') ?: 'https://0ed22897e4a8686bd8c20227ad79d736.r2.cloudflarestorage.com';
-    $r2AccessKey = getenv('R2_ACCESS_KEY_ID') ?: '6ed17ae409c1969b754af590ee6b2d84';
-    $r2SecretKey = getenv('R2_SECRET_ACCESS_KEY') ?: '38725e098bc5d93f940f4bdcac31013da64fd4ddaeb2f348f87a7913e986f09b';
-    $r2Bucket = getenv('R2_BUCKET_NAME') ?: 'photos-kadra';
+    $r2Endpoint = getenv('R2_ENDPOINT') ?: 'https://2dc708dd22889ad3d4a69dc8b22529c9.r2.cloudflarestorage.com';
+    $r2AccessKey = getenv('R2_ACCESS_KEY_ID') ?: 'cf46e4ac89b40447f068513eac99b97c';
+    $r2SecretKey = getenv('R2_SECRET_ACCESS_KEY') ?: '03114d0e6c727612caf31d895c16c98d27a723abbc37d63a5d2fbee031cd6efc';
+    $r2Bucket = getenv('R2_BUCKET_NAME') ?: 'photolesgarennesgalerie';
     
     // Créer client S3 pour R2
     $s3 = new S3Client([
