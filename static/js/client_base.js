@@ -1264,7 +1264,11 @@ async function loadStaticPhotos(eventIds = null) {
     // Si pas de cache, charger depuis R2
     if (!photos) {
       try {
-        const r2Url = window.R2_PUBLIC_URL || 'https://cdnphotoslesgarennes.com';
+        const r2Url = window.R2_PUBLIC_URL;
+        if (!r2Url) {
+          console.error('❌ R2_PUBLIC_URL non défini');
+          continue;
+        }
         const r2Key = `events/${eventId}/photos_index.json`;
         const cacheBuster = `?t=${Date.now()}`;
         const response = await fetch(`${r2Url}/${r2Key}${cacheBuster}`);
@@ -1440,7 +1444,11 @@ function normalizePhotosData(rawPhotos) {
     // NOUVEAU : Utiliser les URLs R2 depuis l'index JSON R2 ou l'API
     let imageUrl = null;
     let previewUrl = null;
-    const r2PublicUrl = window.R2_PUBLIC_URL || 'https://cdnphotoslesgarennes.com';
+    const r2PublicUrl = window.R2_PUBLIC_URL;
+    if (!r2PublicUrl) {
+      console.error('❌ R2_PUBLIC_URL non défini');
+      return photo; // Retourner photo sans URLs R2
+    }
     
     // Priorité 1 : Utiliser r2_key_* depuis l'index JSON R2 (format events/{event_id}/photos/{file_id}/webp.webp)
     if (window.R2_PUBLIC_URL) {
@@ -4454,7 +4462,11 @@ async function discoverAvailableEvents() {
   
   // Méthode 1 : Charger le fichier events_list.json depuis la racine de R2
   try {
-    const r2Url = window.R2_PUBLIC_URL || 'https://cdnphotoslesgarennes.com';
+    const r2Url = window.R2_PUBLIC_URL;
+    if (!r2Url) {
+      console.error('❌ R2_PUBLIC_URL non défini');
+      return Array.from(events);
+    }
     const eventsListUrl = `${r2Url}/events_list.json?t=${Date.now()}`;
     const response = await fetch(eventsListUrl);
     if (response.ok) {
