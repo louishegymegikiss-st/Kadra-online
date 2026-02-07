@@ -26,18 +26,23 @@ const s3Client = new S3Client({
  */
 async function readJsonFromR2(r2Key) {
   try {
+    console.log(`📖 Lecture R2: ${r2Key}`);
     const command = new GetObjectCommand({
       Bucket: R2_BUCKET,
       Key: r2Key
     });
     const response = await s3Client.send(command);
     const body = await response.Body.transformToString();
-    return JSON.parse(body);
+    const parsed = JSON.parse(body);
+    console.log(`✅ R2 ${r2Key} lu avec succès:`, JSON.stringify(parsed, null, 2).substring(0, 500));
+    return parsed;
   } catch (e) {
     if (e.name === 'NoSuchKey' || e.$metadata?.httpStatusCode === 404) {
+      console.log(`⚠️ R2 ${r2Key} non trouvé (404)`);
       return null;
     }
     console.error(`❌ Erreur lecture R2 ${r2Key}:`, e);
+    console.error(`❌ Détails erreur:`, e.message, e.name, e.$metadata);
     throw e;
   }
 }

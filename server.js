@@ -704,7 +704,16 @@ app.get('/api/admin/events', async (req, res) => {
   try {
     console.log('📥 GET /api/admin/events - Récupération événements...');
     const eventsList = await r2Data.readJsonFromR2('events_list.json');
+    console.log('📋 events_list.json brut:', JSON.stringify(eventsList, null, 2));
+    
+    if (!eventsList) {
+      console.warn('⚠️ events_list.json est null ou introuvable');
+      return res.json({ events: [] });
+    }
+    
     let events = eventsList?.events || [];
+    console.log(`📅 events extrait:`, events);
+    console.log(`📅 Type du premier élément:`, events.length > 0 ? typeof events[0] : 'vide');
     
     // Si events est un tableau de strings (format: ["BJ025", "BJ026"]), convertir en objets
     if (events.length > 0 && typeof events[0] === 'string') {
@@ -714,8 +723,9 @@ app.get('/api/admin/events', async (req, res) => {
         id: eventId,
         name: eventId // Par défaut, utiliser l'ID comme nom
       }));
-    } else {
+    } else if (events.length > 0) {
       // Format déjà en objets, s'assurer que event_id/id sont présents
+      console.log(`📅 Format détecté: tableau d'objets (${events.length} événement(s))`);
       events = events.map(event => ({
         event_id: event.event_id || event.id || event,
         id: event.event_id || event.id || event,
@@ -723,7 +733,7 @@ app.get('/api/admin/events', async (req, res) => {
       }));
     }
     
-    console.log(`✅ ${events.length} événement(s) formaté(s) et renvoyé(s)`);
+    console.log(`✅ ${events.length} événement(s) formaté(s) et renvoyé(s):`, JSON.stringify(events, null, 2));
     res.json({ events });
   } catch (e) {
     console.error('❌ Erreur récupération événements:', e);

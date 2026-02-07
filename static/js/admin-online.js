@@ -30,12 +30,23 @@ document.addEventListener('DOMContentLoaded', async () => {
 // ========== CHARGEMENT ÉVÉNEMENTS ==========
 async function loadEvents() {
   try {
+    console.log('📥 Chargement événements depuis /api/admin/events...');
     const response = await fetch('/api/admin/events');
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    }
     const data = await response.json();
+    console.log('📋 Réponse API events:', data);
     allEvents = data.events || [];
+    console.log(`✅ ${allEvents.length} événement(s) reçu(s):`, allEvents);
     
     const select = document.getElementById('event-select');
     const hdSelect = document.getElementById('hd-event-select');
+    
+    if (!select || !hdSelect) {
+      console.error('❌ Éléments select non trouvés dans le DOM');
+      return;
+    }
     
     select.innerHTML = '<option value="">Tous les événements</option>';
     hdSelect.innerHTML = '<option value="">Sélectionner un événement...</option>';
@@ -44,6 +55,7 @@ async function loadEvents() {
       allEvents.forEach(event => {
         const eventId = event.event_id || event.id;
         const eventName = event.name || eventId;
+        console.log(`  📅 Ajout événement: ${eventId} (${eventName})`);
         
         const option = document.createElement('option');
         option.value = eventId;
@@ -53,8 +65,12 @@ async function loadEvents() {
         const hdOption = option.cloneNode(true);
         hdSelect.appendChild(hdOption);
       });
+      console.log(`✅ ${allEvents.length} option(s) ajoutée(s) aux selects`);
+    } else {
+      console.warn('⚠️ Aucun événement à afficher');
     }
   } catch (error) {
+    console.error('❌ Erreur chargement événements:', error);
     showMessage('Erreur chargement événements: ' + error.message, 'error');
   }
 }
