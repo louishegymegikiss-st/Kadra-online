@@ -37,8 +37,38 @@ async function loadEvents() {
     }
     const data = await response.json();
     console.log('📋 Réponse API events:', data);
-    allEvents = data.events || [];
-    console.log(`✅ ${allEvents.length} événement(s) reçu(s):`, allEvents);
+    let events = data.events || [];
+    console.log(`📅 Événements bruts reçus:`, events);
+    console.log(`📅 Type du premier élément:`, events.length > 0 ? typeof events[0] : 'vide');
+    
+    // Convertir les strings en objets si nécessaire (sécurité côté client)
+    if (events.length > 0 && typeof events[0] === 'string') {
+      console.log(`📅 Conversion côté client: tableau de strings → objets`);
+      events = events.map(eventId => ({
+        event_id: eventId,
+        id: eventId,
+        name: eventId
+      }));
+    } else if (events.length > 0) {
+      // S'assurer que tous les événements ont les propriétés nécessaires
+      events = events.map(event => {
+        if (typeof event === 'string') {
+          return {
+            event_id: event,
+            id: event,
+            name: event
+          };
+        }
+        return {
+          event_id: event.event_id || event.id || event,
+          id: event.event_id || event.id || event,
+          name: event.name || event.event_name || event.event_id || event.id || event
+        };
+      });
+    }
+    
+    allEvents = events;
+    console.log(`✅ ${allEvents.length} événement(s) formaté(s):`, allEvents);
     
     const select = document.getElementById('event-select');
     const hdSelect = document.getElementById('hd-event-select');
@@ -56,6 +86,11 @@ async function loadEvents() {
         const eventId = event.event_id || event.id;
         const eventName = event.name || eventId;
         console.log(`  📅 Ajout événement: ${eventId} (${eventName})`);
+        
+        if (!eventId) {
+          console.warn(`⚠️ Événement sans ID ignoré:`, event);
+          return;
+        }
         
         const option = document.createElement('option');
         option.value = eventId;
