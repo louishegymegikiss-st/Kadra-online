@@ -19,6 +19,11 @@ const s3Client = new S3Client({
   }
 });
 
+// Exposer le client S3 pour utilisation dans server.js
+function getS3Client() {
+  return s3Client;
+}
+
 /**
  * Lit un fichier JSON depuis R2
  * @param {string} r2Key - Chemin R2 (ex: "events/BJ025/products.json")
@@ -415,6 +420,7 @@ module.exports = {
   readJsonFromR2,
   writeJsonToR2,
   existsOnR2,
+  getS3Client,
   
   // Produits
   getProductsForEvent,

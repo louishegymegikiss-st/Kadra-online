@@ -105,9 +105,6 @@
                 <button class="tab-btn" data-tab="products">
                     Produits <span class="badge" id="badge-products">0</span>
                 </button>
-                <button class="tab-btn" data-tab="upload-hd">
-                    Upload HD
-                </button>
             </div>
             <div style="display: flex; align-items: center; gap: 10px; margin-left: 20px;">
                 <select id="event-select" style="padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 14px;">
@@ -152,74 +149,184 @@
                 </div>
             </div>
 
-            <!-- Onglet Upload HD -->
-            <div id="tab-upload-hd" class="tab-content" style="display: none;">
-                <div class="upload-hd-section">
-                    <h2>Upload Photo HD vers Galerie</h2>
-                    <form class="upload-form" onsubmit="uploadHD(event)">
-                        <div class="form-group">
-                            <label for="hd-event-select">Événement *</label>
-                            <select id="hd-event-select" required>
-                                <option value="">Sélectionner un événement...</option>
-                            </select>
-                        </div>
-                        <div class="form-group">
-                            <label for="hd-file-id">File ID (optionnel)</label>
-                            <input type="text" id="hd-file-id" placeholder="Laissez vide pour chercher par nom">
-                        </div>
-                        <div class="form-group">
-                            <label for="hd-rider-name">Nom Cavalier</label>
-                            <input type="text" id="hd-rider-name" placeholder="Si file_id vide">
-                        </div>
-                        <div class="form-group">
-                            <label for="hd-horse-name">Nom Cheval</label>
-                            <input type="text" id="hd-horse-name" placeholder="Si file_id vide">
-                        </div>
-                        <div class="form-group">
-                            <label for="hd-source-path">Chemin source (optionnel)</label>
-                            <input type="text" id="hd-source-path" placeholder="Chemin direct vers fichier HD">
-                        </div>
-                        <button type="submit" id="upload-hd-btn">Upload HD vers R2</button>
-                    </form>
-                    <div id="upload-hd-result" style="margin-top: 15px;"></div>
-                </div>
-            </div>
         </main>
+    </div>
+
+    <!-- Modal Upload HD -->
+    <div id="hd-upload-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close-modal" onclick="closeHDUploadModal()">&times;</span>
+            <h2>Upload Photos HD</h2>
+            <div id="hd-upload-info" style="margin-bottom: 20px; padding: 15px; background: #f0f0f0; border-radius: 5px;">
+                <p><strong>Commande:</strong> <span id="hd-upload-order-id"></span></p>
+                <p><strong>Événement:</strong> <span id="hd-upload-event-id"></span></p>
+            </div>
+            <div id="hd-upload-dropzone" style="border: 3px dashed #667eea; border-radius: 8px; padding: 40px; text-align: center; background: #f9f9f9; margin-bottom: 20px; min-height: 200px; display: flex; flex-direction: column; align-items: center; justify-content: center; cursor: pointer;">
+                <p style="font-size: 18px; color: #667eea; margin-bottom: 10px;">📤 Glissez-déposez les photos HD ici</p>
+                <p style="color: #666; margin-bottom: 20px;">ou cliquez pour sélectionner</p>
+                <input type="file" id="hd-upload-input" multiple accept="image/jpeg,image/jpg" style="display: none;">
+                <div id="hd-upload-files-list" style="width: 100%; margin-top: 20px;"></div>
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <button type="button" class="btn btn-primary" onclick="uploadHDFiles()">Upload vers R2</button>
+                <button type="button" class="btn" onclick="closeHDUploadModal()">Annuler</button>
+            </div>
+            <div id="hd-upload-progress" style="margin-top: 20px; display: none;">
+                <div style="background: #f0f0f0; border-radius: 5px; padding: 10px;">
+                    <div id="hd-upload-progress-bar" style="background: #667eea; height: 20px; border-radius: 5px; width: 0%; transition: width 0.3s;"></div>
+                </div>
+                <p id="hd-upload-status" style="margin-top: 10px; text-align: center;"></p>
+            </div>
+        </div>
     </div>
 
     <!-- Modal Produit -->
     <div id="product-modal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 800px;">
+        <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
             <span class="close-modal" onclick="closeProductForm()">&times;</span>
             <h2 id="product-modal-title">Ajouter un produit</h2>
             <form id="product-form" onsubmit="saveProduct(event)">
-                <div class="form-group">
-                    <label>Nom (FR) *</label>
-                    <input type="text" id="product-name-fr" required>
+                <!-- Noms traduits -->
+                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #667eea;">Traductions</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Nom (FR) *</label>
+                        <input type="text" id="product-name-fr" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Nom (EN)</label>
+                        <input type="text" id="product-name-en">
+                    </div>
+                    <div class="form-group">
+                        <label>Nom (ES)</label>
+                        <input type="text" id="product-name-es">
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Nom (EN)</label>
-                    <input type="text" id="product-name-en">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px;">
+                    <div class="form-group">
+                        <label>Description (FR)</label>
+                        <textarea id="product-description-fr" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Description (EN)</label>
+                        <textarea id="product-description-en" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Description (ES)</label>
+                        <textarea id="product-description-es" rows="3"></textarea>
+                    </div>
                 </div>
-                <div class="form-group">
-                    <label>Nom (ES)</label>
-                    <input type="text" id="product-name-es">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px;">
+                    <div class="form-group">
+                        <label>Badge texte (FR)</label>
+                        <input type="text" id="product-badge-text-fr" placeholder="Ex: Envoi instantané">
+                    </div>
+                    <div class="form-group">
+                        <label>Badge texte (EN)</label>
+                        <input type="text" id="product-badge-text-en">
+                    </div>
+                    <div class="form-group">
+                        <label>Badge texte (ES)</label>
+                        <input type="text" id="product-badge-text-es">
+                    </div>
                 </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+
+                <!-- Prix et catégorie -->
+                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Prix et catégorie</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
                     <div class="form-group">
                         <label>Prix (€) *</label>
                         <input type="number" id="product-price" step="0.01" min="0" required>
                     </div>
                     <div class="form-group">
-                        <label>Catégorie</label>
-                        <select id="product-category">
+                        <label>Prix promo (€)</label>
+                        <input type="number" id="product-promo-price" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label>Catégorie *</label>
+                        <select id="product-category" required>
                             <option value="numérique">Numérique</option>
                             <option value="impression">Impression</option>
                             <option value="pack">Pack</option>
                         </select>
                     </div>
                 </div>
+
+                <!-- Options numériques -->
+                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Options numériques</h3>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="product-email-delivery"> Photo redimensionnée 3000x2000 (livraison par email)
+                        </label>
+                        <small style="display: block; color: #666; margin-top: 5px;">Si coché: MD (3000x2000). Si non coché: HD complète</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Prix réduit avec impression (€)</label>
+                        <input type="number" id="product-reduced-price-with-print" step="0.01" min="0" placeholder="Ex: 5.00">
+                        <small style="display: block; color: #666; margin-top: 5px;">Prix réduit si une impression de la même photo est dans le panier</small>
+                    </div>
+                </div>
+
+                <!-- Options impression -->
+                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Options impression</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Méthode de livraison</label>
+                        <select id="product-delivery-method">
+                            <option value="">Aucune</option>
+                            <option value="pickup">Sur place</option>
+                            <option value="shipping">Envoi postal</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="product-requires-address"> Demander l'adresse
+                        </label>
+                        <small style="display: block; color: #666; margin-top: 5px;">Automatiquement activé si envoi postal</small>
+                    </div>
+                </div>
+
+                <!-- Règles de prix -->
+                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Règles de prix</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Règles de prix par quantité</label>
+                        <textarea id="product-pricing-rules" rows="4" placeholder='{"1": 15, "2": 25, "3": 35}'></textarea>
+                        <small style="display: block; color: #666; margin-top: 5px;">JSON: {"quantité": prix}</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Règle promo spéciale</label>
+                        <input type="text" id="product-special-promo-rule" placeholder='Ex: "5=7" (5 achetés = 7 offerts)'>
+                    </div>
+                </div>
+
+                <!-- Options pack -->
+                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Options pack</h3>
+                <div class="form-group">
+                    <label>Formats inclus dans le pack (IDs séparés par des virgules)</label>
+                    <input type="text" id="product-pack-formats" placeholder="Ex: 16,21,14">
+                    <small style="display: block; color: #666; margin-top: 5px;">Liste des IDs de produits inclus dans ce pack</small>
+                </div>
+
+                <!-- Affichage -->
+                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Affichage</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                    <div class="form-group">
+                        <label>Position dans "Nos offres"</label>
+                        <input type="number" id="product-featured-position" min="0" value="0">
+                        <small style="display: block; color: #666; margin-top: 5px;">0 = masqué, 1,2,3... = ordre d'affichage</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Ordre dans le panier</label>
+                        <input type="number" id="product-cart-order" min="0" value="0">
+                        <small style="display: block; color: #666; margin-top: 5px;">0 = par défaut, 1,2,3... = ordre personnalisé</small>
+                    </div>
+                </div>
+
+                <!-- Statut et global -->
+                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Statut</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
                     <div class="form-group">
                         <label>
                             <input type="checkbox" id="product-active" checked> Actif
@@ -227,11 +334,18 @@
                     </div>
                     <div class="form-group">
                         <label>
+                            <input type="checkbox" id="product-hidden"> Masqué
+                        </label>
+                        <small style="display: block; color: #666; margin-top: 5px;">Masqué mais reste actif</small>
+                    </div>
+                    <div class="form-group">
+                        <label>
                             <input type="checkbox" id="product-is-global"> Appliquer à tous les événements
                         </label>
                     </div>
                 </div>
-                <div style="display: flex; gap: 10px; margin-top: 20px;">
+
+                <div style="display: flex; gap: 10px; margin-top: 30px;">
                     <button type="submit" class="btn btn-primary">Enregistrer</button>
                     <button type="button" class="btn" onclick="closeProductForm()">Annuler</button>
                 </div>

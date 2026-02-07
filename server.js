@@ -896,7 +896,71 @@ app.put('/api/admin/events/:eventId/orders/:orderId', async (req, res) => {
   }
 });
 
-// UPLOAD HD vers R2
+// Multer pour gérer les uploads de fichiers
+const multer = require('multer');
+const upload = multer({ 
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 100 * 1024 * 1024 } // 100 MB max
+});
+
+// UPLOAD HD vers R2 (nouveau endpoint avec fichier)
+app.post('/api/admin/upload-hd-file', upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'Aucun fichier fourni' });
+    }
+    
+    const { event_id, order_id, file_id } = req.body;
+    
+    if (!event_id) {
+      return res.status(400).json({ error: 'event_id requis' });
+    }
+    
+    // Utiliser file_id fourni ou extraire du nom de fichier
+    const finalFileId = file_id || req.file.originalname.replace(/\.[^/.]+$/, '');
+    
+    if (!finalFileId) {
+      return res.status(400).json({ error: 'file_id requis (fourni ou dans le nom du fichier)' });
+    }
+    
+    console.log(`📤 Upload HD: ${finalFileId} pour événement ${event_id}`);
+    console.log(`📦 Taille fichier: ${(req.file.size / 1024 / 1024).toFixed(2)} MB`);
+    
+    // Construire la clé R2: events/{eventId}/photos/{fileId}/hd.jpg
+    const r2Key = `events/${event_id}/photos/${finalFileId}/hd.jpg`;
+    
+    // Upload vers R2
+    const { PutObjectCommand } = require('@aws-sdk/client-s3');
+    const r2Data = require('./r2-data');
+    const s3Client = r2Data.getS3Client();
+    
+    const uploadCommand = new PutObjectCommand({
+      Bucket: process.env.R2_BUCKET_NAME || 'photolesgarennesgalerie',
+      Key: r2Key,
+      Body: req.file.buffer,
+      ContentType: 'image/jpeg',
+      CacheControl: 'public, max-age=31536000'
+    });
+    
+    await s3Client.send(uploadCommand);
+    
+    console.log(`✅ HD uploadé vers R2: ${r2Key}`);
+    
+    res.json({
+      success: true,
+      r2_key: r2Key,
+      file_id: finalFileId,
+      event_id: event_id,
+      size: req.file.size
+    });
+  } catch (e) {
+    console.error('❌ Erreur upload HD:', e);
+    console.error('Stack:', e.stack);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// UPLOAD HD vers R2 (ancien endpoint - gardé pour compatibilité)
 app.post('/api/admin/upload-hd', async (req, res) => {
   try {
     const { event_id, file_id, rider_name, horse_name, source_path } = req.body;
