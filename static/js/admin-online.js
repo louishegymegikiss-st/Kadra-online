@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Charger les commandes par défaut
   await loadAllOrders();
   await loadConfig();
+
+  // Afficher/masquer les blocs du formulaire produit selon la catégorie
+  const productCategorySelect = document.getElementById('product-category');
+  if (productCategorySelect) {
+    productCategorySelect.addEventListener('change', toggleProductFormSections);
+  }
 });
 
 // ========== CHARGEMENT ÉVÉNEMENTS ==========
@@ -385,6 +391,21 @@ function renderProducts() {
   document.getElementById('badge-products').textContent = products.length;
 }
 
+function toggleProductFormSections() {
+  const categorySelect = document.getElementById('product-category');
+  const packInfoBox = document.getElementById('pack-info-box');
+  const deliveryMethodGroup = document.getElementById('delivery-method-group');
+  const reducedPriceWithPrintGroup = document.getElementById('reduced-price-with-print-group');
+  if (!categorySelect) return;
+  const category = (categorySelect.value || '').toLowerCase();
+  const isPack = category === 'pack';
+  const isImpression = category === 'impression';
+  const isDigital = category === 'numérique' || category === '';
+  if (packInfoBox) packInfoBox.style.display = isPack ? 'block' : 'none';
+  if (deliveryMethodGroup) deliveryMethodGroup.style.display = isImpression ? 'block' : 'none';
+  if (reducedPriceWithPrintGroup) reducedPriceWithPrintGroup.style.display = isDigital ? 'block' : 'none';
+}
+
 function openProductForm(productId = null) {
   const modal = document.getElementById('product-modal');
   const form = document.getElementById('product-form');
@@ -441,11 +462,14 @@ function openProductForm(productId = null) {
     delete form.dataset.productId;
   }
   
-  modal.style.display = 'block';
+  toggleProductFormSections();
+  modal.classList.add('active');
+  document.body.style.overflow = 'hidden';
 }
 
 function closeProductForm() {
-  document.getElementById('product-modal').style.display = 'none';
+  document.getElementById('product-modal').classList.remove('active');
+  document.body.style.overflow = '';
 }
 
 async function saveProduct(event) {

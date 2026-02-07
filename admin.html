@@ -56,6 +56,179 @@
             background: #ccc;
             cursor: not-allowed;
         }
+
+        /* Modal produit – aligné sur admin-ecommerce local */
+        #product-modal .modal-content {
+            background: #f9f9f9;
+            padding: 28px 32px;
+            border-radius: 8px;
+            max-width: 720px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            position: relative;
+        }
+        #product-modal .close-modal {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            font-size: 1.6rem;
+            cursor: pointer;
+            color: #6b7280;
+            line-height: 1;
+        }
+        #product-modal .close-modal:hover {
+            color: #1f2937;
+        }
+        #product-modal #product-modal-title {
+            margin-bottom: 24px;
+            color: #333;
+            font-size: 1.35rem;
+            font-weight: 600;
+            padding-right: 32px;
+        }
+        #product-modal .product-form {
+            max-width: 100%;
+        }
+        #product-modal .form-section {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        #product-modal .form-section:first-of-type {
+            margin-top: 0;
+            padding-top: 0;
+            border-top: none;
+        }
+        #product-modal .form-section-title {
+            margin-bottom: 14px;
+            color: #2d3561;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+        #product-modal .form-group {
+            margin-bottom: 18px;
+        }
+        #product-modal .form-group:last-child {
+            margin-bottom: 0;
+        }
+        #product-modal .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #374151;
+        }
+        #product-modal .form-group input,
+        #product-modal .form-group textarea,
+        #product-modal .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            font-family: inherit;
+            background: #fff;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        #product-modal .form-group input:focus,
+        #product-modal .form-group textarea:focus,
+        #product-modal .form-group select:focus {
+            outline: none;
+            border-color: #2d3561;
+            box-shadow: 0 0 0 2px rgba(45, 53, 97, 0.1);
+        }
+        #product-modal .form-group small {
+            display: block;
+            margin-top: 6px;
+            line-height: 1.45;
+            color: #6b7280;
+            font-size: 0.85em;
+        }
+        #product-modal .checkbox-group {
+            margin-bottom: 16px;
+        }
+        #product-modal .checkbox-label {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-bottom: 0;
+            line-height: 1.5;
+        }
+        #product-modal .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin: 0;
+            margin-top: 2px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+        #product-modal .checkbox-label span {
+            flex: 1;
+        }
+        #product-modal .form-row {
+            display: grid;
+            gap: 16px;
+        }
+        #product-modal .form-row.cols-3 {
+            grid-template-columns: 1fr 1fr 1fr;
+        }
+        #product-modal .form-row.cols-2 {
+            grid-template-columns: 1fr 1fr;
+        }
+        #product-modal .pack-info-box {
+            display: none;
+            margin-top: 14px;
+            padding: 14px 16px;
+            background: #e8f4f8;
+            border-left: 4px solid #2d3561;
+            border-radius: 4px;
+        }
+        #product-modal .pack-info-box p {
+            margin: 0 0 8px 0;
+            font-size: 0.9em;
+            color: #374151;
+        }
+        #product-modal .pack-info-box p:last-child {
+            margin-bottom: 0;
+        }
+        #product-modal .pack-info-box .pack-info-title {
+            font-weight: 600;
+            color: #2d3561;
+        }
+        #product-modal .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+            padding-top: 20px;
+            border-top: 1px solid #e5e7eb;
+        }
+        #product-modal .btn-submit {
+            background: #10b981;
+            color: white;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+        }
+        #product-modal .btn-submit:hover {
+            background: #059669;
+        }
+        #product-modal .btn-cancel {
+            background: #6c757d;
+            color: white;
+            padding: 10px 22px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+        }
+        #product-modal .btn-cancel:hover {
+            background: #5a6268;
+        }
     </style>
 </head>
 <body>
@@ -180,174 +353,195 @@
         </div>
     </div>
 
-    <!-- Modal Produit -->
-    <div id="product-modal" class="modal" style="display: none;">
-        <div class="modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+    <!-- Modal Produit (aligné sur admin-ecommerce local) -->
+    <div id="product-modal" class="modal">
+        <div class="modal-content">
             <span class="close-modal" onclick="closeProductForm()">&times;</span>
             <h2 id="product-modal-title">Ajouter un produit</h2>
-            <form id="product-form" onsubmit="saveProduct(event)">
-                <!-- Noms traduits -->
-                <h3 style="margin-top: 20px; margin-bottom: 10px; color: #667eea;">Traductions</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Nom (FR) *</label>
-                        <input type="text" id="product-name-fr" required>
+            <form id="product-form" class="product-form" onsubmit="saveProduct(event)">
+                <div class="form-section">
+                    <h3 class="form-section-title">Traductions</h3>
+                    <div class="form-row cols-3">
+                        <div class="form-group">
+                            <label for="product-name-fr">Nom (FR) *</label>
+                            <input type="text" id="product-name-fr" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-name-en">Nom (EN)</label>
+                            <input type="text" id="product-name-en" placeholder="Name in English">
+                        </div>
+                        <div class="form-group">
+                            <label for="product-name-es">Nom (ES)</label>
+                            <input type="text" id="product-name-es" placeholder="Nombre en español">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Nom (EN)</label>
-                        <input type="text" id="product-name-en">
+                    <div class="form-row cols-3">
+                        <div class="form-group">
+                            <label for="product-description-fr">Description (FR)</label>
+                            <textarea id="product-description-fr" rows="3"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-description-en">Description (EN)</label>
+                            <textarea id="product-description-en" rows="3" placeholder="Description in English"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-description-es">Description (ES)</label>
+                            <textarea id="product-description-es" rows="3" placeholder="Descripción en español"></textarea>
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Nom (ES)</label>
-                        <input type="text" id="product-name-es">
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px;">
-                    <div class="form-group">
-                        <label>Description (FR)</label>
-                        <textarea id="product-description-fr" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Description (EN)</label>
-                        <textarea id="product-description-en" rows="3"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Description (ES)</label>
-                        <textarea id="product-description-es" rows="3"></textarea>
-                    </div>
-                </div>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; margin-top: 15px;">
-                    <div class="form-group">
-                        <label>Badge texte (FR)</label>
-                        <input type="text" id="product-badge-text-fr" placeholder="Ex: Envoi instantané">
-                    </div>
-                    <div class="form-group">
-                        <label>Badge texte (EN)</label>
-                        <input type="text" id="product-badge-text-en">
-                    </div>
-                    <div class="form-group">
-                        <label>Badge texte (ES)</label>
-                        <input type="text" id="product-badge-text-es">
-                    </div>
-                </div>
-
-                <!-- Prix et catégorie -->
-                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Prix et catégorie</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Prix (€) *</label>
-                        <input type="number" id="product-price" step="0.01" min="0" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Prix promo (€)</label>
-                        <input type="number" id="product-promo-price" step="0.01" min="0">
-                    </div>
-                    <div class="form-group">
-                        <label>Catégorie *</label>
-                        <select id="product-category" required>
-                            <option value="numérique">Numérique</option>
-                            <option value="impression">Impression</option>
-                            <option value="pack">Pack</option>
-                        </select>
+                    <div class="form-row cols-3">
+                        <div class="form-group">
+                            <label for="product-badge-text-fr">Texte du badge (FR)</label>
+                            <input type="text" id="product-badge-text-fr" placeholder="Ex: Pack, Envoi instantané...">
+                            <small>Texte affiché dans le bandeau sur la carte produit « Nos offres ».</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-badge-text-en">Texte du badge (EN)</label>
+                            <input type="text" id="product-badge-text-en" placeholder="Ex: Pack, Instant delivery...">
+                        </div>
+                        <div class="form-group">
+                            <label for="product-badge-text-es">Texte du badge (ES)</label>
+                            <input type="text" id="product-badge-text-es" placeholder="Ex: Pack, Envío inmediato...">
+                        </div>
                     </div>
                 </div>
 
-                <!-- Options numériques -->
-                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Options numériques</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="product-email-delivery"> Photo redimensionnée 3000x2000 (livraison par email)
-                        </label>
-                        <small style="display: block; color: #666; margin-top: 5px;">Si coché: MD (3000x2000). Si non coché: HD complète</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Prix réduit avec impression (€)</label>
-                        <input type="number" id="product-reduced-price-with-print" step="0.01" min="0" placeholder="Ex: 5.00">
-                        <small style="display: block; color: #666; margin-top: 5px;">Prix réduit si une impression de la même photo est dans le panier</small>
-                    </div>
-                </div>
-
-                <!-- Options impression -->
-                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Options impression</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Méthode de livraison</label>
-                        <select id="product-delivery-method">
-                            <option value="">Aucune</option>
-                            <option value="pickup">Sur place</option>
-                            <option value="shipping">Envoi postal</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="product-requires-address"> Demander l'adresse
-                        </label>
-                        <small style="display: block; color: #666; margin-top: 5px;">Automatiquement activé si envoi postal</small>
+                <div class="form-section">
+                    <h3 class="form-section-title">Prix et catégorie</h3>
+                    <div class="form-row cols-3">
+                        <div class="form-group">
+                            <label for="product-price">Prix (€) *</label>
+                            <input type="number" id="product-price" step="0.01" min="0" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-promo-price">Prix promo (€)</label>
+                            <input type="number" id="product-promo-price" step="0.01" min="0" placeholder="Laisser vide si pas de promo">
+                        </div>
+                        <div class="form-group">
+                            <label for="product-category">Type *</label>
+                            <select id="product-category" required>
+                                <option value="numérique">Numérique</option>
+                                <option value="impression">Impression</option>
+                                <option value="pack">Pack</option>
+                            </select>
+                            <small>Les produits <strong>Pack</strong> sont utilisés par le bouton « Acheter mon pack ».</small>
+                            <div id="pack-info-box" class="pack-info-box">
+                                <p class="pack-info-title">Configuration du Pack</p>
+                                <p>Le pack permet d’acheter toutes les photos numériques d’un cavalier/cheval en une fois. Configurez le prix dégressif (règles de prix par quantité) pour des tarifs avantageux.</p>
+                                <p>Option « Photo redimensionnée 3000×2000 » : si coché, le pack propose des photos redimensionnées ; sinon photos HD complètes.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Règles de prix -->
-                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Règles de prix</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Règles de prix par quantité</label>
-                        <textarea id="product-pricing-rules" rows="4" placeholder='{"1": 15, "2": 25, "3": 35}'></textarea>
-                        <small style="display: block; color: #666; margin-top: 5px;">JSON: {"quantité": prix}</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Règle promo spéciale</label>
-                        <input type="text" id="product-special-promo-rule" placeholder='Ex: "5=7" (5 achetés = 7 offerts)'>
-                    </div>
-                </div>
-
-                <!-- Options pack -->
-                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Options pack</h3>
-                <div class="form-group">
-                    <label>Formats inclus dans le pack (IDs séparés par des virgules)</label>
-                    <input type="text" id="product-pack-formats" placeholder="Ex: 16,21,14">
-                    <small style="display: block; color: #666; margin-top: 5px;">Liste des IDs de produits inclus dans ce pack</small>
-                </div>
-
-                <!-- Affichage -->
-                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Affichage</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>Position dans "Nos offres"</label>
-                        <input type="number" id="product-featured-position" min="0" value="0">
-                        <small style="display: block; color: #666; margin-top: 5px;">0 = masqué, 1,2,3... = ordre d'affichage</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Ordre dans le panier</label>
-                        <input type="number" id="product-cart-order" min="0" value="0">
-                        <small style="display: block; color: #666; margin-top: 5px;">0 = par défaut, 1,2,3... = ordre personnalisé</small>
+                <div class="form-section">
+                    <h3 class="form-section-title">Options numériques</h3>
+                    <div class="form-row cols-2">
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="product-email-delivery">
+                                <span>Photo redimensionnée en 3000×2000 (livraison par email)</span>
+                            </label>
+                            <small>Si coché : format MD. Si non coché : HD complète (upload manuel côté admin).</small>
+                        </div>
+                        <div class="form-group" id="reduced-price-with-print-group">
+                            <label for="product-reduced-price-with-print">Prix réduit avec impression (€)</label>
+                            <input type="number" id="product-reduced-price-with-print" step="0.01" min="0" placeholder="Ex: 5.00">
+                            <small>Si une impression de la même photo est dans le panier, ce prix sera appliqué. Laisser vide si pas de réduction.</small>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Statut et global -->
-                <h3 style="margin-top: 30px; margin-bottom: 10px; color: #667eea;">Statut</h3>
-                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px;">
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="product-active" checked> Actif
-                        </label>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="product-hidden"> Masqué
-                        </label>
-                        <small style="display: block; color: #666; margin-top: 5px;">Masqué mais reste actif</small>
-                    </div>
-                    <div class="form-group">
-                        <label>
-                            <input type="checkbox" id="product-is-global"> Appliquer à tous les événements
-                        </label>
+                <div class="form-section" id="delivery-method-group" style="display: none;">
+                    <h3 class="form-section-title">Options impression</h3>
+                    <div class="form-row cols-2">
+                        <div class="form-group">
+                            <label for="product-delivery-method">Mode de livraison</label>
+                            <select id="product-delivery-method">
+                                <option value="">— Sélectionner —</option>
+                                <option value="pickup">Impression sur place</option>
+                                <option value="shipping">Envoi postal</option>
+                            </select>
+                            <small><strong>Sur place</strong> : récupération sur place. <strong>Envoi postal</strong> : nécessite une adresse.</small>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="product-requires-address">
+                                <span>Demander l’adresse</span>
+                            </label>
+                            <small>Automatiquement activé si envoi postal.</small>
+                        </div>
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 10px; margin-top: 30px;">
-                    <button type="submit" class="btn btn-primary">Enregistrer</button>
-                    <button type="button" class="btn" onclick="closeProductForm()">Annuler</button>
+                <div class="form-section">
+                    <h3 class="form-section-title">Règles de prix</h3>
+                    <div class="form-row cols-2">
+                        <div class="form-group">
+                            <label for="product-pricing-rules">Règles de prix par quantité</label>
+                            <textarea id="product-pricing-rules" rows="4" placeholder='{"1": 15, "2": 25, "3": 35}'></textarea>
+                            <small>JSON : quantité → prix. Ex. : photo 1 = 15€, photo 2 = 10€. Le total affiché est le cumul.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-special-promo-rule">Règle promo spéciale</label>
+                            <input type="text" id="product-special-promo-rule" placeholder="Ex: 2=1 (toutes les 2 photos, 1 offerte)">
+                            <small>Format X=Y : toutes les X photos, Y offertes. Ex. « 2=1 » = positions 2, 4, 6… gratuites.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">Options pack</h3>
+                    <div class="form-group">
+                        <label for="product-pack-formats">Formats inclus dans le pack (IDs séparés par des virgules)</label>
+                        <input type="text" id="product-pack-formats" placeholder="Ex: 16, 21, 14">
+                        <small>Liste des IDs de produits inclus dans ce pack.</small>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">Affichage</h3>
+                    <div class="form-row cols-2">
+                        <div class="form-group">
+                            <label for="product-featured-position">Position dans « Nos offres »</label>
+                            <input type="number" id="product-featured-position" min="0" value="0">
+                            <small>0 = masqué ; 1, 2, 3… = ordre d’affichage.</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="product-cart-order">Ordre dans le panier</label>
+                            <input type="number" id="product-cart-order" min="0" value="0">
+                            <small>0 = par défaut ; 1, 2, 3… = ordre personnalisé.</small>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">Statut</h3>
+                    <div class="form-row cols-3">
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="product-active" checked>
+                                <span>Actif</span>
+                            </label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="product-hidden">
+                                <span>Masquer (caché mais reste actif)</span>
+                            </label>
+                        </div>
+                        <div class="form-group checkbox-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="product-is-global">
+                                <span>Appliquer à tous les événements</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn-submit">Enregistrer</button>
+                    <button type="button" class="btn-cancel" onclick="closeProductForm()">Annuler</button>
                 </div>
             </form>
         </div>
