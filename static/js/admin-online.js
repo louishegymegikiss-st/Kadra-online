@@ -331,17 +331,18 @@ function updateStats() {
 
 // ========== PRODUITS ==========
 async function loadProducts() {
-  if (!currentEventId) {
-    document.getElementById('products-list').innerHTML = '<p>Sélectionnez un événement pour gérer les produits.</p>';
-    return;
-  }
+  // Charger produits globaux + produits de l'événement sélectionné (ou tous si aucun sélectionné)
+  const targetEventId = currentEventId || 'global';
   
   try {
-    const response = await fetch(`/api/admin/events/${currentEventId}/products`);
+    console.log(`📥 Chargement produits pour: ${targetEventId}`);
+    const response = await fetch(`/api/admin/events/${targetEventId}/products`);
     const data = await response.json();
     products = data.products || [];
+    console.log(`✅ ${products.length} produit(s) chargé(s) (${products.filter(p => p.is_global).length} global(aux), ${products.filter(p => !p.is_global).length} spécifique(s))`);
     renderProducts();
   } catch (error) {
+    console.error('❌ Erreur chargement produits:', error);
     showMessage('Erreur chargement produits: ' + error.message, 'error');
     document.getElementById('products-list').innerHTML = '<p style="color: red;">Erreur de chargement</p>';
   }
