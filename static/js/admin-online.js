@@ -90,7 +90,9 @@ async function loadAllOrders() {
 }
 
 async function loadOrders() {
+  // Si aucun événement sélectionné, charger toutes les commandes
   if (!currentEventId) {
+    console.log('📥 Aucun événement sélectionné, chargement de toutes les commandes...');
     await loadAllOrders();
     return;
   }
@@ -211,7 +213,12 @@ async function updateOrderStatus(orderId, eventId, newStatus) {
     }
     
     showMessage('Statut mis à jour avec succès', 'success');
-    await loadOrders();
+    // Recharger les commandes (toutes si aucun événement sélectionné)
+    if (currentEventId) {
+      await loadOrders();
+    } else {
+      await loadAllOrders();
+    }
   } catch (error) {
     showMessage('Erreur mise à jour: ' + error.message, 'error');
   }
@@ -525,7 +532,12 @@ function switchTab(tabName) {
   
   // Charger les données selon l'onglet
   if (tabName === 'orders') {
-    loadOrders();
+    // Si aucun événement sélectionné, charger toutes les commandes
+    if (currentEventId) {
+      loadOrders();
+    } else {
+      loadAllOrders();
+    }
   } else if (tabName === 'products') {
     loadProducts();
   }
