@@ -56,6 +56,24 @@ async function writeJsonToR2(r2Key, data) {
     // Écriture atomique via fichier temporaire
     const tmpKey = `${r2Key}.tmp`;
     
+    // Nettoyer un ancien .tmp s'il existe (safe - seulement si c'est un .tmp)
+    if (tmpKey.endsWith('.tmp')) {
+      try {
+        const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
+        const deleteTmpCommand = new DeleteObjectCommand({
+          Bucket: R2_BUCKET,
+          Key: tmpKey
+        });
+        await s3Client.send(deleteTmpCommand);
+        console.log(`🧹 Nettoyage ancien .tmp R2: ${tmpKey}`);
+      } catch (cleanupError) {
+        // Ignorer si le fichier n'existe pas ou autre erreur (safe)
+        if (cleanupError.name !== 'NoSuchKey' && cleanupError.$metadata?.httpStatusCode !== 404) {
+          console.debug(`⚠️ Impossible de nettoyer .tmp ${tmpKey}:`, cleanupError.message);
+        }
+      }
+    }
+    
     // 1. Écrire dans .tmp
     const tmpCommand = new PutObjectCommand({
       Bucket: R2_BUCKET,
@@ -76,19 +94,38 @@ async function writeJsonToR2(r2Key, data) {
     });
     await s3Client.send(finalCommand);
     
-    // 3. Supprimer le .tmp (optionnel, on peut le laisser)
-    try {
-      const deleteTmpCommand = new HeadObjectCommand({
-        Bucket: R2_BUCKET,
-        Key: tmpKey
-      });
-      // On ne supprime pas vraiment, on laisse le .tmp pour debug si besoin
-    } catch (e) {
-      // Ignorer
+    // 3. Supprimer le .tmp après succès (safe - seulement si c'est un .tmp)
+    if (tmpKey.endsWith('.tmp')) {
+      try {
+        const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
+        const deleteTmpCommand = new DeleteObjectCommand({
+          Bucket: R2_BUCKET,
+          Key: tmpKey
+        });
+        await s3Client.send(deleteTmpCommand);
+        console.log(`🧹 .tmp supprimé après succès: ${tmpKey}`);
+      } catch (deleteError) {
+        // Ignorer si suppression échoue (non-critique)
+        console.debug(`⚠️ Impossible de supprimer .tmp ${tmpKey}:`, deleteError.message);
+      }
     }
     
     return true;
   } catch (e) {
+    // Nettoyer le .tmp en cas d'erreur (safe)
+    const tmpKey = `${r2Key}.tmp`;
+    if (tmpKey.endsWith('.tmp')) {
+      try {
+        const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
+        const deleteTmpCommand = new DeleteObjectCommand({
+          Bucket: R2_BUCKET,
+          Key: tmpKey
+        });
+        await s3Client.send(deleteTmpCommand);
+      } catch (cleanupError) {
+        // Ignorer
+      }
+    }
     console.error(`❌ Erreur écriture R2 ${r2Key}:`, e);
     throw e;
   }
@@ -157,7 +194,7 @@ async function saveProductsForEvent(eventId, products) {
  * @returns {Promise<Array>} - Liste des commandes
  */
 async function getOrdersForEvent(eventId) {
-  const r2Key = `events/${eventId}/orders.json`;
+  const r2Key = `orders/${eventId}/pending_orders.json`;
   const data = await readJsonFromR2(r2Key);
   return data?.orders || [];
 }
@@ -169,14 +206,22 @@ async function getOrdersForEvent(eventId) {
  * @returns {Promise<boolean>}
  */
 async function saveOrdersForEvent(eventId, orders) {
-  const r2Key = `events/${eventId}/orders.json`;
-  const data = {
-    version: 1,
+  const r2Key = `orders/${eventId}/pending_orders.json`;
+  const snapshot = {
     event_id: eventId,
-    updated_at: new Date().toISOString(),
+    snapshot_version: 1, // Sera incrémenté si fichier existe déjà
+    generated_at: new Date().toISOString(),
+    count: orders.length,
     orders: orders
   };
-  return writeJsonToR2(r2Key, data);
+  
+  // Si le fichier existe, préserver le snapshot_version
+  const existing = await readJsonFromR2(r2Key);
+  if (existing && existing.snapshot_version) {
+    snapshot.snapshot_version = existing.snapshot_version + 1;
+  }
+  
+  return writeJsonToR2(r2Key, snapshot);
 }
 
 /**

@@ -572,8 +572,24 @@ app.post('/api/orders/snapshot', async (req, res) => {
     
     const snapshotJson = JSON.stringify(snapshot, null, 2);
     
-    // Upload atomique : d'abord .tmp
+    // Nettoyer un ancien .tmp s'il existe (safe)
     const tmpKey = `orders/${event_id}/pending_orders.tmp.json`;
+    try {
+      const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
+      const deleteTmpCommand = new DeleteObjectCommand({
+        Bucket: R2_BUCKET,
+        Key: tmpKey
+      });
+      await s3Client.send(deleteTmpCommand);
+      console.log(`🧹 Nettoyage ancien .tmp: ${tmpKey}`);
+    } catch (cleanupError) {
+      // Ignorer si le fichier n'existe pas (normal)
+      if (cleanupError.name !== 'NoSuchKey' && cleanupError.$metadata?.httpStatusCode !== 404) {
+        console.debug(`⚠️ Impossible de nettoyer .tmp ${tmpKey}:`, cleanupError.message);
+      }
+    }
+    
+    // Upload atomique : d'abord .tmp
     console.log(`📤 Upload temporaire: ${tmpKey} (${snapshotJson.length} bytes)`);
     const tmpCommand = new PutObjectCommand({
       Bucket: R2_BUCKET,
@@ -604,7 +620,32 @@ app.post('/api/orders/snapshot', async (req, res) => {
     try {
       await s3Client.send(finalCommand);
       console.log(`✅ Upload final réussi: ${r2Key}`);
+      
+      // Supprimer le .tmp après succès (safe)
+      try {
+        const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
+        const deleteTmpCommand = new DeleteObjectCommand({
+          Bucket: R2_BUCKET,
+          Key: tmpKey
+        });
+        await s3Client.send(deleteTmpCommand);
+        console.log(`🧹 .tmp supprimé après succès: ${tmpKey}`);
+      } catch (deleteError) {
+        // Ignorer si suppression échoue (non-critique)
+        console.debug(`⚠️ Impossible de supprimer .tmp ${tmpKey}:`, deleteError.message);
+      }
     } catch (finalError) {
+      // Nettoyer le .tmp en cas d'erreur (safe)
+      try {
+        const { DeleteObjectCommand } = require('@aws-sdk/client-s3');
+        const deleteTmpCommand = new DeleteObjectCommand({
+          Bucket: R2_BUCKET,
+          Key: tmpKey
+        });
+        await s3Client.send(deleteTmpCommand);
+      } catch (cleanupError) {
+        // Ignorer
+      }
       console.error(`❌ Erreur upload final ${r2Key}:`, finalError);
       console.error('Error code:', finalError.code);
       console.error('Error message:', finalError.message);
