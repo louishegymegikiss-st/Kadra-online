@@ -712,35 +712,40 @@ function toggleColumn(side) {
   }
 }
 
-// Chargement des produits
+// Chargement des produits (formats et prix selon l'événement courant, depuis R2)
 async function loadProducts() {
-  // Mode statique : charger depuis JSON statique
-  if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
+  // Borne online : charger les produits depuis l'API par événement (R2)
+  const useEventApi = !API_BASE || API_BASE === 'null' || API_BASE === null;
+  if (useEventApi) {
     try {
-      console.log('Mode statique : chargement produits depuis JSON statique');
-      const cacheBuster = `?v=1&t=${Date.now()}`;
-      const response = await fetch(`/static/products.json${cacheBuster}`);
+      const eventId = selectedEventIds.length === 1
+        ? selectedEventIds[0]
+        : ((await discoverAvailableEvents())[0] || '');
+      const url = `/api/products?event_id=${encodeURIComponent(eventId)}&lang=${encodeURIComponent(currentLanguage || 'fr')}`;
+      console.log('Chargement produits par événement:', eventId || '(premier disponible)');
+      const response = await fetch(url);
       if (!response.ok) {
-        console.warn('Fichier products.json introuvable, produits non disponibles');
+        console.warn('API produits indisponible, liste vide');
         products = [];
+        renderPromotions();
+        if (cart.length > 0) renderCartItems();
         return;
       }
       const data = await response.json();
       products = data.products || [];
-      console.log(`✅ ${products.length} produits chargés depuis JSON statique (version ${data.version || 'N/A'})`);
+      console.log(`✅ ${products.length} produit(s) chargé(s) pour l'événement ${data.event_id || eventId || 'N/A'}`);
       renderPromotions();
-      // Re-rendre le panier si ouvert pour mettre à jour les traductions
-      if (cart.length > 0) {
-        renderCartItems();
-      }
+      if (cart.length > 0) renderCartItems();
       return;
     } catch (error) {
-      console.warn('Erreur chargement products.json:', error);
+      console.warn('Erreur chargement produits par événement:', error);
       products = [];
+      renderPromotions();
+      if (cart.length > 0) renderCartItems();
       return;
     }
   }
-  
+
   try {
     const response = await fetch(`${API_BASE}/products?lang=${currentLanguage}`, {
       headers: getApiHeaders()
@@ -753,13 +758,9 @@ async function loadProducts() {
     const data = await response.json();
     products = data.products;
     renderPromotions();
-    // Re-rendre le panier si ouvert pour mettre à jour les traductions
-    if (cart.length > 0) {
-      renderCartItems();
-    }
+    if (cart.length > 0) renderCartItems();
   } catch (error) {
     console.error('Erreur:', error);
-    // Ne pas afficher d'erreur en mode statique
     if (API_BASE && API_BASE !== 'null' && API_BASE !== null) {
       showMessage('Impossible de charger les produits', 'error');
     }
@@ -4575,6 +4576,8 @@ function handleEventFilterChange(availableEvents) {
   if (searchInput && searchInput.value.trim()) {
     searchPhotos(searchInput.value.trim());
   }
+  // Recharger les produits (formats/prix) pour l'événement sélectionné
+  loadProducts();
 }
 
 /**
@@ -4633,6 +4636,8 @@ async function initEventFilter() {
   }
   
   console.log(`✅ Filtre d'événements initialisé: ${availableEvents.length} événement(s) disponible(s)`);
+  // Recharger les produits (formats/prix) pour l'événement sélectionné
+  loadProducts();
 }
 
 // Initialiser le filtre au chargement de la page

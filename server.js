@@ -219,26 +219,17 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 // Middleware pour parser JSON (après le webhook Stripe)
 app.use(express.json());
 
-// Fonction pour charger les produits depuis R2 par événement
+// Charger les produits depuis R2 par événement (plus de fichier statique)
 async function loadProductsForEvent(eventId) {
-  if (!eventId) {
-    // Fallback: charger depuis static/products.json si pas d'event_id
-    const productsPath = path.join(ROOT, 'static', 'products.json');
-    const data = safeReadJson(productsPath, null);
-    if (!data || !Array.isArray(data.products)) return [];
-    return data.products;
+  if (!eventId || !String(eventId).trim()) {
+    return [];
   }
-  
   try {
     const products = await r2Data.getProductsForEvent(eventId);
     return products;
   } catch (e) {
     console.error(`❌ Erreur chargement produits R2 pour ${eventId}:`, e);
-    // Fallback vers static/products.json
-    const productsPath = path.join(ROOT, 'static', 'products.json');
-    const data = safeReadJson(productsPath, null);
-    if (!data || !Array.isArray(data.products)) return [];
-    return data.products;
+    return [];
   }
 }
 
@@ -696,6 +687,26 @@ app.get('/admin', (req, res) => {
     res.sendFile(adminHtmlPath);
   } else {
     res.status(404).send('<h1>Interface admin non trouvée</h1>');
+  }
+});
+
+// Produits pour la borne client (formats et prix par événement, depuis R2)
+app.get('/api/products', async (req, res) => {
+  try {
+    let eventId = (req.query.event_id || '').trim();
+    const lang = (req.query.lang || 'fr').trim() || 'fr';
+    if (!eventId) {
+      const eventsList = await r2Data.readJsonFromR2('events_list.json');
+      const events = Array.isArray(eventsList) ? eventsList : (eventsList?.events || []);
+      const valid = events.filter(e => e != null && e !== '' && String(e) !== 'undefined');
+      const firstId = typeof valid[0] === 'object' ? (valid[0].event_id || valid[0].id) : valid[0];
+      eventId = firstId || '';
+    }
+    const products = await loadProductsForEvent(eventId);
+    res.json({ products, event_id: eventId || null, version: 1 });
+  } catch (e) {
+    console.error('❌ GET /api/products:', e);
+    res.status(500).json({ error: e.message, products: [] });
   }
 });
 
