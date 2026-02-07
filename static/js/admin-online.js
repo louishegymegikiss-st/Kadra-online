@@ -9,11 +9,13 @@ let allEvents = [];
 // ========== INITIALISATION ==========
 document.addEventListener('DOMContentLoaded', async () => {
   await loadEvents();
-  document.getElementById('event-select').addEventListener('change', onEventChange);
-  document.getElementById('hd-event-select').addEventListener('change', (e) => {
+  const eventSelect = document.getElementById('event-select');
+  const hdEventSelect = document.getElementById('hd-event-select');
+  if (eventSelect) eventSelect.addEventListener('change', onEventChange);
+  if (hdEventSelect) hdEventSelect.addEventListener('change', (e) => {
     currentEventId = e.target.value || null;
   });
-  
+
   // Gestion des onglets
   document.querySelectorAll('.tab-btn').forEach(btn => {
     btn.addEventListener('click', () => {
@@ -21,7 +23,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       switchTab(tab);
     });
   });
-  
+
   // Charger les commandes par défaut
   await loadAllOrders();
   await loadConfig();
@@ -41,6 +43,8 @@ async function loadEvents() {
     console.log(`📅 Événements bruts reçus:`, events);
     console.log(`📅 Type du premier élément:`, events.length > 0 ? typeof events[0] : 'vide');
     
+    // Exclure entrées invalides (undefined, null, chaîne "undefined")
+    events = events.filter(e => e != null && e !== '' && String(e) !== 'undefined');
     // Convertir les strings en objets si nécessaire (sécurité côté client)
     if (events.length > 0 && typeof events[0] === 'string') {
       console.log(`📅 Conversion côté client: tableau de strings → objets`);
@@ -64,41 +68,42 @@ async function loadEvents() {
           id: event.event_id || event.id || event,
           name: event.name || event.event_name || event.event_id || event.id || event
         };
-      });
+      }).filter(e => e.id != null && String(e.id) !== 'undefined');
     }
-    
+
     allEvents = events;
     console.log(`✅ ${allEvents.length} événement(s) formaté(s):`, allEvents);
     
     const select = document.getElementById('event-select');
     const hdSelect = document.getElementById('hd-event-select');
-    
-    if (!select || !hdSelect) {
-      console.error('❌ Éléments select non trouvés dans le DOM');
+
+    if (!select) {
+      console.error('❌ Select event-select non trouvé dans le DOM');
       return;
     }
-    
+
     select.innerHTML = '<option value="">Tous les événements</option>';
-    hdSelect.innerHTML = '<option value="">Sélectionner un événement...</option>';
-    
+    if (hdSelect) hdSelect.innerHTML = '<option value="">Sélectionner un événement...</option>';
+
     if (allEvents.length > 0) {
       allEvents.forEach(event => {
         const eventId = event.event_id || event.id;
         const eventName = event.name || eventId;
         console.log(`  📅 Ajout événement: ${eventId} (${eventName})`);
-        
+
         if (!eventId) {
           console.warn(`⚠️ Événement sans ID ignoré:`, event);
           return;
         }
-        
+
         const option = document.createElement('option');
         option.value = eventId;
         option.textContent = eventName;
         select.appendChild(option);
-        
-        const hdOption = option.cloneNode(true);
-        hdSelect.appendChild(hdOption);
+        if (hdSelect) {
+          const hdOption = option.cloneNode(true);
+          hdSelect.appendChild(hdOption);
+        }
       });
       console.log(`✅ ${allEvents.length} option(s) ajoutée(s) aux selects`);
     } else {

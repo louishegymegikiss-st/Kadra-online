@@ -711,7 +711,16 @@ app.get('/api/admin/events', async (req, res) => {
       return res.json({ events: [] });
     }
     
-    let events = eventsList?.events || [];
+    // Support format { events: [...] } ou tableau à la racine ["BJ025", "BJ026"]
+    let events = Array.isArray(eventsList) ? eventsList : (eventsList?.events || []);
+    // Exclure entrées invalides (undefined, null, chaîne "undefined")
+    events = events.filter(e => e != null && e !== '' && String(e) !== 'undefined');
+    if (events.length > 0 && typeof events[0] === 'object') {
+      events = events.filter(e => {
+        const id = e.event_id || e.id;
+        return id != null && id !== '' && String(id) !== 'undefined';
+      });
+    }
     console.log(`📅 events extrait:`, events);
     console.log(`📅 Type du premier élément:`, events.length > 0 ? typeof events[0] : 'vide');
     
@@ -721,7 +730,7 @@ app.get('/api/admin/events', async (req, res) => {
       events = events.map(eventId => ({
         event_id: eventId,
         id: eventId,
-        name: eventId // Par défaut, utiliser l'ID comme nom
+        name: eventId
       }));
     } else if (events.length > 0) {
       // Format déjà en objets, s'assurer que event_id/id sont présents
@@ -730,7 +739,7 @@ app.get('/api/admin/events', async (req, res) => {
         event_id: event.event_id || event.id || event,
         id: event.event_id || event.id || event,
         name: event.name || event.event_name || event.event_id || event.id || event
-      }));
+      })).filter(e => e.id != null && String(e.id) !== 'undefined');
     }
     
     console.log(`✅ ${events.length} événement(s) formaté(s) et renvoyé(s):`, JSON.stringify(events, null, 2));
