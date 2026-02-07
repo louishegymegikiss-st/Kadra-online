@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administration - Photos Les Garennes</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+        }
+        
+        .header-links a {
+            color: white;
+            text-decoration: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            background: rgba(255,255,255,0.2);
+            transition: background 0.2s;
+        }
+        
+        .header-links a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+        
+        .event-selector {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .event-selector label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: #555;
+        }
+        
+        .event-selector select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 16px;
+            background: white;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: #666;
+            border-bottom: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .card h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #059669;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table th, table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        table th {
+            background: #f9fafb;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .message {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+        }
+        
+        .message-success {
+            background: #d1fae5;
+            color: #065f46;
+            border: 1px solid #10b981;
+        }
+        
+        .message-error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        
+        .badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Administration - Photos Les Garennes</h1>
+        <div class="header-links">
+            <a href="/">Interface Client</a>
+            <a href="/admin">Admin</a>
+        </div>
+    </div>
+    
+    <div class="container">
+        <div class="event-selector">
+            <label for="event-select">Sélectionner un événement :</label>
+            <select id="event-select">
+                <option value="">Chargement...</option>
+            </select>
+        </div>
+        
+        <div id="message-container"></div>
+        
+        <div id="content" style="display: none;">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('products')">Produits</button>
+                <button class="tab" onclick="switchTab('orders')">Commandes</button>
+                <button class="tab" onclick="switchTab('config')">Configuration</button>
+            </div>
+            
+            <!-- Onglet Produits -->
+            <div id="tab-products" class="tab-content active">
+                <div class="card">
+                    <h2>Gestion des Produits</h2>
+                    <button class="btn btn-primary" onclick="openProductForm()">+ Ajouter un produit</button>
+                    <div id="products-list" class="loading">Chargement...</div>
+                </div>
+            </div>
+            
+            <!-- Onglet Commandes -->
+            <div id="tab-orders" class="tab-content">
+                <div class="card">
+                    <h2>Commandes</h2>
+                    <div id="orders-list" class="loading">Chargement...</div>
+                </div>
+            </div>
+            
+            <!-- Onglet Configuration -->
+            <div id="tab-config" class="tab-content">
+                <div class="card">
+                    <h2>Configuration de l'événement</h2>
+                    <div class="form-group">
+                        <label for="turnover-objective">Objectif CA (€)</label>
+                        <input type="number" id="turnover-objective" step="0.01" min="0">
+                    </div>
+                    <button class="btn btn-success" onclick="saveConfig()">Enregistrer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal Produit -->
+    <div id="product-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
+        <div style="max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px;">
+            <h2 id="product-modal-title">Ajouter un produit</h2>
+            <form id="product-form" onsubmit="saveProduct(event)">
+                <div class="form-group">
+                    <label>Nom (FR) *</label>
+                    <input type="text" id="product-name-fr" required>
+                </div>
+                <div class="form-group">
+                    <label>Nom (EN)</label>
+                    <input type="text" id="product-name-en">
+                </div>
+                <div class="form-group">
+                    <label>Nom (ES)</label>
+                    <input type="text" id="product-name-es">
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>Prix (€) *</label>
+                        <input type="number" id="product-price" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Catégorie</label>
+                        <select id="product-category">
+                            <option value="numérique">Numérique</option>
+                            <option value="impression">Impression</option>
+                            <option value="pack">Pack</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="product-active"> Actif
+                    </label>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 20px;">
+                    <button type="submit" class="btn btn-primary">Enregistrer</button>
+                    <button type="button" class="btn" onclick="closeProductForm()">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="/static/js/admin-online.js"></script>
+</body>
+</html>

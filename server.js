@@ -106,7 +106,23 @@ function safeWriteJsonAtomic(filePath, data) {
 
 const STRIPE_ORDERS_PATH = path.join(ROOT, 'api', 'orders', 'stripe_orders.json');
 
-function upsertStripeOrder(order) {
+// Module R2 pour gérer produits/commandes par événement
+const r2Data = require('./r2-data');
+
+async function upsertStripeOrder(order) {
+  // Sauvegarder dans R2 par événement si event_id disponible
+  if (order.event_id) {
+    try {
+      const savedOrder = await r2Data.upsertOrderForEvent(order.event_id, order);
+      console.log(`✅ Commande Stripe sauvegardée dans R2: ${order.order_id} (event: ${order.event_id})`);
+      return savedOrder;
+    } catch (e) {
+      console.error(`❌ Erreur sauvegarde R2 pour commande ${order.order_id}:`, e);
+      // Fallback vers fichier local
+    }
+  }
+  
+  // Fallback: sauvegarder dans fichier local (pour compatibilité)
   const store = safeReadJson(STRIPE_ORDERS_PATH, { orders: [] });
   const orders = Array.isArray(store.orders) ? store.orders : [];
   const idx = orders.findIndex(o => o.order_id && order.order_id && o.order_id === order.order_id);
@@ -139,7 +155,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
       const event_id = session.metadata?.event_id || null;
 
       if (order_id) {
-        upsertStripeOrder({
+        await upsertStripeOrder({
           order_id,
           event_id,
           stripe_session_id: session.id,
@@ -165,11 +181,27 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 // Middleware pour parser JSON (après le webhook Stripe)
 app.use(express.json());
 
-function loadProductsFromStatic() {
-  const productsPath = path.join(ROOT, 'static', 'products.json');
-  const data = safeReadJson(productsPath, null);
-  if (!data || !Array.isArray(data.products)) return [];
-  return data.products;
+// Fonction pour charger les produits depuis R2 par événement
+async function loadProductsForEvent(eventId) {
+  if (!eventId) {
+    // Fallback: charger depuis static/products.json si pas d'event_id
+    const productsPath = path.join(ROOT, 'static', 'products.json');
+    const data = safeReadJson(productsPath, null);
+    if (!data || !Array.isArray(data.products)) return [];
+    return data.products;
+  }
+  
+  try {
+    const products = await r2Data.getProductsForEvent(eventId);
+    return products;
+  } catch (e) {
+    console.error(`❌ Erreur chargement produits R2 pour ${eventId}:`, e);
+    // Fallback vers static/products.json
+    const productsPath = path.join(ROOT, 'static', 'products.json');
+    const data = safeReadJson(productsPath, null);
+    if (!data || !Array.isArray(data.products)) return [];
+    return data.products;
+  }
 }
 
 function getUnitPrice(product, position, hasPrintForSamePhoto = false) {
@@ -309,8 +341,8 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
     const order_id = (order && order.order_id) ? String(order.order_id) : crypto.randomUUID();
     const eventId = String(event_id || order?.event_id || '').trim();
 
-    const products = loadProductsFromStatic();
-    console.log(`📊 Products loaded: ${products.length}`);
+    const products = await loadProductsForEvent(eventId);
+    console.log(`📊 Products loaded: ${products.length} (event: ${eventId || 'none'})`);
     
     if (!cart || (Array.isArray(cart) && cart.length === 0)) {
       console.error('❌ Cart is empty or invalid');
@@ -358,7 +390,7 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
 
     console.log('💾 Saving order to local store...');
     try {
-      upsertStripeOrder({
+        await upsertStripeOrder({
         order_id,
         event_id: eventId || null,
         stripe_session_id: session.id,
@@ -553,6 +585,183 @@ app.post('/api/orders/snapshot', async (req, res) => {
       hint: 'Vérifier les credentials R2 et la connexion',
       details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
+  }
+});
+
+// ============================================
+// ENDPOINTS ADMIN - Gestion produits/commandes par événement
+// ============================================
+
+// Route admin HTML
+app.get('/admin', (req, res) => {
+  const adminHtmlPath = path.join(ROOT, 'admin.html');
+  if (fs.existsSync(adminHtmlPath)) {
+    res.sendFile(adminHtmlPath);
+  } else {
+    res.status(404).send('<h1>Interface admin non trouvée</h1>');
+  }
+});
+
+// Liste des événements (depuis events_list.json sur R2)
+app.get('/api/admin/events', async (req, res) => {
+  try {
+    const eventsList = await r2Data.readJsonFromR2('events_list.json');
+    const events = eventsList?.events || [];
+    res.json({ events });
+  } catch (e) {
+    console.error('❌ Erreur récupération événements:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// PRODUITS par événement
+app.get('/api/admin/events/:eventId/products', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const products = await r2Data.getProductsForEvent(eventId);
+    res.json({ products });
+  } catch (e) {
+    console.error('❌ Erreur récupération produits:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.post('/api/admin/events/:eventId/products', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const product = req.body;
+    
+    // Générer un ID si absent
+    if (!product.id) {
+      product.id = Date.now(); // ID simple basé sur timestamp
+    }
+    
+    const products = await r2Data.getProductsForEvent(eventId);
+    const existingIdx = products.findIndex(p => p.id === product.id);
+    
+    if (existingIdx >= 0) {
+      products[existingIdx] = { ...products[existingIdx], ...product };
+    } else {
+      products.push(product);
+    }
+    
+    await r2Data.saveProductsForEvent(eventId, products);
+    res.json({ product: existingIdx >= 0 ? products[existingIdx] : products[products.length - 1] });
+  } catch (e) {
+    console.error('❌ Erreur sauvegarde produit:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.put('/api/admin/events/:eventId/products/:productId', async (req, res) => {
+  try {
+    const { eventId, productId } = req.params;
+    const product = req.body;
+    
+    const products = await r2Data.getProductsForEvent(eventId);
+    const idx = products.findIndex(p => String(p.id) === String(productId));
+    
+    if (idx < 0) {
+      return res.status(404).json({ error: 'Produit non trouvé' });
+    }
+    
+    products[idx] = { ...products[idx], ...product, id: Number(productId) };
+    await r2Data.saveProductsForEvent(eventId, products);
+    res.json({ product: products[idx] });
+  } catch (e) {
+    console.error('❌ Erreur mise à jour produit:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.delete('/api/admin/events/:eventId/products/:productId', async (req, res) => {
+  try {
+    const { eventId, productId } = req.params;
+    
+    const products = await r2Data.getProductsForEvent(eventId);
+    const filtered = products.filter(p => String(p.id) !== String(productId));
+    
+    await r2Data.saveProductsForEvent(eventId, filtered);
+    res.json({ success: true });
+  } catch (e) {
+    console.error('❌ Erreur suppression produit:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// COMMANDES par événement
+app.get('/api/admin/events/:eventId/orders', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const { status } = req.query;
+    let orders = await r2Data.getOrdersForEvent(eventId);
+    
+    if (status) {
+      orders = orders.filter(o => o.status === status);
+    }
+    
+    res.json({ orders });
+  } catch (e) {
+    console.error('❌ Erreur récupération commandes:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/admin/events/:eventId/orders/:orderId', async (req, res) => {
+  try {
+    const { eventId, orderId } = req.params;
+    const orders = await r2Data.getOrdersForEvent(eventId);
+    const order = orders.find(o => (o.order_id || o.id) === orderId);
+    
+    if (!order) {
+      return res.status(404).json({ error: 'Commande non trouvée' });
+    }
+    
+    res.json({ order });
+  } catch (e) {
+    console.error('❌ Erreur récupération commande:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.put('/api/admin/events/:eventId/orders/:orderId', async (req, res) => {
+  try {
+    const { eventId, orderId } = req.params;
+    const updates = req.body;
+    
+    const order = await r2Data.upsertOrderForEvent(eventId, {
+      order_id: orderId,
+      ...updates
+    });
+    
+    res.json({ order });
+  } catch (e) {
+    console.error('❌ Erreur mise à jour commande:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// CONFIGURATION par événement
+app.get('/api/admin/events/:eventId/config', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const config = await r2Data.getConfigForEvent(eventId);
+    res.json({ config });
+  } catch (e) {
+    console.error('❌ Erreur récupération config:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.put('/api/admin/events/:eventId/config', async (req, res) => {
+  try {
+    const { eventId } = req.params;
+    const config = req.body;
+    await r2Data.saveConfigForEvent(eventId, config);
+    res.json({ config });
+  } catch (e) {
+    console.error('❌ Erreur sauvegarde config:', e);
+    res.status(500).json({ error: e.message });
   }
 });
 
