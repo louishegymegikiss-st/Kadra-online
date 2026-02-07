@@ -322,13 +322,23 @@ async function getAllOrders() {
   try {
     console.log('📋 Récupération toutes les commandes depuis R2...');
     const eventsList = await readJsonFromR2('events_list.json');
-    const events = eventsList?.events || [];
+    let events = eventsList?.events || [];
     console.log(`📅 ${events.length} événement(s) trouvé(s) dans events_list.json`);
+    
+    // Si events est un tableau de strings (format: ["BJ025", "BJ026"]), convertir en objets
+    if (events.length > 0 && typeof events[0] === 'string') {
+      console.log(`📅 Format détecté: tableau de strings, conversion en objets`);
+      events = events.map(eventId => ({
+        event_id: eventId,
+        id: eventId,
+        name: eventId // Par défaut, utiliser l'ID comme nom
+      }));
+    }
     
     const allOrders = [];
     
     for (const event of events) {
-      const eventId = event.event_id || event.id;
+      const eventId = event.event_id || event.id || event; // Support aussi si event est directement une string
       const eventName = event.name || event.event_name || eventId;
       
       if (eventId) {

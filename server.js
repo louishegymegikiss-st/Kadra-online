@@ -702,11 +702,32 @@ app.get('/admin', (req, res) => {
 // Liste des événements (depuis events_list.json sur R2)
 app.get('/api/admin/events', async (req, res) => {
   try {
+    console.log('📥 GET /api/admin/events - Récupération événements...');
     const eventsList = await r2Data.readJsonFromR2('events_list.json');
-    const events = eventsList?.events || [];
+    let events = eventsList?.events || [];
+    
+    // Si events est un tableau de strings (format: ["BJ025", "BJ026"]), convertir en objets
+    if (events.length > 0 && typeof events[0] === 'string') {
+      console.log(`📅 Format détecté: tableau de strings (${events.length} événement(s))`);
+      events = events.map(eventId => ({
+        event_id: eventId,
+        id: eventId,
+        name: eventId // Par défaut, utiliser l'ID comme nom
+      }));
+    } else {
+      // Format déjà en objets, s'assurer que event_id/id sont présents
+      events = events.map(event => ({
+        event_id: event.event_id || event.id || event,
+        id: event.event_id || event.id || event,
+        name: event.name || event.event_name || event.event_id || event.id || event
+      }));
+    }
+    
+    console.log(`✅ ${events.length} événement(s) formaté(s) et renvoyé(s)`);
     res.json({ events });
   } catch (e) {
     console.error('❌ Erreur récupération événements:', e);
+    console.error('Stack:', e.stack);
     res.status(500).json({ error: e.message });
   }
 });
