@@ -95,11 +95,31 @@ function safeWriteJsonAtomic(filePath, data) {
       fs.mkdirSync(dir, { recursive: true });
     }
     const tmp = `${filePath}.tmp`;
+    
+    // Nettoyer un ancien .tmp s'il existe (orphelin d'une écriture précédente)
+    if (fs.existsSync(tmp)) {
+      try {
+        fs.unlinkSync(tmp);
+        console.log(`🧹 Nettoyage ancien fichier .tmp: ${tmp}`);
+      } catch (cleanupError) {
+        // Ignorer si suppression échoue
+      }
+    }
+    
     fs.writeFileSync(tmp, JSON.stringify(data, null, 2), 'utf8');
     fs.renameSync(tmp, filePath);
     console.log(`✅ File written: ${filePath}`);
   } catch (e) {
     console.error(`❌ Error writing file ${filePath}:`, e);
+    // Nettoyer le .tmp en cas d'erreur
+    const tmp = `${filePath}.tmp`;
+    if (fs.existsSync(tmp)) {
+      try {
+        fs.unlinkSync(tmp);
+      } catch (cleanupError) {
+        // Ignorer
+      }
+    }
     throw e;
   }
 }
