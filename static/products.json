@@ -21,13 +21,14 @@
         "4": 10,
         "5": 10,
         "6": 0,
-        "7": 10
+        "7": 10,
+        "12": 0
       },
       "pack_formats": null,
       "featured_position": 3,
       "cart_order": 5,
       "requires_address": false,
-      "special_promo_rule": "6=1",
+      "special_promo_rule": null,
       "delivery_method": null,
       "reduced_price_with_print": 5.0,
       "badge_text_fr": "Envoi instantané par mail",
