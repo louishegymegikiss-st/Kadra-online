@@ -96,12 +96,18 @@ async function loadOrders() {
   }
   
   try {
+    console.log(`📥 Chargement commandes pour événement: ${currentEventId}`);
     const response = await fetch(`/api/admin/events/${currentEventId}/orders`);
     const data = await response.json();
     orders = data.orders || [];
+    console.log(`✅ ${orders.length} commande(s) chargée(s) pour ${currentEventId}`);
+    if (orders.length > 0) {
+      console.log('📋 Exemple commande:', orders[0]);
+    }
     renderOrders();
     updateStats();
   } catch (error) {
+    console.error('❌ Erreur chargement commandes:', error);
     showMessage('Erreur chargement commandes: ' + error.message, 'error');
   }
 }
@@ -130,9 +136,19 @@ function renderOrders() {
     const amount = order.amount_total_cents ? (order.amount_total_cents / 100).toFixed(2) : '0.00';
     const status = order.status || 'pending';
     const paymentMode = order.payment_mode || '-';
-    const clientName = order.client_name || order.client_firstname || 'N/A';
-    const clientEmail = order.client_email || '-';
-    const eventName = order.event_name || order.event_id || '-';
+    const clientName = order.client_name || order.client_firstname || order.order_payload?.client_name || 'N/A';
+    const clientEmail = order.client_email || order.order_payload?.client_email || '-';
+    
+    // Récupérer le nom de l'événement depuis allEvents si disponible
+    let eventName = order.event_name || order.event_id || '-';
+    if (order.event_id && allEvents.length > 0) {
+      const event = allEvents.find(e => (e.event_id || e.id) === order.event_id);
+      if (event) {
+        eventName = event.name || event.event_name || event.event_id || order.event_id;
+      }
+    }
+    
+    console.log(`📋 Commande ${order.order_id || order.id}: event_id=${order.event_id}, event_name=${eventName}`);
     
     html += `
       <tr>
@@ -145,8 +161,8 @@ function renderOrders() {
         <td>${getStatusBadge(status)}</td>
         <td>${escapeHtml(eventName)}</td>
         <td>
-          <button class="btn btn-primary" onclick="viewOrder('${order.order_id || order.id}', '${order.event_id}')" style="padding: 6px 12px; font-size: 12px;">Voir</button>
-          <button class="btn btn-success" onclick="updateOrderStatus('${order.order_id || order.id}', '${order.event_id}', 'completed')" style="padding: 6px 12px; font-size: 12px;">Finaliser</button>
+          <button class="btn btn-primary" onclick="viewOrder('${order.order_id || order.id}', '${order.event_id || ''}')" style="padding: 6px 12px; font-size: 12px;">Voir</button>
+          <button class="btn btn-success" onclick="updateOrderStatus('${order.order_id || order.id}', '${order.event_id || ''}', 'completed')" style="padding: 6px 12px; font-size: 12px;">Finaliser</button>
         </td>
       </tr>
     `;
@@ -247,15 +263,16 @@ function renderProducts() {
   let html = '<table style="width: 100%; border-collapse: collapse;"><thead><tr><th>Nom</th><th>Prix</th><th>Catégorie</th><th>Statut</th><th>Actions</th></tr></thead><tbody>';
   
   products.forEach(product => {
+    const isGlobal = product.is_global === true;
     html += `
       <tr>
-        <td>${escapeHtml(product.name_fr || product.name || 'Sans nom')}</td>
+        <td>${escapeHtml(product.name_fr || product.name || 'Sans nom')} ${isGlobal ? '<span class="badge" style="background: #667eea; color: white; margin-left: 5px; font-size: 10px;">Global</span>' : ''}</td>
         <td>${(product.price || 0).toFixed(2)} €</td>
         <td>${escapeHtml(product.category || 'numérique')}</td>
         <td>${product.active !== false ? '<span class="badge badge-success">Actif</span>' : '<span class="badge badge-danger">Inactif</span>'}</td>
         <td>
           <button class="btn btn-primary" onclick="editProduct(${product.id})" style="padding: 6px 12px; font-size: 12px;">Modifier</button>
-          <button class="btn btn-danger" onclick="deleteProduct(${product.id})" style="padding: 6px 12px; font-size: 12px;">Supprimer</button>
+          <button class="btn btn-danger" onclick="deleteProduct(${product.id}, ${isGlobal ? 'true' : 'false'})" style="padding: 6px 12px; font-size: 12px;">Supprimer</button>
         </td>
       </tr>
     `;
@@ -271,11 +288,6 @@ function openProductForm(productId = null) {
   const form = document.getElementById('product-form');
   const title = document.getElementById('product-modal-title');
   
-  if (!currentEventId) {
-    showMessage('Sélectionnez d\'abord un événement', 'error');
-    return;
-  }
-  
   if (productId) {
     const product = products.find(p => p.id === productId);
     if (product) {
@@ -286,11 +298,14 @@ function openProductForm(productId = null) {
       document.getElementById('product-price').value = product.price || 0;
       document.getElementById('product-category').value = product.category || 'numérique';
       document.getElementById('product-active').checked = product.active !== false;
+      document.getElementById('product-is-global').checked = product.is_global === true;
       form.dataset.productId = productId;
     }
   } else {
     title.textContent = 'Ajouter un produit';
     form.reset();
+    document.getElementById('product-active').checked = true;
+    document.getElementById('product-is-global').checked = false;
     delete form.dataset.productId;
   }
   
@@ -303,10 +318,18 @@ function closeProductForm() {
 
 async function saveProduct(event) {
   event.preventDefault();
-  if (!currentEventId) return;
   
   const form = document.getElementById('product-form');
   const productId = form.dataset.productId;
+  const isGlobal = document.getElementById('product-is-global').checked;
+  
+  // Si produit global, utiliser "global" comme eventId, sinon utiliser currentEventId ou le premier événement
+  let targetEventId = isGlobal ? 'global' : (currentEventId || (allEvents.length > 0 ? allEvents[0].event_id : null));
+  
+  if (!targetEventId && !isGlobal) {
+    showMessage('Sélectionnez d\'abord un événement ou cochez "Appliquer à tous les événements"', 'error');
+    return;
+  }
   
   const product = {
     name_fr: document.getElementById('product-name-fr').value,
@@ -315,20 +338,21 @@ async function saveProduct(event) {
     name: document.getElementById('product-name-fr').value, // Fallback
     price: parseFloat(document.getElementById('product-price').value),
     category: document.getElementById('product-category').value,
-    active: document.getElementById('product-active').checked
+    active: document.getElementById('product-active').checked,
+    is_global: isGlobal
   };
   
   try {
     let response;
     if (productId) {
-      response = await fetch(`/api/admin/events/${currentEventId}/products/${productId}`, {
+      response = await fetch(`/api/admin/events/${targetEventId}/products/${productId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(product)
       });
     } else {
       product.id = Date.now();
-      response = await fetch(`/api/admin/events/${currentEventId}/products`, {
+      response = await fetch(`/api/admin/events/${targetEventId}/products`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(product)
@@ -339,7 +363,7 @@ async function saveProduct(event) {
       throw new Error('Erreur sauvegarde produit');
     }
     
-    showMessage('Produit enregistré avec succès', 'success');
+    showMessage(`Produit enregistré avec succès ${isGlobal ? '(tous les événements)' : ''}`, 'success');
     closeProductForm();
     await loadProducts();
   } catch (error) {
@@ -347,12 +371,17 @@ async function saveProduct(event) {
   }
 }
 
-async function deleteProduct(productId) {
+async function deleteProduct(productId, isGlobal = false) {
   if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) return;
-  if (!currentEventId) return;
+  
+  const targetEventId = isGlobal ? 'global' : (currentEventId || (allEvents.length > 0 ? allEvents[0].event_id : null));
+  if (!targetEventId && !isGlobal) {
+    showMessage('Sélectionnez d\'abord un événement', 'error');
+    return;
+  }
   
   try {
-    const response = await fetch(`/api/admin/events/${currentEventId}/products/${productId}`, {
+    const response = await fetch(`/api/admin/events/${targetEventId}/products/${productId}`, {
       method: 'DELETE'
     });
     

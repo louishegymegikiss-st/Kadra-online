@@ -791,15 +791,19 @@ app.get('/api/admin/events/:eventId/orders', async (req, res) => {
   try {
     const { eventId } = req.params;
     const { status } = req.query;
+    console.log(`📥 GET /api/admin/events/${eventId}/orders (status: ${status || 'all'})`);
     let orders = await r2Data.getOrdersForEvent(eventId);
+    console.log(`✅ ${orders.length} commande(s) trouvée(s) pour événement ${eventId}`);
     
     if (status) {
       orders = orders.filter(o => o.status === status);
+      console.log(`📊 Après filtre status=${status}: ${orders.length} commande(s)`);
     }
     
     res.json({ orders });
   } catch (e) {
-    console.error('❌ Erreur récupération commandes:', e);
+    console.error(`❌ Erreur récupération commandes pour ${eventId}:`, e);
+    console.error('Stack:', e.stack);
     res.status(500).json({ error: e.message });
   }
 });
@@ -807,10 +811,22 @@ app.get('/api/admin/events/:eventId/orders', async (req, res) => {
 // Toutes les commandes (tous événements)
 app.get('/api/admin/orders/all', async (req, res) => {
   try {
+    console.log('📥 GET /api/admin/orders/all - Récupération toutes les commandes...');
     const orders = await r2Data.getAllOrders();
+    console.log(`✅ ${orders.length} commande(s) récupérée(s) depuis R2`);
+    if (orders.length > 0) {
+      console.log(`📋 Exemple première commande:`, JSON.stringify({
+        order_id: orders[0].order_id,
+        event_id: orders[0].event_id,
+        event_name: orders[0].event_name,
+        status: orders[0].status,
+        amount: orders[0].amount_total_cents
+      }, null, 2));
+    }
     res.json({ orders });
   } catch (e) {
     console.error('❌ Erreur récupération toutes les commandes:', e);
+    console.error('Stack:', e.stack);
     res.status(500).json({ error: e.message });
   }
 });

@@ -157,31 +157,88 @@ async function existsOnR2(r2Key) {
 // ============================================
 
 /**
- * Récupère les produits pour un événement
- * @param {string} eventId - ID de l'événement (ex: "BJ025")
+ * Récupère les produits pour un événement (fusionne avec produits globaux)
+ * @param {string} eventId - ID de l'événement (ex: "BJ025") ou "global" pour tous
  * @returns {Promise<Array>} - Liste des produits
  */
 async function getProductsForEvent(eventId) {
-  const r2Key = `events/${eventId}/products.json`;
-  const data = await readJsonFromR2(r2Key);
-  return data?.products || [];
+  const products = [];
+  
+  // 1. Charger les produits globaux (tous événements)
+  try {
+    const globalData = await readJsonFromR2('products_global.json');
+    if (globalData?.products && Array.isArray(globalData.products)) {
+      globalData.products.forEach(p => {
+        products.push({ ...p, is_global: true });
+      });
+      console.log(`📦 ${globalData.products.length} produit(s) global(aux) chargé(s)`);
+    }
+  } catch (e) {
+    // Fichier global n'existe pas encore, c'est normal
+    console.debug('📦 Aucun produit global (fichier products_global.json absent)');
+  }
+  
+  // 2. Charger les produits spécifiques à l'événement (si eventId n'est pas "global")
+  if (eventId && eventId !== 'global') {
+    try {
+      const r2Key = `events/${eventId}/products.json`;
+      const data = await readJsonFromR2(r2Key);
+      if (data?.products && Array.isArray(data.products)) {
+        data.products.forEach(p => {
+          products.push({ ...p, is_global: false, event_id: eventId });
+        });
+        console.log(`📦 ${data.products.length} produit(s) spécifique(s) chargé(s) pour ${eventId}`);
+      }
+    } catch (e) {
+      console.debug(`📦 Aucun produit spécifique pour ${eventId}`);
+    }
+  }
+  
+  return products;
 }
 
 /**
- * Sauvegarde les produits pour un événement
- * @param {string} eventId - ID de l'événement
+ * Sauvegarde les produits pour un événement ou globalement
+ * @param {string} eventId - ID de l'événement ou "global" pour tous
  * @param {Array} products - Liste des produits
  * @returns {Promise<boolean>}
  */
 async function saveProductsForEvent(eventId, products) {
-  const r2Key = `events/${eventId}/products.json`;
-  const data = {
-    version: 1,
-    event_id: eventId,
-    updated_at: new Date().toISOString(),
-    products: products
-  };
-  return writeJsonToR2(r2Key, data);
+  // Séparer produits globaux et spécifiques
+  const globalProducts = products.filter(p => p.is_global === true);
+  const eventProducts = products.filter(p => p.is_global !== true);
+  
+  // Sauvegarder produits globaux
+  if (globalProducts.length > 0 || eventId === 'global') {
+    const globalData = {
+      version: 1,
+      updated_at: new Date().toISOString(),
+      products: globalProducts.map(p => {
+        const { is_global, event_id, ...product } = p;
+        return product;
+      })
+    };
+    await writeJsonToR2('products_global.json', globalData);
+    console.log(`💾 ${globalProducts.length} produit(s) global(aux) sauvegardé(s)`);
+  }
+  
+  // Sauvegarder produits spécifiques à l'événement
+  if (eventId && eventId !== 'global' && eventProducts.length > 0) {
+    const r2Key = `events/${eventId}/products.json`;
+    const data = {
+      version: 1,
+      event_id: eventId,
+      updated_at: new Date().toISOString(),
+      products: eventProducts.map(p => {
+        const { is_global, event_id, ...product } = p;
+        return product;
+      })
+    };
+    await writeJsonToR2(r2Key, data);
+    console.log(`💾 ${eventProducts.length} produit(s) spécifique(s) sauvegardé(s) pour ${eventId}`);
+  }
+  
+  return true;
 }
 
 // ============================================
@@ -195,8 +252,11 @@ async function saveProductsForEvent(eventId, products) {
  */
 async function getOrdersForEvent(eventId) {
   const r2Key = `orders/${eventId}/pending_orders.json`;
+  console.log(`📖 Lecture R2: ${r2Key}`);
   const data = await readJsonFromR2(r2Key);
-  return data?.orders || [];
+  const orders = data?.orders || [];
+  console.log(`  ✅ ${orders.length} commande(s) lue(s) depuis ${r2Key}`);
+  return orders;
 }
 
 /**
@@ -260,27 +320,42 @@ async function upsertOrderForEvent(eventId, order) {
  */
 async function getAllOrders() {
   try {
+    console.log('📋 Récupération toutes les commandes depuis R2...');
     const eventsList = await readJsonFromR2('events_list.json');
     const events = eventsList?.events || [];
+    console.log(`📅 ${events.length} événement(s) trouvé(s) dans events_list.json`);
+    
     const allOrders = [];
     
     for (const event of events) {
       const eventId = event.event_id || event.id;
+      const eventName = event.name || event.event_name || eventId;
+      
       if (eventId) {
-        const orders = await getOrdersForEvent(eventId);
-        orders.forEach(order => {
-          allOrders.push({
-            ...order,
-            event_id: eventId,
-            event_name: event.name || eventId
+        try {
+          console.log(`🔍 Lecture commandes pour événement: ${eventId} (${eventName})`);
+          const orders = await getOrdersForEvent(eventId);
+          console.log(`  ✅ ${orders.length} commande(s) trouvée(s) pour ${eventId}`);
+          
+          orders.forEach(order => {
+            allOrders.push({
+              ...order,
+              event_id: eventId,
+              event_name: eventName // Utiliser le nom de l'événement depuis events_list
+            });
           });
-        });
+        } catch (e) {
+          // Ignorer les erreurs pour un événement spécifique et continuer
+          console.warn(`⚠️ Erreur récupération commandes pour ${eventId}:`, e.message);
+        }
       }
     }
     
+    console.log(`✅ Total: ${allOrders.length} commande(s) récupérée(s) depuis tous les événements`);
     return allOrders;
   } catch (e) {
     console.error('❌ Erreur récupération toutes les commandes:', e);
+    console.error('Stack:', e.stack);
     return [];
   }
 }
