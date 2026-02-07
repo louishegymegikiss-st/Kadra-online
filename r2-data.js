@@ -209,6 +209,37 @@ async function upsertOrderForEvent(eventId, order) {
   return updatedOrder;
 }
 
+/**
+ * Récupère toutes les commandes de tous les événements (pour vue globale)
+ * @returns {Promise<Array>} - Liste de toutes les commandes avec event_id
+ */
+async function getAllOrders() {
+  try {
+    const eventsList = await readJsonFromR2('events_list.json');
+    const events = eventsList?.events || [];
+    const allOrders = [];
+    
+    for (const event of events) {
+      const eventId = event.event_id || event.id;
+      if (eventId) {
+        const orders = await getOrdersForEvent(eventId);
+        orders.forEach(order => {
+          allOrders.push({
+            ...order,
+            event_id: eventId,
+            event_name: event.name || eventId
+          });
+        });
+      }
+    }
+    
+    return allOrders;
+  } catch (e) {
+    console.error('❌ Erreur récupération toutes les commandes:', e);
+    return [];
+  }
+}
+
 // ============================================
 // CONFIGURATION par événement
 // ============================================
@@ -258,6 +289,7 @@ module.exports = {
   getOrdersForEvent,
   saveOrdersForEvent,
   upsertOrderForEvent,
+  getAllOrders,
   
   // Configuration
   getConfigForEvent,

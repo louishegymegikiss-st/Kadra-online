@@ -4,11 +4,27 @@ let currentEventId = null;
 let products = [];
 let orders = [];
 let config = {};
+let allEvents = [];
 
 // ========== INITIALISATION ==========
 document.addEventListener('DOMContentLoaded', async () => {
   await loadEvents();
   document.getElementById('event-select').addEventListener('change', onEventChange);
+  document.getElementById('hd-event-select').addEventListener('change', (e) => {
+    currentEventId = e.target.value || null;
+  });
+  
+  // Gestion des onglets
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tab = btn.dataset.tab;
+      switchTab(tab);
+    });
+  });
+  
+  // Charger les commandes par défaut
+  await loadAllOrders();
+  await loadConfig();
 });
 
 // ========== CHARGEMENT ÉVÉNEMENTS ==========
@@ -16,18 +32,27 @@ async function loadEvents() {
   try {
     const response = await fetch('/api/admin/events');
     const data = await response.json();
-    const select = document.getElementById('event-select');
-    select.innerHTML = '<option value="">Sélectionner un événement...</option>';
+    allEvents = data.events || [];
     
-    if (data.events && data.events.length > 0) {
-      data.events.forEach(event => {
+    const select = document.getElementById('event-select');
+    const hdSelect = document.getElementById('hd-event-select');
+    
+    select.innerHTML = '<option value="">Tous les événements</option>';
+    hdSelect.innerHTML = '<option value="">Sélectionner un événement...</option>';
+    
+    if (allEvents.length > 0) {
+      allEvents.forEach(event => {
+        const eventId = event.event_id || event.id;
+        const eventName = event.name || eventId;
+        
         const option = document.createElement('option');
-        option.value = event.event_id || event.id;
-        option.textContent = event.name || event.event_id || event.id;
+        option.value = eventId;
+        option.textContent = eventName;
         select.appendChild(option);
+        
+        const hdOption = option.cloneNode(true);
+        hdSelect.appendChild(hdOption);
       });
-    } else {
-      select.innerHTML = '<option value="">Aucun événement disponible</option>';
     }
   } catch (error) {
     showMessage('Erreur chargement événements: ' + error.message, 'error');
@@ -37,24 +62,167 @@ async function loadEvents() {
 // ========== CHANGEMENT D'ÉVÉNEMENT ==========
 async function onEventChange() {
   const eventId = document.getElementById('event-select').value;
-  if (!eventId) {
-    document.getElementById('content').style.display = 'none';
+  currentEventId = eventId || null;
+  
+  if (currentEventId) {
+    await Promise.all([
+      loadProducts(),
+      loadOrders(),
+      loadConfig()
+    ]);
+  } else {
+    await loadAllOrders();
+  }
+}
+
+// ========== COMMANDES ==========
+async function loadAllOrders() {
+  try {
+    const response = await fetch('/api/admin/orders/all');
+    const data = await response.json();
+    orders = data.orders || [];
+    renderOrders();
+    updateStats();
+  } catch (error) {
+    console.error('Erreur chargement commandes:', error);
+    document.getElementById('orders-table-body').innerHTML = '<tr><td colspan="9" style="color: red;">Erreur de chargement</td></tr>';
+  }
+}
+
+async function loadOrders() {
+  if (!currentEventId) {
+    await loadAllOrders();
     return;
   }
   
-  currentEventId = eventId;
-  document.getElementById('content').style.display = 'block';
+  try {
+    const response = await fetch(`/api/admin/events/${currentEventId}/orders`);
+    const data = await response.json();
+    orders = data.orders || [];
+    renderOrders();
+    updateStats();
+  } catch (error) {
+    showMessage('Erreur chargement commandes: ' + error.message, 'error');
+  }
+}
+
+function renderOrders() {
+  const tbody = document.getElementById('orders-table-body');
+  if (!tbody) return;
   
-  await Promise.all([
-    loadProducts(),
-    loadOrders(),
-    loadConfig()
-  ]);
+  // Filtrer par événement si sélectionné
+  let filteredOrders = orders;
+  if (currentEventId) {
+    filteredOrders = orders.filter(o => o.event_id === currentEventId);
+  }
+  
+  if (filteredOrders.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="9" class="empty-state">Aucune commande</td></tr>';
+    document.getElementById('empty-state').style.display = 'block';
+    return;
+  }
+  
+  document.getElementById('empty-state').style.display = 'none';
+  
+  let html = '';
+  filteredOrders.forEach(order => {
+    const date = order.created_at ? new Date(order.created_at).toLocaleDateString('fr-FR') : '-';
+    const amount = order.amount_total_cents ? (order.amount_total_cents / 100).toFixed(2) : '0.00';
+    const status = order.status || 'pending';
+    const paymentMode = order.payment_mode || '-';
+    const clientName = order.client_name || order.client_firstname || 'N/A';
+    const clientEmail = order.client_email || '-';
+    const eventName = order.event_name || order.event_id || '-';
+    
+    html += `
+      <tr>
+        <td>${date}</td>
+        <td>${order.order_id || order.id || '-'}</td>
+        <td>${escapeHtml(clientName)}</td>
+        <td>${escapeHtml(clientEmail)}</td>
+        <td>${amount} €</td>
+        <td>${paymentMode}</td>
+        <td>${getStatusBadge(status)}</td>
+        <td>${escapeHtml(eventName)}</td>
+        <td>
+          <button class="btn btn-primary" onclick="viewOrder('${order.order_id || order.id}', '${order.event_id}')" style="padding: 6px 12px; font-size: 12px;">Voir</button>
+          <button class="btn btn-success" onclick="updateOrderStatus('${order.order_id || order.id}', '${order.event_id}', 'completed')" style="padding: 6px 12px; font-size: 12px;">Finaliser</button>
+        </td>
+      </tr>
+    `;
+  });
+  
+  tbody.innerHTML = html;
+  document.getElementById('badge-orders').textContent = filteredOrders.length;
+}
+
+function getStatusBadge(status) {
+  const badges = {
+    'pending': '<span class="badge badge-warning">En attente</span>',
+    'paid': '<span class="badge badge-success">Payée</span>',
+    'completed': '<span class="badge badge-success">Finalisée</span>',
+    'cancelled': '<span class="badge badge-danger">Annulée</span>',
+    'processing_web': '<span class="badge badge-warning">À traiter Web</span>',
+    'processing_print': '<span class="badge badge-warning">À traiter Impression</span>'
+  };
+  return badges[status] || `<span class="badge">${status}</span>`;
+}
+
+async function viewOrder(orderId, eventId) {
+  try {
+    const response = await fetch(`/api/admin/events/${eventId}/orders/${orderId}`);
+    const data = await response.json();
+    const order = data.order;
+    
+    alert(`Commande ${orderId}\nClient: ${order.client_name || 'N/A'}\nEmail: ${order.client_email || '-'}\nMontant: ${order.amount_total_cents ? (order.amount_total_cents / 100).toFixed(2) : '0.00'} €\nStatut: ${order.status || 'pending'}\nÉvénement: ${order.event_id || '-'}`);
+  } catch (error) {
+    showMessage('Erreur chargement commande: ' + error.message, 'error');
+  }
+}
+
+async function updateOrderStatus(orderId, eventId, newStatus) {
+  if (!confirm(`Changer le statut de la commande ${orderId} à "${newStatus}" ?`)) return;
+  
+  try {
+    const response = await fetch(`/api/admin/events/${eventId}/orders/${orderId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus })
+    });
+    
+    if (!response.ok) {
+      throw new Error('Erreur mise à jour statut');
+    }
+    
+    showMessage('Statut mis à jour avec succès', 'success');
+    await loadOrders();
+  } catch (error) {
+    showMessage('Erreur mise à jour: ' + error.message, 'error');
+  }
+}
+
+function updateStats() {
+  const total = orders.reduce((sum, o) => {
+    return sum + (o.amount_total_cents ? o.amount_total_cents / 100 : 0);
+  }, 0);
+  
+  document.getElementById('ca-ttc').textContent = total.toFixed(2) + ' €';
+  
+  // Mettre à jour la barre de progression si objectif défini
+  const objective = config.turnover_objective || 0;
+  if (objective > 0) {
+    const percent = Math.min((total / objective) * 100, 100);
+    document.getElementById('objective-progress').style.width = percent + '%';
+    document.getElementById('objective-percent').textContent = Math.round(percent) + '%';
+  }
 }
 
 // ========== PRODUITS ==========
 async function loadProducts() {
-  if (!currentEventId) return;
+  if (!currentEventId) {
+    document.getElementById('products-list').innerHTML = '<p>Sélectionnez un événement pour gérer les produits.</p>';
+    return;
+  }
   
   try {
     const response = await fetch(`/api/admin/events/${currentEventId}/products`);
@@ -76,7 +244,7 @@ function renderProducts() {
     return;
   }
   
-  let html = '<table><thead><tr><th>Nom</th><th>Prix</th><th>Catégorie</th><th>Statut</th><th>Actions</th></tr></thead><tbody>';
+  let html = '<table style="width: 100%; border-collapse: collapse;"><thead><tr><th>Nom</th><th>Prix</th><th>Catégorie</th><th>Statut</th><th>Actions</th></tr></thead><tbody>';
   
   products.forEach(product => {
     html += `
@@ -95,12 +263,18 @@ function renderProducts() {
   
   html += '</tbody></table>';
   container.innerHTML = html;
+  document.getElementById('badge-products').textContent = products.length;
 }
 
 function openProductForm(productId = null) {
   const modal = document.getElementById('product-modal');
   const form = document.getElementById('product-form');
   const title = document.getElementById('product-modal-title');
+  
+  if (!currentEventId) {
+    showMessage('Sélectionnez d\'abord un événement', 'error');
+    return;
+  }
   
   if (productId) {
     const product = products.find(p => p.id === productId);
@@ -197,69 +371,65 @@ function editProduct(productId) {
   openProductForm(productId);
 }
 
-// ========== COMMANDES ==========
-async function loadOrders() {
-  if (!currentEventId) return;
+// ========== UPLOAD HD ==========
+async function uploadHD(event) {
+  event.preventDefault();
   
-  try {
-    const response = await fetch(`/api/admin/events/${currentEventId}/orders`);
-    const data = await response.json();
-    orders = data.orders || [];
-    renderOrders();
-  } catch (error) {
-    showMessage('Erreur chargement commandes: ' + error.message, 'error');
-    document.getElementById('orders-list').innerHTML = '<p style="color: red;">Erreur de chargement</p>';
-  }
-}
-
-function renderOrders() {
-  const container = document.getElementById('orders-list');
-  if (!container) return;
+  const eventId = document.getElementById('hd-event-select').value;
+  const fileId = document.getElementById('hd-file-id').value.trim();
+  const riderName = document.getElementById('hd-rider-name').value.trim();
+  const horseName = document.getElementById('hd-horse-name').value.trim();
+  const sourcePath = document.getElementById('hd-source-path').value.trim();
   
-  if (orders.length === 0) {
-    container.innerHTML = '<p>Aucune commande pour cet événement.</p>';
+  if (!eventId) {
+    showMessage('Sélectionnez un événement', 'error');
     return;
   }
   
-  let html = '<table><thead><tr><th>ID</th><th>Client</th><th>Montant</th><th>Statut</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
+  if (!fileId && !riderName && !horseName && !sourcePath) {
+    showMessage('Remplissez au moins un champ (file_id, nom cavalier/cheval, ou chemin source)', 'error');
+    return;
+  }
   
-  orders.forEach(order => {
-    const amount = order.amount_total_cents ? (order.amount_total_cents / 100).toFixed(2) : '0.00';
-    const date = order.created_at ? new Date(order.created_at).toLocaleDateString('fr-FR') : '-';
-    const status = order.status || 'pending';
+  const btn = document.getElementById('upload-hd-btn');
+  const resultDiv = document.getElementById('upload-hd-result');
+  btn.disabled = true;
+  btn.textContent = 'Upload en cours...';
+  resultDiv.innerHTML = '<p style="color: #666;">Upload en cours...</p>';
+  
+  try {
+    const response = await fetch('/api/admin/upload-hd', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        event_id: eventId,
+        file_id: fileId || undefined,
+        rider_name: riderName || undefined,
+        horse_name: horseName || undefined,
+        source_path: sourcePath || undefined
+      })
+    });
     
-    html += `
-      <tr>
-        <td>${order.order_id || order.id || '-'}</td>
-        <td>${escapeHtml(order.client_name || order.client_firstname || 'N/A')}</td>
-        <td>${amount} €</td>
-        <td>${getStatusBadge(status)}</td>
-        <td>${date}</td>
-        <td>
-          <button class="btn btn-primary" onclick="viewOrder('${order.order_id || order.id}')" style="padding: 6px 12px; font-size: 12px;">Voir</button>
-        </td>
-      </tr>
-    `;
-  });
-  
-  html += '</tbody></table>';
-  container.innerHTML = html;
-}
-
-function getStatusBadge(status) {
-  const badges = {
-    'pending': '<span class="badge badge-warning">En attente</span>',
-    'paid': '<span class="badge badge-success">Payée</span>',
-    'completed': '<span class="badge badge-success">Finalisée</span>',
-    'cancelled': '<span class="badge badge-danger">Annulée</span>'
-  };
-  return badges[status] || `<span class="badge">${status}</span>`;
-}
-
-function viewOrder(orderId) {
-  const order = orders.find(o => (o.order_id || o.id) === orderId);
-  if (order) {
-    alert(`Commande ${orderId}\nClient: ${order.client_name || 'N/A'}\nMontant: ${order.amount_total_cents ? (order.amount_total_cents / 100).toFixed(2) : '0.00'} €\nStatut: ${order.status || 'pending'}`);
+    const data = await response.json();
+    
+    if (!response.ok) {
+      throw new Error(data.error || 'Erreur upload');
+    }
+    
+    resultDiv.innerHTML = `<p style="color: #10b981; font-weight: 600;">✅ ${data.message || 'Upload réussi'}</p><p>R2 Key: ${data.r2_key || '-'}</p>`;
+    showMessage('Photo HD uploadée avec succès', 'success');
+    
+    // Réinitialiser le formulaire
+    document.getElementById('hd-file-id').value = '';
+    document.getElementById('hd-rider-name').value = '';
+    document.getElementById('hd-horse-name').value = '';
+    document.getElementById('hd-source-path').value = '';
+  } catch (error) {
+    resultDiv.innerHTML = `<p style="color: #ef4444; font-weight: 600;">❌ Erreur: ${error.message}</p>`;
+    showMessage('Erreur upload: ' + error.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Upload HD vers R2';
   }
 }
 
@@ -296,20 +466,40 @@ async function saveConfig() {
     }
     
     showMessage('Configuration enregistrée avec succès', 'success');
+    await loadConfig();
   } catch (error) {
     showMessage('Erreur sauvegarde: ' + error.message, 'error');
   }
 }
 
+// Sauvegarder l'objectif quand on change
+document.getElementById('turnover-objective')?.addEventListener('change', saveConfig);
+
 // ========== ONGLETS ==========
 function switchTab(tabName) {
   // Désactiver tous les onglets
-  document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(content => {
+    content.style.display = 'none';
+    content.classList.remove('active');
+  });
   
   // Activer l'onglet sélectionné
-  event.target.classList.add('active');
-  document.getElementById(`tab-${tabName}`).classList.add('active');
+  const btn = document.querySelector(`[data-tab="${tabName}"]`);
+  if (btn) btn.classList.add('active');
+  
+  const content = document.getElementById(`tab-${tabName}`);
+  if (content) {
+    content.style.display = 'block';
+    content.classList.add('active');
+  }
+  
+  // Charger les données selon l'onglet
+  if (tabName === 'orders') {
+    loadOrders();
+  } else if (tabName === 'products') {
+    loadProducts();
+  }
 }
 
 // ========== UTILITAIRES ==========
@@ -321,14 +511,14 @@ function escapeHtml(str) {
 }
 
 function showMessage(message, type = 'success') {
-  const container = document.getElementById('message-container');
-  if (!container) return;
-  
+  // Créer un message temporaire en haut de page
   const messageEl = document.createElement('div');
   messageEl.className = `message message-${type}`;
   messageEl.textContent = message;
-  container.innerHTML = '';
-  container.appendChild(messageEl);
+  messageEl.style.cssText = 'position: fixed; top: 20px; right: 20px; padding: 12px 20px; border-radius: 6px; z-index: 10000; box-shadow: 0 4px 6px rgba(0,0,0,0.1);';
+  messageEl.style.background = type === 'success' ? '#d1fae5' : '#fee2e2';
+  messageEl.style.color = type === 'success' ? '#065f46' : '#991b1b';
+  document.body.appendChild(messageEl);
   
   setTimeout(() => {
     messageEl.remove();

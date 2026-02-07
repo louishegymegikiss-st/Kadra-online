@@ -4,322 +4,193 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administration - Photos Les Garennes</title>
+    <link rel="stylesheet" href="/static/css/vendor.css?v=23">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: #f5f7fa;
-            color: #333;
-            line-height: 1.6;
-        }
-        
-        .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px 30px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        .header h1 {
-            font-size: 24px;
-            margin-bottom: 10px;
-        }
-        
-        .header-links {
-            display: flex;
-            gap: 15px;
-            margin-top: 10px;
-        }
-        
-        .header-links a {
-            color: white;
-            text-decoration: none;
-            padding: 5px 10px;
-            border-radius: 4px;
-            background: rgba(255,255,255,0.2);
-            transition: background 0.2s;
-        }
-        
-        .header-links a:hover {
-            background: rgba(255,255,255,0.3);
-        }
-        
-        .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 0 20px;
-        }
-        
-        .event-selector {
+        .upload-hd-section {
             background: white;
             padding: 20px;
             border-radius: 8px;
+            margin-bottom: 20px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
         }
-        
-        .event-selector label {
-            display: block;
-            font-weight: 600;
-            margin-bottom: 10px;
-            color: #555;
+        .upload-hd-section h2 {
+            margin-bottom: 15px;
+            color: #333;
         }
-        
-        .event-selector select {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 6px;
-            font-size: 16px;
-            background: white;
-        }
-        
-        .tabs {
+        .upload-form {
             display: flex;
             gap: 10px;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #e0e0e0;
+            align-items: flex-end;
         }
-        
-        .tab {
-            padding: 12px 24px;
-            background: none;
-            border: none;
-            cursor: pointer;
-            font-size: 16px;
-            color: #666;
-            border-bottom: 3px solid transparent;
-            transition: all 0.2s;
+        .upload-form .form-group {
+            flex: 1;
+            margin: 0;
         }
-        
-        .tab.active {
-            color: #667eea;
-            border-bottom-color: #667eea;
-            font-weight: 600;
-        }
-        
-        .tab-content {
-            display: none;
-        }
-        
-        .tab-content.active {
+        .upload-form label {
             display: block;
-        }
-        
-        .card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-        
-        .card h2 {
-            margin-bottom: 20px;
-            color: #333;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s;
-        }
-        
-        .btn-primary {
-            background: #667eea;
-            color: white;
-        }
-        
-        .btn-primary:hover {
-            background: #5568d3;
-        }
-        
-        .btn-danger {
-            background: #ef4444;
-            color: white;
-        }
-        
-        .btn-danger:hover {
-            background: #dc2626;
-        }
-        
-        .btn-success {
-            background: #10b981;
-            color: white;
-        }
-        
-        .btn-success:hover {
-            background: #059669;
-        }
-        
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        
-        table th, table td {
-            padding: 12px;
-            text-align: left;
-            border-bottom: 1px solid #e0e0e0;
-        }
-        
-        table th {
-            background: #f9fafb;
+            margin-bottom: 5px;
             font-weight: 600;
             color: #555;
         }
-        
-        .form-group {
-            margin-bottom: 20px;
-        }
-        
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 600;
-            color: #555;
-        }
-        
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
+        .upload-form input, .upload-form select {
             width: 100%;
             padding: 10px;
             border: 2px solid #e0e0e0;
             border-radius: 6px;
             font-size: 14px;
         }
-        
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #667eea;
-        }
-        
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
-        .message {
-            padding: 12px 16px;
+        .upload-form button {
+            padding: 10px 20px;
+            background: #667eea;
+            color: white;
+            border: none;
             border-radius: 6px;
-            margin-bottom: 20px;
-        }
-        
-        .message-success {
-            background: #d1fae5;
-            color: #065f46;
-            border: 1px solid #10b981;
-        }
-        
-        .message-error {
-            background: #fee2e2;
-            color: #991b1b;
-            border: 1px solid #ef4444;
-        }
-        
-        .badge {
-            display: inline-block;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
+            cursor: pointer;
             font-weight: 600;
         }
-        
-        .badge-success {
-            background: #d1fae5;
-            color: #065f46;
+        .upload-form button:hover {
+            background: #5568d3;
         }
-        
-        .badge-warning {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        
-        .badge-danger {
-            background: #fee2e2;
-            color: #991b1b;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 40px;
-            color: #666;
+        .upload-form button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
         }
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Administration - Photos Les Garennes</h1>
-        <div class="header-links">
-            <a href="/">Interface Client</a>
-            <a href="/admin">Admin</a>
-        </div>
-    </div>
-    
-    <div class="container">
-        <div class="event-selector">
-            <label for="event-select">Sélectionner un événement :</label>
-            <select id="event-select">
-                <option value="">Chargement...</option>
-            </select>
-        </div>
-        
-        <div id="message-container"></div>
-        
-        <div id="content" style="display: none;">
-            <div class="tabs">
-                <button class="tab active" onclick="switchTab('products')">Produits</button>
-                <button class="tab" onclick="switchTab('orders')">Commandes</button>
-                <button class="tab" onclick="switchTab('config')">Configuration</button>
-            </div>
-            
-            <!-- Onglet Produits -->
-            <div id="tab-products" class="tab-content active">
-                <div class="card">
-                    <h2>Gestion des Produits</h2>
-                    <button class="btn btn-primary" onclick="openProductForm()">+ Ajouter un produit</button>
-                    <div id="products-list" class="loading">Chargement...</div>
+    <div class="app-container">
+        <!-- HEADER -->
+        <header class="app-header">
+            <div class="header-left">
+                <h1>Administration</h1>
+                <div class="header-shortcuts">
+                    <a href="/" target="_blank" class="shortcut-btn">Interface Client</a>
+                    <a href="/admin" target="_blank" class="shortcut-btn">Admin</a>
                 </div>
             </div>
             
-            <!-- Onglet Commandes -->
-            <div id="tab-orders" class="tab-content">
-                <div class="card">
-                    <h2>Commandes</h2>
-                    <div id="orders-list" class="loading">Chargement...</div>
-                </div>
-            </div>
-            
-            <!-- Onglet Configuration -->
-            <div id="tab-config" class="tab-content">
-                <div class="card">
-                    <h2>Configuration de l'événement</h2>
-                    <div class="form-group">
-                        <label for="turnover-objective">Objectif CA (€)</label>
-                        <input type="number" id="turnover-objective" step="0.01" min="0">
+            <div style="display: flex; align-items: flex-end; gap: 20px;">
+                <div class="header-stats">
+                    <div class="stat-box turnover-box">
+                        <div class="turnover-display">
+                            <div class="ca-row">
+                                <span class="ca-label">CA TTC</span>
+                                <span class="ca-value" id="ca-ttc">0.00 €</span>
+                            </div>
+                        </div>
+                        <div class="objective-container">
+                            <div class="objective-header">
+                                <label for="turnover-objective">Objectif</label>
+                                <input type="number" id="turnover-objective" placeholder="0" step="100">
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" id="objective-progress" style="width: 0%"></div>
+                                </div>
+                                <span class="progress-text" id="objective-percent">0%</span>
+                            </div>
+                        </div>
                     </div>
-                    <button class="btn btn-success" onclick="saveConfig()">Enregistrer</button>
                 </div>
             </div>
-        </div>
+        </header>
+
+        <!-- NAVIGATION ONGLETS -->
+        <nav class="tabs-nav" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; gap: 10px;">
+                <button class="tab-btn active" data-tab="orders">
+                    Commandes <span class="badge" id="badge-orders">0</span>
+                </button>
+                <button class="tab-btn" data-tab="products">
+                    Produits <span class="badge" id="badge-products">0</span>
+                </button>
+                <button class="tab-btn" data-tab="upload-hd">
+                    Upload HD
+                </button>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px; margin-left: 20px;">
+                <select id="event-select" style="padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 14px;">
+                    <option value="">Tous les événements</option>
+                </select>
+            </div>
+        </nav>
+
+        <!-- CONTENU PRINCIPAL -->
+        <main class="main-content">
+            <!-- Onglet Commandes -->
+            <div id="tab-orders" class="tab-content active">
+                <div class="table-container">
+                    <table class="orders-table">
+                        <thead>
+                            <tr>
+                                <th width="90">Date</th>
+                                <th width="80">Référence</th>
+                                <th width="100">Client</th>
+                                <th width="140">Contact</th>
+                                <th width="80">Prix</th>
+                                <th width="80">Paiement</th>
+                                <th width="100">Statut</th>
+                                <th width="100">Événement</th>
+                                <th class="actions-col" width="200">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="orders-table-body">
+                            <tr><td colspan="9" class="loading">Chargement des commandes...</td></tr>
+                        </tbody>
+                    </table>
+                    <div id="empty-state" class="empty-state" style="display: none;">Aucune commande</div>
+                </div>
+            </div>
+
+            <!-- Onglet Produits -->
+            <div id="tab-products" class="tab-content" style="display: none;">
+                <div style="background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                    <h2>Gestion des Produits</h2>
+                    <button class="btn btn-primary" onclick="openProductForm()" style="margin-bottom: 20px;">+ Ajouter un produit</button>
+                    <div id="products-list">Chargement...</div>
+                </div>
+            </div>
+
+            <!-- Onglet Upload HD -->
+            <div id="tab-upload-hd" class="tab-content" style="display: none;">
+                <div class="upload-hd-section">
+                    <h2>Upload Photo HD vers Galerie</h2>
+                    <form class="upload-form" onsubmit="uploadHD(event)">
+                        <div class="form-group">
+                            <label for="hd-event-select">Événement *</label>
+                            <select id="hd-event-select" required>
+                                <option value="">Sélectionner un événement...</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="hd-file-id">File ID (optionnel)</label>
+                            <input type="text" id="hd-file-id" placeholder="Laissez vide pour chercher par nom">
+                        </div>
+                        <div class="form-group">
+                            <label for="hd-rider-name">Nom Cavalier</label>
+                            <input type="text" id="hd-rider-name" placeholder="Si file_id vide">
+                        </div>
+                        <div class="form-group">
+                            <label for="hd-horse-name">Nom Cheval</label>
+                            <input type="text" id="hd-horse-name" placeholder="Si file_id vide">
+                        </div>
+                        <div class="form-group">
+                            <label for="hd-source-path">Chemin source (optionnel)</label>
+                            <input type="text" id="hd-source-path" placeholder="Chemin direct vers fichier HD">
+                        </div>
+                        <button type="submit" id="upload-hd-btn">Upload HD vers R2</button>
+                    </form>
+                    <div id="upload-hd-result" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+        </main>
     </div>
-    
+
     <!-- Modal Produit -->
-    <div id="product-modal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); z-index: 1000; overflow-y: auto;">
-        <div style="max-width: 800px; margin: 40px auto; background: white; padding: 30px; border-radius: 8px;">
+    <div id="product-modal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 800px;">
+            <span class="close-modal" onclick="closeProductForm()">&times;</span>
             <h2 id="product-modal-title">Ajouter un produit</h2>
             <form id="product-form" onsubmit="saveProduct(event)">
                 <div class="form-group">
@@ -334,7 +205,7 @@
                     <label>Nom (ES)</label>
                     <input type="text" id="product-name-es">
                 </div>
-                <div class="form-row">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div class="form-group">
                         <label>Prix (€) *</label>
                         <input type="number" id="product-price" step="0.01" min="0" required>
@@ -350,7 +221,7 @@
                 </div>
                 <div class="form-group">
                     <label>
-                        <input type="checkbox" id="product-active"> Actif
+                        <input type="checkbox" id="product-active" checked> Actif
                     </label>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 20px;">
@@ -360,7 +231,7 @@
             </form>
         </div>
     </div>
-    
+
     <script src="/static/js/admin-online.js"></script>
 </body>
 </html>

@@ -154,6 +154,24 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
       const order_id = session.metadata?.order_id || null;
       const event_id = session.metadata?.event_id || null;
 
+      if (order_id && event_id) {
+        // Mettre à jour dans events/{event_id}/orders.json
+        await r2Data.upsertOrderForEvent(event_id, {
+          order_id,
+          event_id,
+          stripe_session_id: session.id,
+          stripe_payment_intent: session.payment_intent || null,
+          amount_total_cents: session.amount_total || null,
+          currency: session.currency || 'eur',
+          status: 'paid',
+          payment_mode: 'online',
+          fulfillment: session.metadata?.fulfillment || '',
+          paid_at: new Date().toISOString(),
+        });
+        console.log(`✅ Stripe PAID - Order updated in R2: ${order_id} (event: ${event_id})`);
+      }
+      
+      // Aussi mettre à jour dans stripe_orders.json (compatibilité)
       if (order_id) {
         await upsertStripeOrder({
           order_id,
@@ -167,7 +185,7 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
           fulfillment: session.metadata?.fulfillment || '',
           paid_at: new Date().toISOString(),
         });
-        console.log('✅ Stripe PAID:', order_id, session.id);
+        console.log('✅ Stripe PAID - Order updated in local store:', order_id, session.id);
       }
     }
 
@@ -388,9 +406,27 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
     });
     console.log(`✅ Stripe session created: ${session.id}`);
 
-    console.log('💾 Saving order to local store...');
+    console.log('💾 Saving order to R2...');
     try {
-        await upsertStripeOrder({
+      // Sauvegarder dans events/{event_id}/orders.json
+      if (eventId) {
+        await r2Data.upsertOrderForEvent(eventId, {
+          order_id,
+          event_id: eventId,
+          stripe_session_id: session.id,
+          status: 'pending',
+          payment_mode: 'online',
+          fulfillment: fulfillment || '',
+          amount_total_cents,
+          currency,
+          order_payload: order || null,
+          cart: cart || null
+        });
+        console.log(`✅ Order saved to R2: ${order_id} (event: ${eventId})`);
+      }
+      
+      // Aussi sauvegarder dans stripe_orders.json (compatibilité)
+      await upsertStripeOrder({
         order_id,
         event_id: eventId || null,
         stripe_session_id: session.id,
@@ -401,7 +437,7 @@ app.post('/api/stripe/create-checkout-session', async (req, res) => {
         currency,
         order_payload: order || null,
       });
-      console.log(`✅ Order saved: ${order_id}`);
+      console.log(`✅ Order saved to local store: ${order_id}`);
     } catch (saveError) {
       console.error('❌ Error saving order (non-fatal):', saveError);
       // Continue même si la sauvegarde échoue
@@ -707,6 +743,17 @@ app.get('/api/admin/events/:eventId/orders', async (req, res) => {
   }
 });
 
+// Toutes les commandes (tous événements)
+app.get('/api/admin/orders/all', async (req, res) => {
+  try {
+    const orders = await r2Data.getAllOrders();
+    res.json({ orders });
+  } catch (e) {
+    console.error('❌ Erreur récupération toutes les commandes:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.get('/api/admin/events/:eventId/orders/:orderId', async (req, res) => {
   try {
     const { eventId, orderId } = req.params;
@@ -737,6 +784,27 @@ app.put('/api/admin/events/:eventId/orders/:orderId', async (req, res) => {
     res.json({ order });
   } catch (e) {
     console.error('❌ Erreur mise à jour commande:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// UPLOAD HD vers R2
+app.post('/api/admin/upload-hd', async (req, res) => {
+  try {
+    const { event_id, file_id, rider_name, horse_name, source_path } = req.body;
+    
+    if (!event_id) {
+      return res.status(400).json({ error: 'event_id requis' });
+    }
+    
+    // Pour l'instant, on retourne une erreur car l'upload HD nécessite d'accéder au fichier source
+    // Cette fonctionnalité sera implémentée via l'interface admin locale qui a accès aux fichiers
+    return res.status(501).json({ 
+      error: 'Upload HD non implémenté côté serveur web',
+      message: 'Utilisez l\'interface admin locale pour uploader les HD'
+    });
+  } catch (e) {
+    console.error('❌ Erreur upload HD:', e);
     res.status(500).json({ error: e.message });
   }
 });
