@@ -35,7 +35,7 @@ Index des photos (si utilisé par le front) :
 
 | Clé | Description |
 |-----|-------------|
-| `events/{eventId}/photos_index.json` | Index des photos de l’événement (liste file_id, métadonnées). |
+| `events/{eventId}/photos_index.db` | Index des photos de l’événement (liste file_id, métadonnées). |
 
 ---
 
@@ -50,7 +50,7 @@ bucket R2
 │       ├── products.json
 │       ├── config.json
 │       └── photos/
-│           ├── photos_index.json     (optionnel)
+│           ├── photos_index.db       (index FTS)
 │           └── {fileId}/             (ex. 6d1301bb...)
 │               ├── webp.webp
 │               ├── md.jpg

@@ -683,6 +683,8 @@ function updateInterfaceLanguage() {
 
 // État global
 let products = [];
+/** Cache produits par événement : { 'global': [...], 'BJ025': [...], ... } — utilisé pour le panier (prix selon event_id de la photo) */
+let productsByEvent = {};
 let currentSearch = '';
 let currentSearchResults = []; // Stocker les résultats de recherche pour extraire les infos cavalier/cheval
 
@@ -712,36 +714,60 @@ function toggleColumn(side) {
   }
 }
 
+// Retourne la liste des produits pour un event_id (panier : prix selon la photo). Utilise le cache.
+function getProductsForEventId(eventId) {
+  const key = eventId && String(eventId).trim() ? eventId : 'global';
+  return productsByEvent[key] || productsByEvent['global'] || products;
+}
+
+// Charge en arrière-plan les produits d'un événement pour le cache (panier multi-événements).
+async function ensureProductsForEvent(eventId) {
+  const key = eventId && String(eventId).trim() ? eventId : 'global';
+  if (productsByEvent[key]) return productsByEvent[key];
+  try {
+    const url = `/api/products?event_id=${encodeURIComponent(key)}&lang=${encodeURIComponent(currentLanguage || 'fr')}`;
+    const response = await fetch(url);
+    if (!response.ok) return products;
+    const data = await response.json();
+    productsByEvent[key] = data.products || [];
+    return productsByEvent[key];
+  } catch (e) {
+    return products;
+  }
+}
+
 // Chargement des produits (formats et prix selon l'événement courant, depuis R2)
 async function loadProducts() {
   // Borne online : charger les produits depuis l'API par événement (R2)
   const useEventApi = !API_BASE || API_BASE === 'null' || API_BASE === null;
   if (useEventApi) {
     try {
-      const eventId = selectedEventIds.length === 1
-        ? selectedEventIds[0]
-        : ((await discoverAvailableEvents())[0] || '');
+      // Un seul événement sélectionné → prix de cet événement (global + spécifique). Sinon → produits globaux (prix par défaut à l'arrivée).
+      const eventId = selectedEventIds.length === 1 ? selectedEventIds[0] : 'global';
       const url = `/api/products?event_id=${encodeURIComponent(eventId)}&lang=${encodeURIComponent(currentLanguage || 'fr')}`;
-      console.log('Chargement produits par événement:', eventId || '(premier disponible)');
+      console.log('Chargement produits:', eventId === 'global' ? 'globaux (par défaut)' : `événement ${eventId}`);
       const response = await fetch(url);
       if (!response.ok) {
         console.warn('API produits indisponible, liste vide');
         products = [];
+        productsByEvent[eventId === 'global' ? 'global' : eventId] = [];
         renderPromotions();
-        if (cart.length > 0) renderCartItems();
+        if (cart.length > 0) await renderCartItems();
         return;
       }
       const data = await response.json();
       products = data.products || [];
-      console.log(`✅ ${products.length} produit(s) chargé(s) pour l'événement ${data.event_id || eventId || 'N/A'}`);
+      const cacheKey = eventId === 'global' ? 'global' : eventId;
+      productsByEvent[cacheKey] = products;
+      console.log(`✅ ${products.length} produit(s) chargé(s) ${eventId === 'global' ? '(globaux, par défaut)' : `pour l'événement ${data.event_id || eventId}`}`);
       renderPromotions();
-      if (cart.length > 0) renderCartItems();
+      if (cart.length > 0) await renderCartItems();
       return;
     } catch (error) {
       console.warn('Erreur chargement produits par événement:', error);
       products = [];
       renderPromotions();
-      if (cart.length > 0) renderCartItems();
+      if (cart.length > 0) await renderCartItems();
       return;
     }
   }
@@ -758,7 +784,7 @@ async function loadProducts() {
     const data = await response.json();
     products = data.products;
     renderPromotions();
-    if (cart.length > 0) renderCartItems();
+    if (cart.length > 0) await renderCartItems();
   } catch (error) {
     console.error('Erreur:', error);
     if (API_BASE && API_BASE !== 'null' && API_BASE !== null) {
@@ -1190,6 +1216,58 @@ let staticPhotosCache = null; // Cache global (pour compatibilité avec code exi
 let multiEventPhotosCache = {}; // Cache multi-événements : { event_id: [photos] }
 let selectedEventIds = []; // Événements sélectionnés pour la recherche
 
+/** Charge le script sql.js (une seule fois). */
+function loadSqlJs() {
+  if (window.initSqlJs) return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.js';
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error('sql.js load failed'));
+    document.head.appendChild(script);
+  });
+}
+
+/**
+ * Charge l'index photos depuis la DB FTS sur R2 (events/{eventId}/photos_index.db).
+ * Retourne un tableau d'items (file_id, rider_name, horse_name, r2_key_*, etc.) ou null en cas d'erreur.
+ */
+async function loadPhotosFromIndexDb(eventId) {
+  const r2Url = window.R2_PUBLIC_URL;
+  if (!r2Url) return null;
+  const r2Key = `events/${eventId}/photos_index.db`;
+  const cacheBuster = `?t=${Date.now()}`;
+  let response;
+  try {
+    response = await fetch(`${r2Url}/${r2Key}${cacheBuster}`);
+  } catch (e) {
+    return null;
+  }
+  if (!response.ok) return null;
+  const arrayBuffer = await response.arrayBuffer();
+  try {
+    await loadSqlJs();
+    const SQL = await window.initSqlJs({
+      locateFile: () => 'https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.wasm'
+    });
+    const db = new SQL.Database(new Uint8Array(arrayBuffer));
+    const result = db.exec('SELECT file_id, rider_name, horse_name, rider_number, class_name, contest, r2_key_thumb, r2_key_preview, r2_key_hd, r2_key_webp FROM photos_index');
+    db.close();
+    if (!result || !result[0] || !result[0].values) return null;
+    const cols = result[0].columns;
+    const photos = result[0].values.map(row => {
+      const o = {};
+      cols.forEach((c, i) => { o[c] = row[i] != null ? row[i] : ''; });
+      o.event_id = eventId;
+      return o;
+    });
+    return photos;
+  } catch (e) {
+    console.warn('Erreur chargement photos_index.db pour', eventId, e);
+    return null;
+  }
+}
+
 /**
  * Charge les photos pour un ou plusieurs événements
  * @param {string|string[]} eventIds - Un event_id ou un tableau d'event_ids. Si null, détecte automatiquement.
@@ -1262,41 +1340,39 @@ async function loadStaticPhotos(eventIds = null) {
       }
     }
     
-    // Si pas de cache, charger depuis R2
+    // Si pas de cache, charger depuis R2 : index DB uniquement (photos_index.db)
     if (!photos) {
+      const r2Url = window.R2_PUBLIC_URL;
+      if (!r2Url) {
+        console.error('❌ R2_PUBLIC_URL non défini');
+        continue;
+      }
       try {
-        const r2Url = window.R2_PUBLIC_URL;
-        if (!r2Url) {
-          console.error('❌ R2_PUBLIC_URL non défini');
+        photos = await loadPhotosFromIndexDb(eventId);
+        if (photos === null) {
+          console.warn(`⚠️ Index photos introuvable sur R2 pour ${eventId} (photos_index.db)`);
           continue;
         }
-        const r2Key = `events/${eventId}/photos_index.json`;
-        const cacheBuster = `?t=${Date.now()}`;
-        const response = await fetch(`${r2Url}/${r2Key}${cacheBuster}`);
-        
-        if (!response.ok) {
-          console.warn(`⚠️ Index photos introuvable sur R2 pour ${eventId}`);
-          continue; // Passer au suivant
+
+        multiEventPhotosCache[eventId] = photos;
+        const MAX_SESSION_STORAGE_ITEMS = 2500;
+        if (photos.length <= MAX_SESSION_STORAGE_ITEMS) {
+          try {
+            sessionStorage.setItem(cacheKey, JSON.stringify({
+              items: photos,
+              timestamp: Date.now()
+            }));
+          } catch (e) {
+            console.warn('Erreur mise en cache sessionStorage:', e);
+          }
+        } else {
+          console.log(`Cache mémoire uniquement pour ${eventId} (${photos.length} photos, pas de sessionStorage)`);
         }
-        
-        const data = await response.json();
-        photos = data.items || data.photos || [];
-        
-        // Mettre en cache
-        try {
-          sessionStorage.setItem(cacheKey, JSON.stringify({
-            items: photos,
-            timestamp: Date.now()
-          }));
-          multiEventPhotosCache[eventId] = photos; // Mettre aussi dans le cache mémoire
-        } catch (e) {
-          console.warn('Erreur mise en cache:', e);
-        }
-        
-        console.log(`✅ ${photos.length} photos chargées depuis R2 (event_id: ${eventId}, version ${data.version || 'N/A'})`);
+
+        console.log(`✅ ${photos.length} photos chargées depuis R2 (event_id: ${eventId}, photos_index.db)`);
       } catch (error) {
         console.warn(`Erreur chargement photos depuis R2 pour ${eventId}:`, error);
-        continue; // Passer au suivant
+        continue;
       }
     } else {
       multiEventPhotosCache[eventId] = photos; // Mettre dans le cache mémoire
@@ -2085,20 +2161,25 @@ function toggleCart() {
   }
 }
 
-function renderCartItems() {
+async function renderCartItems() {
   const container = document.getElementById('cart-items');
   container.innerHTML = '';
-  
+
   if (cart.length === 0) {
     container.innerHTML = `<div style="text-align: center; padding: 40px; color: #666;">${t('cart_empty')}</div>`;
     updateCartTotal();
     return;
   }
-  
-  let total = 0;
 
+  const useEventApi = !API_BASE || API_BASE === 'null' || API_BASE === null;
+  if (useEventApi) {
+    const eventIds = [...new Set(cart.map(i => (i.event_id && String(i.event_id).trim()) || 'global'))];
+    await Promise.all(eventIds.map(eid => ensureProductsForEvent(eid)));
+  }
+
+  let total = 0;
   const firstPhotoIndex = cart.findIndex(i => i.type === 'photo');
-  
+
   cart.forEach((item, index) => {
     const row = document.createElement('div');
     row.className = 'cart-photo-row';
@@ -2203,8 +2284,9 @@ function renderCartItems() {
         }
       });
       
-      // Trier les produits : impression d'abord, puis numérique, par ordre cart_order
-      const sortedProducts = products
+      // Produits de l'événement de cette photo (prix selon l'event_id de la photo)
+      const eventProducts = getProductsForEventId(eventId);
+      const sortedProducts = eventProducts
         .filter(p => p.category !== 'pack')
         .sort((a, b) => {
           // Séparer impression et numérique
@@ -2240,9 +2322,8 @@ function renderCartItems() {
           // Chercher dans le panier si une impression de la même photo existe
           hasPrintForSamePhoto = cart.some(cartItem => {
             if (cartItem.type === 'photo' && cartItem.filename === item.filename) {
-              // Vérifier si cette photo a un format impression dans le panier
               for (const [pid, qty] of Object.entries(cartItem.formats || {})) {
-                const printProduct = products.find(p => p.id == pid);
+                const printProduct = getProductsForEventId(cartItem.event_id).find(p => p.id == pid);
                 if (printProduct && printProduct.category === 'impression' && qty > 0) {
                   return true;
                 }
@@ -2251,7 +2332,7 @@ function renderCartItems() {
             return false;
           });
         }
-        
+
         // Calculer le prix actuel (de la prochaine photo à ajouter) et le prix suivant selon les règles de prix
         // Si c'est un produit numérique avec impression dans le panier, utiliser le prix réduit
         let basePrice = (isDigital && hasPrintForSamePhoto && product.reduced_price_with_print) 
@@ -2488,8 +2569,8 @@ function renderCartItems() {
       `;
       
     } else if (item.type === 'pack') {
-      // Affichage Pack avec photo du couple
-      const product = products.find(p => p.id === item.product_id);
+      const eventProductsPack = getProductsForEventId(item.event_id || 'global');
+      const product = eventProductsPack.find(p => p.id === item.product_id);
       if (!product) return;
       
       // Déterminer le titre à afficher (Pack en gros, puis Cheval/Cavalier en petit)
@@ -2692,155 +2773,45 @@ window.openPackLightbox = function(index, event) {
 
 function updateCartTotal() {
   let total = 0;
-  let summaryHtml = '';
-  
-  // Calculer les totaux par produit pour appliquer les règles de prix globales
-  const productTotals = {}; // { productId: totalQuantity }
-  
-  // 1. Compter les quantités totales par produit
+  const summaryLines = [];
+  const productPositions = {}; // position globale par productId (pour règles dégressives)
+
   cart.forEach(item => {
+    const eventProducts = getProductsForEventId(item.event_id || 'global');
     if (item.type === 'photo') {
-      for (const [pid, qty] of Object.entries(item.formats)) {
-        productTotals[pid] = (productTotals[pid] || 0) + qty;
+      for (const [pid, qty] of Object.entries(item.formats || {})) {
+        const product = eventProducts.find(p => p.id == pid);
+        if (!product || !qty) continue;
+        let hasPrintForSamePhoto = false;
+        if (product.category === 'numérique' && product.reduced_price_with_print) {
+          hasPrintForSamePhoto = cart.some(ci => ci.type === 'photo' && ci.filename === item.filename && Object.keys(ci.formats || {}).some(printPid => {
+            const pp = getProductsForEventId(ci.event_id).find(p => p.id == printPid);
+            return pp && pp.category === 'impression' && (ci.formats[printPid] || 0) > 0;
+          }));
+        }
+        let lineTotal = 0;
+        for (let i = 0; i < qty; i++) {
+          productPositions[pid] = (productPositions[pid] || 0) + 1;
+          lineTotal += getPriceForPosition(product, productPositions[pid], hasPrintForSamePhoto);
+        }
+        total += lineTotal;
+        summaryLines.push({ name: product.name_fr || product.name, qty, lineTotal });
       }
     } else if (item.type === 'pack') {
-       productTotals[item.product_id] = (productTotals[item.product_id] || 0) + item.quantity;
+      const product = eventProducts.find(p => p.id == item.product_id);
+      if (!product) return;
+      const packTotal = (product.price || 0) * (item.quantity || 1);
+      total += packTotal;
+      summaryLines.push({ name: product.name_fr || product.name, qty: item.quantity || 1, lineTotal: packTotal });
     }
   });
-  
-  // 2. Calculer le prix pour chaque produit selon ses règles
-  for (const [pid, totalQty] of Object.entries(productTotals)) {
-    const product = products.find(p => p.id == pid);
-    if (!product) continue;
-    
-    // Pour les produits numériques, vérifier si une impression de la même photo est dans le panier
-    const isDigital = product.category === 'numérique';
-    let hasPrintForSamePhoto = false;
-    if (isDigital && product.reduced_price_with_print) {
-      // Trouver toutes les photos qui ont ce produit dans le panier
-      const photosWithThisProduct = cart.filter(cartItem => {
-        if (cartItem.type === 'photo') {
-          return cartItem.formats && cartItem.formats[pid] > 0;
-        }
-        return false;
-      });
-      
-      // Pour chaque photo avec ce produit, vérifier si elle a aussi une impression
-      hasPrintForSamePhoto = photosWithThisProduct.some(cartItem => {
-        for (const [printPid, printQty] of Object.entries(cartItem.formats || {})) {
-          const printProduct = products.find(p => p.id == printPid);
-          if (printProduct && printProduct.category === 'impression' && printQty > 0) {
-            return true;
-          }
-        }
-        return false;
-      });
-    }
-    
-    // Prix de base : utiliser le prix réduit si applicable
-    let basePrice = product.price;
-    if (isDigital && hasPrintForSamePhoto && product.reduced_price_with_print) {
-      basePrice = product.reduced_price_with_print;
-    }
-    
-    let lineTotal = 0;
-    
-    // Parser la promo spéciale "X=Y" (ex: "3=10" → la 3ème photo coûte 10 €)
-    let specialPromoPosition = null;
-    let specialPromoPrice = null;
-    if (product.special_promo_rule) {
-      const match = product.special_promo_rule.match(/(\d+)\s*=\s*(\d+)/);
-      if (match) {
-        specialPromoPosition = parseInt(match[1]); // Position (ex: 3)
-        specialPromoPrice = parseFloat(match[2]); // Prix pour cette position (ex: 10)
-      }
-    }
-    
-    // Si produit numérique avec impression : le prix réduit avec impression prend le dessus sur les tarifs dégressifs
-    const useReducedPrice = isDigital && hasPrintForSamePhoto && product.reduced_price_with_print;
-    
-    // Système de prix cumulatif : Prix photo 1 + Prix photo 2 + Prix photo 3 + ...
-  if (product.pricing_rules && typeof product.pricing_rules === 'object' && !useReducedPrice) {
-      // Utiliser les tarifs dégressifs seulement si on n'a pas de prix réduit avec impression
-      const rules = product.pricing_rules;
-      const hasNumericKeys = Object.keys(rules).some(k => !isNaN(parseInt(k)));
-      const hasDefault = 'default' in rules;
-      
-      if (hasNumericKeys || hasDefault) {
-        // Système cumulatif : additionner le prix de chaque photo
-        const defaultPriceBase = parseFloat(rules.default || product.price);
-        const defaultPrice = defaultPriceBase;
-        
-        // Trouver le premier et dernier rang avec dégressivité
-        const numericKeys = Object.keys(rules)
-          .filter(k => !isNaN(parseInt(k)))
-          .map(k => parseInt(k))
-          .sort((a, b) => a - b);
-        const firstDefinedRank = numericKeys.length > 0 ? numericKeys[0] : 0;
-        const lastDefinedRank = numericKeys.length > 0 ? numericKeys[numericKeys.length - 1] : 0;
-        const lastDefinedPriceBase = lastDefinedRank > 0 ? parseFloat(rules[lastDefinedRank.toString()]) : defaultPrice;
-        // Les tarifs dégressifs restent à leur valeur fixe, même avec reduced_price_with_print
-        const lastDefinedPrice = lastDefinedPriceBase;
-        
-        // Fonction pour obtenir le prix selon la position
-        // Note: useReducedPrice est déjà vérifié avant d'entrer dans ce bloc, donc on n'a pas besoin de le vérifier ici
-        const getPriceForPosition = (position) => {
-          // Vérifier si cette position correspond à la promo spéciale (ex: "3=10")
-          if (specialPromoPosition && position === specialPromoPosition) {
-            return specialPromoPrice;
-          }
-          const rankPrice = rules[position.toString()];
-          if (rankPrice !== undefined) {
-            const rulePrice = parseFloat(rankPrice);
-            // Les tarifs dégressifs restent à leur valeur fixe, même avec reduced_price_with_print
-            return rulePrice;
-          }
-          // Pas de prix défini pour ce rang
-          if (position < firstDefinedRank) {
-            // Avant la première dégressivité : utiliser le prix de base (déjà ajusté)
-            return basePrice;
-        } else {
-            // Après la dernière dégressivité : utiliser le dernier prix dégressif
-            return lastDefinedPrice;
-          }
-        };
-        
-        for (let i = 1; i <= totalQty; i++) {
-          lineTotal += getPriceForPosition(i);
-        }
-      } else {
-        // Ancien système (non utilisé normalement)
-        lineTotal = basePrice * totalQty;
-      }
-    } else if (useReducedPrice) {
-      // Prix réduit avec impression prend le dessus : utiliser le prix réduit pour toutes les photos
-      lineTotal = product.reduced_price_with_print * totalQty;
-    } else {
-      // Pas de règles définies : prix standard, mais vérifier la promo spéciale "X=Y" (ex: "3=10")
-      const unitPrice = (product.promo_price && product.promo_price < product.price) 
-        ? product.promo_price 
-        : basePrice;
-      
-      for (let i = 1; i <= totalQty; i++) {
-        // Vérifier si cette position correspond à la promo spéciale
-        if (specialPromoPosition && i === specialPromoPosition) {
-          lineTotal += specialPromoPrice;
-        } else {
-          lineTotal += unitPrice; // Prix normal (ou réduit si applicable)
-        }
-      }
-    }
-    
-    total += lineTotal;
-    
-    summaryHtml += `
-        <div class="summary-line">
-            <span>${totalQty} x ${product.name}</span>
-            <span>${formatPrice(lineTotal)}</span>
-        </div>
-    `;
-  }
-  
+
+  const summaryHtml = summaryLines.map(l => `
+    <div class="summary-line">
+      <span>${l.qty} x ${l.name}</span>
+      <span>${formatPrice(l.lineTotal)}</span>
+    </div>
+  `).join('');
   document.getElementById('cart-summary-details').innerHTML = summaryHtml;
   document.getElementById('cart-total').textContent = formatPrice(total);
   
@@ -3359,7 +3330,7 @@ function removeExcludedPacks(productId, displayName) {
     if (item.type === 'pack') {
       const itemCouple = normalizeCoupleName(item.rider_name || '', '');
       if (isSameCouple(packCouple.rider, packCouple.horse, itemCouple.rider, itemCouple.horse)) {
-        const itemProduct = products.find(p => p.id === item.product_id);
+        const itemProduct = getProductsForEventId(item.event_id || 'global').find(p => p.id === item.product_id);
         if (itemProduct && itemProduct.category === 'pack') {
           const itemEmailDelivery = itemProduct.email_delivery || false;
           // Retirer si email_delivery différent
@@ -3525,11 +3496,12 @@ function updateFormFieldsVisibility() {
     let hasPaperPickup = false;
     let hasPaperShipping = false;
     
-    cart.forEach(item => {
-        if (item.type === 'photo') {
-            for (const [pid, qty] of Object.entries(item.formats)) {
-                const product = products.find(p => p.id == pid);
-                if (product) {
+  cart.forEach(item => {
+    const eventProducts = getProductsForEventId(item.event_id || 'global');
+    if (item.type === 'photo') {
+      for (const [pid, qty] of Object.entries(item.formats)) {
+        const product = eventProducts.find(p => p.id == pid);
+        if (product) {
                     if (product.category === 'numérique') {
                         hasDigital = true;
                     } else if (product.category === 'impression') {
@@ -3542,7 +3514,7 @@ function updateFormFieldsVisibility() {
                 }
             }
         } else if (item.type === 'pack') {
-            const product = products.find(p => p.id == item.product_id);
+            const product = getProductsForEventId(item.event_id || 'global').find(p => p.id == item.product_id);
             if (product && product.category === 'pack') {
                 // Les packs peuvent contenir du numérique, on considère qu'ils nécessitent un email
                 hasDigital = true;
@@ -3721,10 +3693,11 @@ function detectFulfillmentFromCart() {
   let hasPaperShipping = false;
 
   cart.forEach(item => {
+    const eventProducts = getProductsForEventId(item.event_id || 'global');
     if (item.type === 'photo') {
       for (const [pid, qty] of Object.entries(item.formats || {})) {
         if (!qty || qty <= 0) continue;
-        const product = products.find(p => p.id == pid);
+        const product = eventProducts.find(p => p.id == pid);
         if (!product) continue;
         if (product.category === 'numérique') hasDigital = true;
         if (product.category === 'impression') {
@@ -3775,9 +3748,10 @@ async function submitOrder(e, options = {}) {
   // Récupérer les données avec les prix calculés selon la position
   const items = [];
   cart.forEach(item => {
+      const eventProducts = getProductsForEventId(item.event_id || 'global');
       if (item.type === 'photo') {
           for (const [pid, qty] of Object.entries(item.formats)) {
-              const product = products.find(p => p.id == pid);
+              const product = eventProducts.find(p => p.id == pid);
               if (!product) return;
               
               // Vérifier si une impression de la même photo est dans le panier (pour prix réduit numérique)
@@ -3786,9 +3760,8 @@ async function submitOrder(e, options = {}) {
               if (isDigital && product.reduced_price_with_print) {
                 hasPrintForSamePhoto = cart.some(cartItem => {
                   if (cartItem.type === 'photo' && cartItem.filename === item.filename) {
-                    // Vérifier si cette photo a un format impression dans le panier
                     for (const [printPid, printQty] of Object.entries(cartItem.formats || {})) {
-                      const printProduct = products.find(p => p.id == printPid);
+                      const printProduct = getProductsForEventId(cartItem.event_id).find(p => p.id == printPid);
                       if (printProduct && printProduct.category === 'impression' && printQty > 0) {
                         return true;
                       }
@@ -3866,7 +3839,7 @@ async function submitOrder(e, options = {}) {
             photos: packPhotos
           };
           
-          const product = products.find(p => p.id == item.product_id);
+          const product = getProductsForEventId(item.event_id || 'global').find(p => p.id == item.product_id);
           if (!product) return;
           
           // Envoyer chaque unité comme un item séparé avec son prix exact
@@ -4560,17 +4533,21 @@ function handleEventFilterChange(availableEvents) {
   }
   
   console.log('📋 Événements sélectionnés:', selectedEventIds);
-  
+
+  try {
+    localStorage.setItem('borne_selected_event', selectedValue || 'all');
+  } catch (e) {}
+
   // Synchroniser les deux selects
   if (desktopSelect && mobileSelect) {
     desktopSelect.value = selectedValue || 'all';
     mobileSelect.value = selectedValue || 'all';
   }
-  
+
   // Vider le cache pour forcer le rechargement
   staticPhotosCache = null;
   multiEventPhotosCache = {};
-  
+
   // Si une recherche est en cours, relancer la recherche
   const searchInput = document.getElementById('photo-search');
   if (searchInput && searchInput.value.trim()) {
@@ -4613,15 +4590,26 @@ async function initEventFilter() {
   // Initialiser les deux selects
   initSelect(filterSelectMobile);
   initSelect(filterSelectDesktop);
-  
-  // Si un seul événement, le sélectionner automatiquement
+
+  let selectedValue = 'all';
+  try {
+    const saved = localStorage.getItem('borne_selected_event');
+    if (saved && (saved === 'all' || availableEvents.includes(saved))) {
+      selectedValue = saved;
+    }
+  } catch (e) {}
+
   if (availableEvents.length === 1) {
-    if (filterSelectMobile) filterSelectMobile.value = availableEvents[0];
-    if (filterSelectDesktop) filterSelectDesktop.value = availableEvents[0];
+    selectedValue = availableEvents[0];
     selectedEventIds = [availableEvents[0]];
   } else if (availableEvents.length > 0) {
-    // Par défaut, sélectionner "Tous"
-    selectedEventIds = availableEvents;
+    if (selectedValue === 'all') {
+      selectedEventIds = availableEvents;
+    } else {
+      selectedEventIds = [selectedValue];
+    }
+    if (filterSelectMobile) filterSelectMobile.value = selectedValue;
+    if (filterSelectDesktop) filterSelectDesktop.value = selectedValue;
   }
   
   // Gérer le changement de sélection
