@@ -8,6 +8,22 @@ Le client charge les produits via **`/api/products`** (serveur Node) : le serveu
 
 **À faire sur Infomaniak :** lancer le serveur Node (`node server.js` ou `npm start` / PM2) et faire pointer le site vers ce serveur pour que `/api/products` soit servi en JSON.
 
+### Installer les dépendances avant de lancer
+
+Après un clone ou un `git pull`, les modules Node ne sont pas installés (`node_modules` n’est pas versionné). Sur le serveur, exécuter **une fois** dans le dossier du projet :
+
+```bash
+npm install
+```
+
+Puis lancer le serveur :
+
+```bash
+npm start
+```
+
+Si vous voyez `Error: Cannot find module 'multer'` (ou autre module), c’est que `npm install` n’a pas été exécuté sur ce répertoire.
+
 ### Vérifier que Node tourne
 
 Si vous voyez :
