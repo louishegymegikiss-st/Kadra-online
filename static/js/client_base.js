@@ -2268,19 +2268,22 @@ async function renderCartItems() {
         };
       }
       
-      // Utiliser les données de la photo normalisée (comme la lightbox)
+      // Utiliser les données de la photo pour noms/filename
       const filename = photo.filename || item.filename;
       const riderName = photo.rider_name || photo.cavalier || item.rider_name || '';
       const horseName = photo.horse_name || photo.cheval || item.horse_name || '';
-      let fileId = photo.file_id || photo.id || item.file_id || null;
-      let eventId = photo.event_id || photo.contest || item.event_id || null;
-      if (!fileId && !eventId && item.photo_id && item.photo_id.includes('-')) {
+      // URL image : TOUJOURS utiliser l'event_id/file_id de l'item (au moment de l'ajout) pour ne pas changer d'event en changeant de filtre
+      let fileId = item.file_id || null;
+      let eventId = item.event_id || null;
+      if (item.photo_id && item.photo_id.includes('-')) {
         const parts = item.photo_id.split('-');
         eventId = eventId || parts[0] || null;
         fileId = fileId || parts.slice(1).join('-') || null;
       }
-      
-      // Sauvegarder dans l'item pour la prochaine fois (preview et getProductsForEventId utilisent event_id)
+      // Fallback uniquement si l'item n'avait pas encore event_id/file_id (ne jamais écraser par une photo d'un autre event trouvée par filename)
+      if (!fileId) fileId = photo.file_id || photo.id || null;
+      if (!eventId) eventId = photo.event_id || photo.contest || null;
+      // Persister sur l'item pour les prochains rendus (URL et getProductsForEventId)
       item.filename = filename;
       item.rider_name = riderName;
       item.horse_name = horseName;
@@ -2910,9 +2913,18 @@ function openLightbox(startFilename, photosList = null, fromCart = false) {
             const iBasename = i.filename.split('/').pop();
             return pBasename === iBasename;
           });
-          const fileId = i.file_id || (photoData ? (photoData.file_id || photoData.id || null) : null);
-          const eventId = i.event_id || (photoData ? (photoData.event_id || photoData.contest || null) : null);
-          const imageUrl = photoData?.previewUrl || photoData?.imageUrl || getPhotoUrlFromFilename(i.filename, null, null, fileId, eventId, 'webp');
+          // URL : priorité à l'item (event_id/file_id au moment de l'ajout), puis photo_id, puis photoData (évite lien BJ025/BJ026)
+          let fileId = i.file_id || null;
+          let eventId = i.event_id || null;
+          if (i.photo_id && i.photo_id.includes('-')) {
+            const parts = i.photo_id.split('-');
+            eventId = eventId || parts[0] || null;
+            fileId = fileId || parts.slice(1).join('-') || null;
+          }
+          if (!fileId) fileId = photoData ? (photoData.file_id || photoData.id || null) : null;
+          if (!eventId) eventId = photoData ? (photoData.event_id || photoData.contest || null) : null;
+          const imageUrl = photoData && (photoData.event_id === eventId) ? (photoData.previewUrl || photoData.imageUrl) : null
+            || getPhotoUrlFromFilename(i.filename, null, null, fileId, eventId, 'webp');
           return {
             filename: i.filename,
             imageUrl: imageUrl,
