@@ -192,7 +192,7 @@ function encodePhotoPath(path) {
     .join('/');
 }
 
-function getPhotoUrlFromFilename(filename, relPath = null, originalFilename = null, fileId = null, eventId = null, variant = 'preview') {
+function getPhotoUrlFromFilename(filename, relPath = null, originalFilename = null, fileId = null, eventId = null, variant = 'webp') {
   // Si R2 est configuré et disponible
   if (window.R2_PUBLIC_URL) {
     // NOUVEAU : Utiliser les nouveaux chemins R2 simplifiés si file_id disponible
@@ -1610,7 +1610,7 @@ function normalizePhotosData(rawPhotos) {
       if (fileId && eventId) {
         // Nouveau format avec file_id (prioritaire)
         imageUrl = getPhotoUrlFromFilename(normalizedFilename, null, null, fileId, eventId, 'thumb');
-        previewUrl = getPhotoUrlFromFilename(normalizedFilename, null, null, fileId, eventId, 'preview');
+        previewUrl = getPhotoUrlFromFilename(normalizedFilename, null, null, fileId, eventId, 'webp');
       }
       
       // Fallback sur ancien format si nouveau format non disponible
@@ -2585,13 +2585,13 @@ async function renderCartItems() {
       
       // Si pas d'URL directe, construire avec file_id et event_id (comme la lightbox)
       if (!imageUrl) {
-        imageUrl = getPhotoUrlFromFilename(filename, null, null, fileId, eventId, 'preview');
+        imageUrl = getPhotoUrlFromFilename(filename, null, null, fileId, eventId, 'webp');
       }
       
       // Fallback : essayer avec les données de l'item
       let fallbackUrl = imageUrl;
       if (!imageUrl && fileId && eventId) {
-        fallbackUrl = getPhotoUrlFromFilename(filename, null, null, fileId, eventId, 'preview');
+        fallbackUrl = getPhotoUrlFromFilename(filename, null, null, fileId, eventId, 'webp');
       }
       
       row.innerHTML = `
@@ -2912,7 +2912,7 @@ function openLightbox(startFilename, photosList = null, fromCart = false) {
           });
           const fileId = i.file_id || (photoData ? (photoData.file_id || photoData.id || null) : null);
           const eventId = i.event_id || (photoData ? (photoData.event_id || photoData.contest || null) : null);
-          const imageUrl = photoData?.previewUrl || photoData?.imageUrl || getPhotoUrlFromFilename(i.filename, null, null, fileId, eventId, 'preview');
+          const imageUrl = photoData?.previewUrl || photoData?.imageUrl || getPhotoUrlFromFilename(i.filename, null, null, fileId, eventId, 'webp');
           return {
             filename: i.filename,
             imageUrl: imageUrl,
