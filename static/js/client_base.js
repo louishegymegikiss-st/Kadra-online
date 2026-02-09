@@ -1164,28 +1164,40 @@ function setupEventListeners() {
 async function fetchSuggestions(query) {
   const suggestionsBox = document.getElementById('suggestions-box');
   if (!suggestionsBox) return;
-  
-  try {
-    const response = await fetch(`${API_BASE}/search-suggestions?query=${encodeURIComponent(query)}`, {
-      headers: getApiHeaders()
-    });
-    if (!response.ok) throw new Error('Erreur suggestions');
-    const data = await response.json();
-    const suggestions = data.suggestions || [];
-    currentSuggestions = suggestions;
-    
-    if (!suggestions.length) {
-      suggestionsBox.style.display = 'none';
+  const q = (query || '').trim();
+  if (q.length < 2) {
+    suggestionsBox.style.display = 'none';
+    currentSuggestions = [];
     return;
   }
-  
+
+  try {
+    let suggestions = [];
+    if (API_BASE && API_BASE !== 'null') {
+      const response = await fetch(`${API_BASE}/search-suggestions?query=${encodeURIComponent(q)}`, {
+        headers: getApiHeaders()
+      });
+      if (response.ok) {
+        const data = await response.json();
+        suggestions = data.suggestions || [];
+      }
+    } else {
+      suggestions = await getFtsSuggestions(q);
+    }
+    currentSuggestions = suggestions;
+
+    if (!suggestions.length) {
+      suggestionsBox.style.display = 'none';
+      return;
+    }
+
     suggestionsBox.innerHTML = suggestions.map((name, idx) => `
       <div class="suggestion-item" data-suggestion-index="${idx}">
         ${escapeHtml(name)}
       </div>
     `).join('');
     suggestionsBox.style.display = 'block';
-    
+
     suggestionsBox.querySelectorAll('.suggestion-item').forEach(item => {
       item.addEventListener('click', () => {
         const index = parseInt(item.dataset.suggestionIndex, 10);
@@ -1213,8 +1225,10 @@ function applySuggestion(value) {
 
 // Cache pour les photos depuis R2
 let staticPhotosCache = null; // Cache global (pour compatibilité avec code existant)
-let multiEventPhotosCache = {}; // Cache multi-événements : { event_id: [photos] }
+let multiEventPhotosCache = {}; // Event IDs prêts pour FTS (valeurs vides) ou legacy [photos]
 let selectedEventIds = []; // Événements sélectionnés pour la recherche
+// Cache des buffers photos_index.db par event_id (FTS : on ne charge pas toutes les lignes, on interroge à la recherche)
+let multiEventDbBuffers = {};
 
 /** Charge le script sql.js (une seule fois). */
 function loadSqlJs() {
@@ -1228,50 +1242,143 @@ function loadSqlJs() {
   });
 }
 
+let _sqlJsModule = null;
+/** Init sql.js une seule fois (retourne le module SQL). */
+async function getSqlJs() {
+  if (_sqlJsModule) return _sqlJsModule;
+  await loadSqlJs();
+  _sqlJsModule = await window.initSqlJs({
+    locateFile: () => 'https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.wasm'
+  });
+  return _sqlJsModule;
+}
+
 /**
- * Charge l'index photos depuis la DB FTS sur R2 (events/{eventId}/photos_index.db).
- * Retourne un tableau d'items (file_id, rider_name, horse_name, r2_key_*, etc.) ou null en cas d'erreur.
+ * Charge et met en cache le fichier photos_index.db pour un événement (sans charger les lignes en mémoire).
+ * Utilisé pour la recherche FTS (jusqu'à ~100k photos par event).
+ * @returns {Promise<boolean>} true si chargé et mis en cache
  */
-async function loadPhotosFromIndexDb(eventId) {
+async function loadAndCacheEventIndexDb(eventId) {
+  if (multiEventDbBuffers[eventId]) return true;
   const r2Url = window.R2_PUBLIC_URL;
-  if (!r2Url) return null;
+  if (!r2Url) return false;
   const r2Key = `events/${eventId}/photos_index.db`;
   const cacheBuster = `?t=${Date.now()}`;
   let response;
   try {
     response = await fetch(`${r2Url}/${r2Key}${cacheBuster}`);
   } catch (e) {
-    return null;
+    return false;
   }
-  if (!response.ok) return null;
+  if (!response.ok) return false;
   const arrayBuffer = await response.arrayBuffer();
-  try {
-    await loadSqlJs();
-    const SQL = await window.initSqlJs({
-      locateFile: () => 'https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.wasm'
-    });
-    const db = new SQL.Database(new Uint8Array(arrayBuffer));
-    const result = db.exec('SELECT file_id, rider_name, horse_name, rider_number, class_name, contest, r2_key_thumb, r2_key_preview, r2_key_hd, r2_key_webp FROM photos_index');
-    db.close();
-    if (!result || !result[0] || !result[0].values) return null;
-    const cols = result[0].columns;
-    const photos = result[0].values.map(row => {
-      const o = {};
-      cols.forEach((c, i) => { o[c] = row[i] != null ? row[i] : ''; });
-      o.event_id = eventId;
-      return o;
-    });
-    return photos;
-  } catch (e) {
-    console.warn('Erreur chargement photos_index.db pour', eventId, e);
-    return null;
-  }
+  multiEventDbBuffers[eventId] = arrayBuffer;
+  multiEventPhotosCache[eventId] = []; // Marquer l'event comme prêt (pour discoverAvailableEvents)
+  return true;
 }
 
 /**
- * Charge les photos pour un ou plusieurs événements
+ * Exécute une recherche FTS sur un buffer photos_index.db.
+ * @param {ArrayBuffer} arrayBuffer - Buffer du fichier .db
+ * @param {string} eventId - event_id à ajouter aux lignes
+ * @param {string} ftsQuery - Expression FTS5 (ex. "jean" "dupont")
+ * @param {number} [limit] - Limite optionnelle (ex. pour les suggestions)
+ * @returns {Promise<Array<object>>} Lignes trouvées (file_id, rider_name, horse_name, r2_key_*, etc.)
+ */
+async function runFtsSearchOnIndexDb(arrayBuffer, eventId, ftsQuery, limit) {
+  const SQL = await getSqlJs();
+  if (!SQL) return [];
+  const db = new SQL.Database(new Uint8Array(arrayBuffer));
+  try {
+    const limitClause = (limit != null && limit > 0) ? ' LIMIT ?' : '';
+    const sql = `SELECT p.file_id, p.rider_name, p.horse_name, p.rider_number, p.class_name, p.contest,
+      p.r2_key_thumb, p.r2_key_preview, p.r2_key_hd, p.r2_key_webp
+      FROM photos_index p
+      WHERE p.id IN (SELECT rowid FROM photos_index_fts WHERE photos_index_fts MATCH ?)${limitClause}`;
+    const stmt = db.prepare(sql);
+    if (limit != null && limit > 0) {
+      stmt.bind([ftsQuery, limit]);
+    } else {
+      stmt.bind([ftsQuery]);
+    }
+    const rows = [];
+    const cols = ['file_id', 'rider_name', 'horse_name', 'rider_number', 'class_name', 'contest', 'r2_key_thumb', 'r2_key_preview', 'r2_key_hd', 'r2_key_webp'];
+    while (stmt.step()) {
+      const row = stmt.get();
+      const o = {};
+      cols.forEach((c, i) => { o[c] = row[i] != null ? row[i] : ''; });
+      o.event_id = eventId;
+      rows.push(o);
+    }
+    stmt.free();
+    return rows;
+  } finally {
+    db.close();
+  }
+}
+
+/** Construit une expression FTS5 sûre à partir de la requête utilisateur (tous les mots requis = AND). */
+function buildFtsQuery(userQuery) {
+  const words = (userQuery || '').trim().split(/\s+/).filter(w => w.length > 0);
+  if (words.length === 0) return '';
+  // FTS5 : termes entre guillemets, échapper " par ""
+  return words.map(w => '"' + String(w).replace(/"/g, '""') + '"').join(' ');
+}
+
+/** Construit une expression FTS5 pour recherche par préfixe (suggestions / prédict). */
+function buildFtsPrefixQuery(prefix) {
+  const p = (prefix || '').trim();
+  if (p.length === 0) return '';
+  return '"' + String(p).replace(/"/g, '""') + '*"';
+}
+
+const SUGGESTIONS_LIMIT_PER_EVENT = 15;
+const SUGGESTIONS_MAX_TOTAL = 25;
+
+/**
+ * Récupère des suggestions (prédict) via FTS préfixe sur les index des événements sélectionnés.
+ * @param {string} prefix - Texte saisi (ex. "dup")
+ * @returns {Promise<string[]>} Liste de chaînes à afficher (ex. "Jean Dupont - Jappeloup", "123 Dupont")
+ */
+async function getFtsSuggestions(prefix) {
+  const eventIds = selectedEventIds.length > 0 ? selectedEventIds : await discoverAvailableEvents();
+  if (!eventIds || eventIds.length === 0) return [];
+  const ftsQuery = buildFtsPrefixQuery(prefix);
+  if (!ftsQuery) return [];
+  for (const eventId of eventIds) {
+    await loadAndCacheEventIndexDb(eventId);
+  }
+  const seen = new Set();
+  const suggestions = [];
+  for (const eventId of eventIds) {
+    const buf = multiEventDbBuffers[eventId];
+    if (!buf) continue;
+    try {
+      const rows = await runFtsSearchOnIndexDb(buf, eventId, ftsQuery, SUGGESTIONS_LIMIT_PER_EVENT);
+      for (const r of rows) {
+        const rider = (r.rider_name || '').trim();
+        const horse = (r.horse_name || '').trim();
+        const num = (r.rider_number || '').trim();
+        const key = [rider, horse, num].join('\t');
+        if (seen.has(key)) continue;
+        seen.add(key);
+        const label = [num, rider, horse].filter(Boolean).join(' – ');
+        if (label && suggestions.length < SUGGESTIONS_MAX_TOTAL) {
+          suggestions.push(label);
+        }
+      }
+    } catch (e) {
+      console.warn('FTS suggestions erreur pour', eventId, e);
+    }
+  }
+  return suggestions;
+}
+
+/**
+ * Prépare l'index FTS pour un ou plusieurs événements (charge photos_index.db en cache, sans charger les lignes).
+ * Avec ~100k photos/event, les résultats viennent de la recherche FTS dans searchPhotos().
  * @param {string|string[]} eventIds - Un event_id ou un tableau d'event_ids. Si null, détecte automatiquement.
- * @returns {Promise<Array>} Tableau de toutes les photos des événements demandés
+ * @returns {Promise<Array>} Toujours [] en mode FTS (les photos sont retournées par searchPhotos via FTS).
  */
 async function loadStaticPhotos(eventIds = null) {
   // Si eventIds est null, détecter automatiquement (comportement legacy)
@@ -1317,82 +1424,18 @@ async function loadStaticPhotos(eventIds = null) {
     eventIds = [eventIds];
   }
   
-  // Charger tous les événements demandés
-  const allPhotos = [];
+  // FTS : on ne charge pas toutes les lignes (jusqu'à ~100k/event). On met en cache uniquement le fichier .db par event.
   for (const eventId of eventIds) {
-    // Vérifier le cache pour cet event_id
-    const cacheKey = `photos_cache_${eventId}`;
-    const cachedData = sessionStorage.getItem(cacheKey);
-    let photos = null;
-    
-    if (cachedData) {
-      try {
-        const parsed = JSON.parse(cachedData);
-        const cacheTime = parsed.timestamp || 0;
-        const cacheAge = Date.now() - cacheTime;
-        // Cache valide pendant 5 minutes
-        if (cacheAge < 5 * 60 * 1000) {
-          photos = parsed.items || [];
-          console.log(`✅ ${photos.length} photos chargées depuis cache (event_id: ${eventId})`);
-        }
-      } catch (e) {
-        console.warn('Erreur parsing cache:', e);
-      }
-    }
-    
-    // Si pas de cache, charger depuis R2 : index DB uniquement (photos_index.db)
-    if (!photos) {
-      const r2Url = window.R2_PUBLIC_URL;
-      if (!r2Url) {
-        console.error('❌ R2_PUBLIC_URL non défini');
-        continue;
-      }
-      try {
-        photos = await loadPhotosFromIndexDb(eventId);
-        if (photos === null) {
-          console.warn(`⚠️ Index photos introuvable sur R2 pour ${eventId} (photos_index.db)`);
-          continue;
-        }
-
-        multiEventPhotosCache[eventId] = photos;
-        const MAX_SESSION_STORAGE_ITEMS = 2500;
-        if (photos.length <= MAX_SESSION_STORAGE_ITEMS) {
-          try {
-            sessionStorage.setItem(cacheKey, JSON.stringify({
-              items: photos,
-              timestamp: Date.now()
-            }));
-          } catch (e) {
-            console.warn('Erreur mise en cache sessionStorage:', e);
-          }
-        } else {
-          console.log(`Cache mémoire uniquement pour ${eventId} (${photos.length} photos, pas de sessionStorage)`);
-        }
-
-        console.log(`✅ ${photos.length} photos chargées depuis R2 (event_id: ${eventId}, photos_index.db)`);
-      } catch (error) {
-        console.warn(`Erreur chargement photos depuis R2 pour ${eventId}:`, error);
-        continue;
-      }
+    const ok = await loadAndCacheEventIndexDb(eventId);
+    if (ok) {
+      console.log(`✅ Index FTS prêt pour ${eventId} (photos_index.db)`);
     } else {
-      multiEventPhotosCache[eventId] = photos; // Mettre dans le cache mémoire
-    }
-    
-    if (photos && photos.length > 0) {
-      allPhotos.push(...photos);
+      console.warn(`⚠️ Index photos introuvable sur R2 pour ${eventId} (photos_index.db)`);
     }
   }
-  
-  // Si aucun événement chargé, retourner un tableau vide
-  if (allPhotos.length === 0) {
-    console.warn('⚠️ Aucune photo chargée depuis R2 pour les événements demandés');
-    return [];
-  }
-  
-  // Mettre à jour le cache pour compatibilité
-  staticPhotosCache = allPhotos;
-  
-  return allPhotos;
+  // Ne pas retourner de lignes : la recherche se fait via FTS dans searchPhotos()
+  staticPhotosCache = [];
+  return [];
 }
 
 async function searchPhotos(query) {
@@ -1401,77 +1444,55 @@ async function searchPhotos(query) {
   container.style.display = 'block';
   container.innerHTML = `<div style="text-align: center; padding: 20px;">${t('search_in_progress')}</div>`;
   
-  // Mode statique : recherche dans le JSON local
+  // Mode statique : recherche FTS sur photos_index.db (un index par event, fusion si plusieurs events)
   if (!API_BASE || API_BASE === 'null' || API_BASE === null) {
     try {
-      console.log('🔍 Mode statique : recherche de', query);
-      // Charger les photos des événements sélectionnés (ou détecter automatiquement)
-      const eventIdsToLoad = selectedEventIds.length > 0 ? selectedEventIds : null;
-      const allPhotos = await loadStaticPhotos(eventIdsToLoad);
-      if (!allPhotos || allPhotos.length === 0) {
-        console.warn('⚠️ Aucune photo chargée');
-        container.innerHTML = `<div style="text-align: center; padding: 20px; color: orange;">Aucune photo disponible</div>`;
+      const queryTrimmed = (query || '').trim();
+      if (!queryTrimmed) {
+        container.innerHTML = `<div style="text-align: center; padding: 20px; color: #666;">${typeof t === 'function' ? t('search_hint') || 'Saisissez un nom, numéro de dossard ou cheval' : 'Saisissez un nom, numéro de dossard ou cheval'}</div>`;
         return;
       }
-      
-      console.log(`📸 ${allPhotos.length} photos chargées`);
-      
-      // Recherche côté client
-      const queryLower = query.toLowerCase().trim();
-      const queryWords = queryLower.split(/\s+/).filter(w => w.length > 0);
-      
-      if (queryWords.length === 0) {
+
+      console.log('🔍 Mode statique FTS : recherche de', queryTrimmed);
+      const eventIds = selectedEventIds.length > 0 ? selectedEventIds : await discoverAvailableEvents();
+      if (!eventIds || eventIds.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 20px; color: orange;">Aucun événement disponible</div>`;
+        return;
+      }
+
+      // Charger les index .db pour chaque event (cache si déjà chargé)
+      for (const eventId of eventIds) {
+        await loadAndCacheEventIndexDb(eventId);
+      }
+
+      const ftsQuery = buildFtsQuery(queryTrimmed);
+      if (!ftsQuery) {
         container.innerHTML = `<div style="text-align: center; padding: 20px;">${t('search_error')}</div>`;
         return;
       }
-      
-      console.log('🔎 Mots recherchés:', queryWords);
-      
-      // Filtrer les photos
-      const filtered = allPhotos.filter(photo => {
-        // Extraire les noms depuis différentes sources possibles (JSON R2, API legacy, etc.)
-        const rider = (photo.rider_name || photo.rider || photo.cavalier || '').toLowerCase().trim();
-        const horse = (photo.horse_name || photo.horse || photo.cheval || '').toLowerCase().trim();
-        const number = (photo.rider_number || photo.number || photo.bib || '').toLowerCase().trim();
-        
-        // Construire le texte de recherche avec tous les champs possibles
-        const searchText = `${rider} ${horse} ${number}`.toLowerCase();
-        
-        // Debug désactivé pour éviter les logs répétitifs
-        // if (queryWords.length > 0 && queryWords[0].length > 2) {
-        //   console.debug('Photo data:', {
-        //     rider_name: photo.rider_name,
-        //     horse_name: photo.horse_name,
-        //     rider_number: photo.rider_number,
-        //     searchText: searchText,
-        //     query: queryWords.join(' ')
-        //   });
-        // }
-        
-        // Tous les mots de la requête doivent être présents
-        const matches = queryWords.every(word => searchText.includes(word));
-        // Log désactivé pour éviter la répétition excessive
-        // if (matches) {
-        //   console.log('✅ Match trouvé:', { rider, horse, number, query: queryWords.join(' ') });
-        // }
-        return matches;
-      });
-      
-      console.log(`📊 ${filtered.length} résultats trouvés`);
-      
-      // Normaliser et trier
-      const photos = normalizePhotosData(filtered);
+
+      const allResults = [];
+      for (const eventId of eventIds) {
+        const buf = multiEventDbBuffers[eventId];
+        if (buf) {
+          try {
+            const rows = await runFtsSearchOnIndexDb(buf, eventId, ftsQuery);
+            allResults.push(...rows);
+          } catch (e) {
+            console.warn(`FTS erreur pour ${eventId}:`, e);
+          }
+        }
+      }
+
+      console.log(`📊 FTS : ${allResults.length} résultat(s) pour "${queryTrimmed}" (${eventIds.length} event(s))`);
+
+      const photos = normalizePhotosData(allResults);
       const sortedPhotos = [...photos].sort(naturalSort);
-      
-      // Stocker les résultats
       currentSearchResults = sortedPhotos;
-      
-      // Afficher
       renderPhotos(sortedPhotos);
       return;
     } catch (error) {
-      console.error('❌ Erreur recherche statique:', error);
-      console.error('Stack:', error.stack);
+      console.error('❌ Erreur recherche FTS:', error);
       container.innerHTML = `<div style="text-align: center; padding: 20px; color: red;">${t('search_error')}: ${error.message}</div>`;
       return;
     }
@@ -4544,9 +4565,10 @@ function handleEventFilterChange(availableEvents) {
     mobileSelect.value = selectedValue || 'all';
   }
 
-  // Vider le cache pour forcer le rechargement
+  // Vider le cache pour forcer le rechargement (FTS : buffers DB aussi)
   staticPhotosCache = null;
   multiEventPhotosCache = {};
+  multiEventDbBuffers = {};
 
   // Si une recherche est en cours, relancer la recherche
   const searchInput = document.getElementById('photo-search');

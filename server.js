@@ -219,13 +219,12 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 // Middleware pour parser JSON (après le webhook Stripe)
 app.use(express.json());
 
-// Charger les produits depuis R2 par événement (plus de fichier statique)
+// Charger les produits depuis R2 par événement (eventId = 'global' = produits globaux uniquement)
 async function loadProductsForEvent(eventId) {
-  if (!eventId || !String(eventId).trim()) {
-    return [];
-  }
+  const id = eventId && String(eventId).trim();
+  if (!id) return [];
   try {
-    const products = await r2Data.getProductsForEvent(eventId);
+    const products = await r2Data.getProductsForEvent(id);
     return products;
   } catch (e) {
     console.error(`❌ Erreur chargement produits R2 pour ${eventId}:`, e);
@@ -691,19 +690,17 @@ app.get('/admin', (req, res) => {
 });
 
 // Produits pour la borne client (formats et prix par événement, depuis R2)
+// event_id=global ou vide → produits globaux uniquement (prix par défaut à l'arrivée sur la page)
+// event_id=BJ025 → produits globaux + produits spécifiques BJ025
 app.get('/api/products', async (req, res) => {
   try {
     let eventId = (req.query.event_id || '').trim();
     const lang = (req.query.lang || 'fr').trim() || 'fr';
-    if (!eventId) {
-      const eventsList = await r2Data.readJsonFromR2('events_list.json');
-      const events = Array.isArray(eventsList) ? eventsList : (eventsList?.events || []);
-      const valid = events.filter(e => e != null && e !== '' && String(e) !== 'undefined');
-      const firstId = typeof valid[0] === 'object' ? (valid[0].event_id || valid[0].id) : valid[0];
-      eventId = firstId || '';
+    if (eventId === 'global' || !eventId) {
+      eventId = 'global';
     }
     const products = await loadProductsForEvent(eventId);
-    res.json({ products, event_id: eventId || null, version: 1 });
+    res.json({ products, event_id: eventId === 'global' ? null : eventId, version: 1 });
   } catch (e) {
     console.error('❌ GET /api/products:', e);
     res.status(500).json({ error: e.message, products: [] });
@@ -833,6 +830,31 @@ app.delete('/api/admin/events/:eventId/products/:productId', async (req, res) =>
     res.json({ success: true });
   } catch (e) {
     console.error('❌ Erreur suppression produit:', e);
+    res.status(500).json({ error: e.message });
+  }
+});
+
+// Distribuer un produit : défaut (ouverture) + liste d'événements
+app.post('/api/admin/products/distribute', async (req, res) => {
+  try {
+    const { product, default_display, event_ids } = req.body;
+    if (!product || typeof product !== 'object') {
+      return res.status(400).json({ error: 'product requis' });
+    }
+    const eventIds = Array.isArray(event_ids) ? event_ids.filter(e => e && String(e).trim()) : [];
+    let payload = { ...product };
+    if (payload.id == null || payload.id === '') {
+      payload.id = Date.now();
+    }
+    if (default_display) {
+      await r2Data.mergeProductIntoGlobal(payload);
+    }
+    for (const eventId of eventIds) {
+      await r2Data.mergeProductIntoEvent(eventId, payload);
+    }
+    res.json({ product: payload });
+  } catch (e) {
+    console.error('❌ POST /api/admin/products/distribute:', e);
     res.status(500).json({ error: e.message });
   }
 });

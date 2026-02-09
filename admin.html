@@ -517,7 +517,7 @@
 
                 <div class="form-section">
                     <h3 class="form-section-title">Statut</h3>
-                    <div class="form-row cols-3">
+                    <div class="form-row cols-2">
                         <div class="form-group checkbox-group">
                             <label class="checkbox-label">
                                 <input type="checkbox" id="product-active" checked>
@@ -530,12 +530,22 @@
                                 <span>Masquer (caché mais reste actif)</span>
                             </label>
                         </div>
-                        <div class="form-group checkbox-group">
-                            <label class="checkbox-label">
-                                <input type="checkbox" id="product-is-global">
-                                <span>Appliquer à tous les événements</span>
-                            </label>
-                        </div>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">Où afficher ce produit</h3>
+                    <div class="form-group checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="product-default-display">
+                            <span>Afficher par défaut à l'ouverture (tarifs promotionnels par défaut sur la borne)</span>
+                        </label>
+                        <small>Si coché, le produit apparaît dans « Nos offres » quand le client ouvre la borne (tous événements).</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Présent dans les événements</label>
+                        <div id="product-event-ids" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px;"></div>
+                        <small>Cochez les événements pour lesquels ce produit (et ses prix) doit être proposé. Dans le panier, le prix affiché sera celui de l'événement de la photo.</small>
                     </div>
                 </div>
 

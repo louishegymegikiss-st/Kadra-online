@@ -203,8 +203,23 @@ async function getProductsForEvent(eventId) {
       console.debug(`📦 Aucun produit spécifique pour ${eventId}`);
     }
   }
-  
-  return products;
+
+  // Dédupliquer par id : version événement écrase la version globale ; garder event_sources pour l'admin (suppression)
+  const byId = {};
+  products.forEach(p => {
+    const id = p.id != null ? String(p.id) : null;
+    if (!id) return;
+    const source = p.is_global ? 'global' : (p.event_id || null);
+    if (!byId[id]) {
+      byId[id] = { ...p, event_sources: [] };
+    } else {
+      Object.assign(byId[id], p);
+    }
+    if (source && !byId[id].event_sources.includes(source)) {
+      byId[id].event_sources.push(source);
+    }
+  });
+  return Object.values(byId);
 }
 
 /**
@@ -248,6 +263,61 @@ async function saveProductsForEvent(eventId, products) {
     console.log(`💾 ${eventProducts.length} produit(s) spécifique(s) sauvegardé(s) pour ${eventId}`);
   }
   
+  return true;
+}
+
+/**
+ * Ajoute ou met à jour un produit dans products_global.json
+ * @param {object} product - Produit (avec id)
+ * @returns {Promise<boolean>}
+ */
+async function mergeProductIntoGlobal(product) {
+  const data = await readJsonFromR2('products_global.json');
+  const list = data?.products && Array.isArray(data.products) ? data.products : [];
+  const id = product.id != null ? String(product.id) : null;
+  const idx = id ? list.findIndex(p => String(p.id) === id) : -1;
+  const clean = { ...product };
+  delete clean.is_global;
+  delete clean.event_id;
+  if (idx >= 0) {
+    list[idx] = clean;
+  } else {
+    list.push(clean);
+  }
+  await writeJsonToR2('products_global.json', {
+    version: 1,
+    updated_at: new Date().toISOString(),
+    products: list
+  });
+  return true;
+}
+
+/**
+ * Ajoute ou met à jour un produit dans events/{eventId}/products.json
+ * @param {string} eventId - ID événement
+ * @param {object} product - Produit (avec id)
+ * @returns {Promise<boolean>}
+ */
+async function mergeProductIntoEvent(eventId, product) {
+  const r2Key = `events/${eventId}/products.json`;
+  const data = await readJsonFromR2(r2Key);
+  const list = data?.products && Array.isArray(data.products) ? data.products : [];
+  const id = product.id != null ? String(product.id) : null;
+  const idx = id ? list.findIndex(p => String(p.id) === id) : -1;
+  const clean = { ...product };
+  delete clean.is_global;
+  delete clean.event_id;
+  if (idx >= 0) {
+    list[idx] = clean;
+  } else {
+    list.push(clean);
+  }
+  await writeJsonToR2(r2Key, {
+    version: 1,
+    event_id: eventId,
+    updated_at: new Date().toISOString(),
+    products: list
+  });
   return true;
 }
 
@@ -421,10 +491,12 @@ module.exports = {
   writeJsonToR2,
   existsOnR2,
   getS3Client,
-  
+
   // Produits
   getProductsForEvent,
   saveProductsForEvent,
+  mergeProductIntoGlobal,
+  mergeProductIntoEvent,
   
   // Commandes
   getOrdersForEvent,

@@ -88,8 +88,8 @@ async function loadEvents() {
       return;
     }
 
-    select.innerHTML = '<option value="">Tous les événements</option>';
-    if (hdSelect) hdSelect.innerHTML = '<option value="">Sélectionner un événement...</option>';
+    select.innerHTML = '<option value="">Tous les événements</option><option value="global">Défaut (ouverture)</option>';
+    if (hdSelect) hdSelect.innerHTML = '<option value="">Sélectionner un événement...</option><option value="global">Défaut (ouverture)</option>';
 
     if (allEvents.length > 0) {
       allEvents.forEach(event => {
@@ -371,16 +371,16 @@ function renderProducts() {
   let html = '<table style="width: 100%; border-collapse: collapse;"><thead><tr><th>Nom</th><th>Prix</th><th>Catégorie</th><th>Statut</th><th>Actions</th></tr></thead><tbody>';
   
   products.forEach(product => {
-    const isGlobal = product.is_global === true;
+    const fromDefault = product.event_sources && product.event_sources.includes('global');
     html += `
       <tr>
-        <td>${escapeHtml(product.name_fr || product.name || 'Sans nom')} ${isGlobal ? '<span class="badge" style="background: #667eea; color: white; margin-left: 5px; font-size: 10px;">Global</span>' : ''}</td>
+        <td>${escapeHtml(product.name_fr || product.name || 'Sans nom')} ${fromDefault ? '<span class="badge" style="background: #667eea; color: white; margin-left: 5px; font-size: 10px;">Défaut</span>' : ''}</td>
         <td>${(product.price || 0).toFixed(2)} €</td>
         <td>${escapeHtml(product.category || 'numérique')}</td>
         <td>${product.active !== false ? '<span class="badge badge-success">Actif</span>' : '<span class="badge badge-danger">Inactif</span>'}</td>
         <td>
           <button class="btn btn-primary" onclick="editProduct(${product.id})" style="padding: 6px 12px; font-size: 12px;">Modifier</button>
-          <button class="btn btn-danger" onclick="deleteProduct(${product.id}, ${isGlobal ? 'true' : 'false'})" style="padding: 6px 12px; font-size: 12px;">Supprimer</button>
+          <button class="btn btn-danger" onclick="deleteProduct(${product.id})" style="padding: 6px 12px; font-size: 12px;">Retirer</button>
         </td>
       </tr>
     `;
@@ -446,7 +446,7 @@ function openProductForm(productId = null) {
       // Statut
       document.getElementById('product-active').checked = product.active !== false;
       document.getElementById('product-hidden').checked = product.hidden === true;
-      document.getElementById('product-is-global').checked = product.is_global === true;
+      document.getElementById('product-default-display').checked = (product.event_sources && product.event_sources.includes('global')) || product.is_global === true;
       form.dataset.productId = productId;
     }
   } else {
@@ -454,17 +454,38 @@ function openProductForm(productId = null) {
     form.reset();
     document.getElementById('product-active').checked = true;
     document.getElementById('product-hidden').checked = false;
-    document.getElementById('product-is-global').checked = false;
+    document.getElementById('product-default-display').checked = false;
     document.getElementById('product-email-delivery').checked = false;
     document.getElementById('product-requires-address').checked = false;
     document.getElementById('product-featured-position').value = 0;
     document.getElementById('product-cart-order').value = 0;
     delete form.dataset.productId;
   }
-  
+
+  fillProductEventIds();
   toggleProductFormSections();
   modal.classList.add('active');
   document.body.style.overflow = 'hidden';
+}
+
+function fillProductEventIds() {
+  const container = document.getElementById('product-event-ids');
+  if (!container) return;
+  container.innerHTML = '';
+  allEvents.forEach(ev => {
+    const id = ev.event_id || ev.id;
+    const name = ev.name || id;
+    const label = document.createElement('label');
+    label.className = 'checkbox-label';
+    label.style.cssText = 'margin: 0; display: flex; align-items: center; gap: 6px;';
+    const input = document.createElement('input');
+    input.type = 'checkbox';
+    input.dataset.eventId = id;
+    input.value = id;
+    label.appendChild(input);
+    label.appendChild(document.createTextNode(name));
+    container.appendChild(label);
+  });
 }
 
 function closeProductForm() {
@@ -474,19 +495,20 @@ function closeProductForm() {
 
 async function saveProduct(event) {
   event.preventDefault();
-  
+
   const form = document.getElementById('product-form');
   const productId = form.dataset.productId;
-  const isGlobal = document.getElementById('product-is-global').checked;
-  
-  // Si produit global, utiliser "global" comme eventId, sinon utiliser currentEventId ou le premier événement
-  let targetEventId = isGlobal ? 'global' : (currentEventId || (allEvents.length > 0 ? allEvents[0].event_id : null));
-  
-  if (!targetEventId && !isGlobal) {
-    showMessage('Sélectionnez d\'abord un événement ou cochez "Appliquer à tous les événements"', 'error');
+  const defaultDisplay = document.getElementById('product-default-display').checked;
+  const eventIds = [];
+  document.querySelectorAll('#product-event-ids input[type="checkbox"]:checked').forEach(cb => {
+    if (cb.dataset.eventId) eventIds.push(cb.dataset.eventId);
+  });
+
+  if (!defaultDisplay && eventIds.length === 0) {
+    showMessage('Cochez « Afficher par défaut » et/ou au moins un événement.', 'error');
     return;
   }
-  
+
   // Parser les règles de prix
   let pricingRules = null;
   const pricingRulesText = document.getElementById('product-pricing-rules').value.trim();
@@ -540,32 +562,25 @@ async function saveProduct(event) {
     cart_order: parseInt(document.getElementById('product-cart-order').value) || 0,
     // Statut
     active: document.getElementById('product-active').checked,
-    hidden: document.getElementById('product-hidden').checked,
-    is_global: isGlobal
+    hidden: document.getElementById('product-hidden').checked
   };
-  
+  if (productId) product.id = parseInt(productId, 10);
+
   try {
-    let response;
-    if (productId) {
-      response = await fetch(`/api/admin/events/${targetEventId}/products/${productId}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product)
-      });
-    } else {
-      product.id = Date.now();
-      response = await fetch(`/api/admin/events/${targetEventId}/products`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(product)
-      });
-    }
-    
+    const response = await fetch('/api/admin/products/distribute', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        product,
+        default_display: defaultDisplay,
+        event_ids: eventIds
+      })
+    });
     if (!response.ok) {
-      throw new Error('Erreur sauvegarde produit');
+      const err = await response.json().catch(() => ({}));
+      throw new Error(err.error || 'Erreur sauvegarde produit');
     }
-    
-    showMessage(`Produit enregistré avec succès ${isGlobal ? '(tous les événements)' : ''}`, 'success');
+    showMessage('Produit enregistré (défaut: ' + (defaultDisplay ? 'oui' : 'non') + ', événements: ' + eventIds.length + ')', 'success');
     closeProductForm();
     await loadProducts();
   } catch (error) {
@@ -573,15 +588,10 @@ async function saveProduct(event) {
   }
 }
 
-async function deleteProduct(productId, isGlobal = false) {
-  if (!confirm('Êtes-vous sûr de vouloir supprimer ce produit ?')) return;
-  
-  const targetEventId = isGlobal ? 'global' : (currentEventId || (allEvents.length > 0 ? allEvents[0].event_id : null));
-  if (!targetEventId && !isGlobal) {
-    showMessage('Sélectionnez d\'abord un événement', 'error');
-    return;
-  }
-  
+async function deleteProduct(productId) {
+  if (!confirm('Êtes-vous sûr de vouloir retirer ce produit de la sélection actuelle ?')) return;
+
+  const targetEventId = currentEventId || 'global';
   try {
     const response = await fetch(`/api/admin/events/${targetEventId}/products/${productId}`, {
       method: 'DELETE'

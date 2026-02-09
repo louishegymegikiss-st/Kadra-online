@@ -597,7 +597,7 @@ window.openPaymentModal = function(orderId, action) {
   state.currentPaymentOrderId = orderId;
   state.currentPaymentAction = action;
   
-  const order = state.orders.find(o => o.id === orderId);
+  const order = state.orders.find(o => o.id == orderId);
   if (!order) return;
   
   // Remplir le montant (éditable)
@@ -636,7 +636,12 @@ window.confirmPayment = async function() {
   // Si action = 'reserve' -> 'reserved'
   // Si action = 'pay' -> dépend du type de commande
   
-  const order = state.orders.find(o => o.id === orderId);
+  const order = state.orders.find(o => o.id == orderId);
+  if (!order) {
+    alert('Commande introuvable. Veuillez rafraîchir la page.');
+    closePaymentModal();
+    return;
+  }
   const type = getOrderType(order);
   
   let newStatus = 'paid'; // Intermédiaire par défaut
@@ -653,7 +658,7 @@ window.confirmPayment = async function() {
   
     // Mettre à jour le prix, le mode de paiement et le statut
   try {
-    await fetch(`/api/vendeur/orders/${orderId}`, {
+    const response = await fetch(`/api/vendeur/orders/${orderId}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ 
@@ -662,9 +667,13 @@ window.confirmPayment = async function() {
         status: newStatus
       })
     });
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`API ${response.status}: ${errText || response.statusText}`);
+    }
     
     // Mettre à jour localement la commande pour un feedback immédiat
-    const orderIndex = state.orders.findIndex(o => o.id === orderId);
+    const orderIndex = state.orders.findIndex(o => o.id == orderId);
     if (orderIndex !== -1) {
       state.orders[orderIndex].status = newStatus;
       state.orders[orderIndex].total = newTotal;
@@ -697,7 +706,8 @@ window.confirmPayment = async function() {
     loadOrders().catch(err => console.error('Erreur rechargement commandes:', err));
   } catch (error) {
     console.error('Erreur confirmation paiement:', error);
-    alert('Erreur lors de la confirmation du paiement');
+    const msg = (error && error.message) ? error.message : 'Erreur lors de la confirmation du paiement';
+    alert('Erreur lors de la confirmation du paiement: ' + msg);
   }
   
   closePaymentModal();
