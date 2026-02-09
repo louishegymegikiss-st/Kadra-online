@@ -1,11 +1,15 @@
 <?php
 /**
  * Endpoint Infomaniak : Création snapshot commandes → R2
- * 
+ *
  * Route: POST /api/orders/snapshot
- * 
+ *
  * Reçoit les commandes depuis le frontend et les upload dans R2
  * avec merge atomique pour éviter les doublons.
+ *
+ * Dossier R2 :
+ * - Si toutes les commandes ont le même event_id → orders/{event_id}/pending_orders.json
+ * - Si plusieurs events ou indéterminé → orders/mix/pending_orders.json
  */
 
 header('Content-Type: application/json');
@@ -41,14 +45,27 @@ try {
         throw new Exception('Données JSON invalides');
     }
     
-    $eventId = $data['event_id'] ?? null;
+    $topLevelEventId = isset($data['event_id']) ? trim((string) $data['event_id']) : null;
     $orders = $data['orders'] ?? [];
     
-    if (!$eventId || !is_array($orders) || empty($orders)) {
+    if (!is_array($orders) || empty($orders)) {
         http_response_code(400);
-        echo json_encode(['error' => 'event_id et orders requis']);
+        echo json_encode(['error' => 'orders requis']);
         exit;
     }
+    
+    // Déterminer le dossier R2 : un seul event dans les commandes → orders/{event_id}/ ; sinon → orders/mix/
+    $eventIds = [];
+    foreach ($orders as $o) {
+        $eid = isset($o['event_id']) ? trim((string) $o['event_id']) : $topLevelEventId;
+        if ($eid !== '') {
+            $eventIds[$eid] = true;
+        }
+    }
+    if (empty($eventIds) && $topLevelEventId !== '') {
+        $eventIds[$topLevelEventId] = true;
+    }
+    $folder = (count($eventIds) === 1) ? (string) array_keys($eventIds)[0] : 'mix';
     
     // Configuration R2 depuis variables d'environnement ou valeurs par défaut
     $r2Endpoint = getenv('R2_ENDPOINT') ?: 'https://2dc708dd22889ad3d4a69dc8b22529c9.r2.cloudflarestorage.com';
@@ -68,7 +85,7 @@ try {
     ]);
     
     // Lire le snapshot existant depuis R2
-    $r2Key = "orders/{$eventId}/pending_orders.json";
+    $r2Key = "orders/{$folder}/pending_orders.json";
     $existingSnapshot = null;
     
     try {
@@ -98,7 +115,7 @@ try {
     
     // Créer le snapshot
     $snapshot = [
-        'event_id' => $eventId,
+        'event_id' => $folder,
         'snapshot_version' => ($existingSnapshot['snapshot_version'] ?? 0) + 1,
         'generated_at' => date('c'),
         'count' => count($allOrders),
@@ -108,7 +125,7 @@ try {
     $snapshotJson = json_encode($snapshot, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE);
     
     // Upload atomique : d'abord .tmp
-    $tmpKey = "orders/{$eventId}/pending_orders.tmp.json";
+    $tmpKey = "orders/{$folder}/pending_orders.tmp.json";
     $s3->putObject([
         'Bucket' => $r2Bucket,
         'Key' => $tmpKey,
@@ -131,7 +148,8 @@ try {
     http_response_code(200);
     echo json_encode([
         'message' => "Snapshot v{$snapshot['snapshot_version']} de " . count($allOrders) . " commande(s) créé",
-        'event_id' => $eventId,
+        'event_id' => $folder,
+        'r2_key' => $r2Key,
         'snapshot_version' => $snapshot['snapshot_version'],
         'new_orders' => count($orders),
         'total_orders' => count($allOrders)
