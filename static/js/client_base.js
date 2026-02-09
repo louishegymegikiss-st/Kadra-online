@@ -755,7 +755,26 @@ async function loadProducts() {
         if (cart.length > 0) await renderCartItems();
         return;
       }
-      const data = await response.json();
+      const contentType = response.headers.get('content-type') || '';
+      const text = await response.text();
+      if (contentType.indexOf('application/json') === -1 || (text.trim().startsWith('<') && text.indexOf('<!DOCTYPE') !== -1)) {
+        console.warn('API produits a renvoyé du HTML au lieu de JSON. Vérifiez que le serveur Node (server.js) tourne sur Infomaniak et que /api/products est bien servi.');
+        products = [];
+        productsByEvent[eventId === 'global' ? 'global' : eventId] = [];
+        renderPromotions();
+        if (cart.length > 0) await renderCartItems();
+        return;
+      }
+      let data;
+      try {
+        data = JSON.parse(text);
+      } catch (parseErr) {
+        console.warn('Erreur chargement produits par événement:', parseErr);
+        products = [];
+        renderPromotions();
+        if (cart.length > 0) await renderCartItems();
+        return;
+      }
       products = data.products || [];
       const cacheKey = eventId === 'global' ? 'global' : eventId;
       productsByEvent[cacheKey] = products;
@@ -1230,25 +1249,25 @@ let selectedEventIds = []; // Événements sélectionnés pour la recherche
 // Cache des buffers photos_index.db par event_id (FTS : on ne charge pas toutes les lignes, on interroge à la recherche)
 let multiEventDbBuffers = {};
 
-/** Charge le script sql.js (une seule fois). */
+/** Charge le script sql.js-fts5 (build avec FTS5 pour la recherche full-text). */
 function loadSqlJs() {
   if (window.initSqlJs) return Promise.resolve();
   return new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.js';
+    script.src = 'https://cdn.jsdelivr.net/npm/sql.js-fts5@1.4.0/dist/sql-wasm.js';
     script.onload = () => resolve();
-    script.onerror = () => reject(new Error('sql.js load failed'));
+    script.onerror = () => reject(new Error('sql.js-fts5 load failed'));
     document.head.appendChild(script);
   });
 }
 
 let _sqlJsModule = null;
-/** Init sql.js une seule fois (retourne le module SQL). */
+/** Init sql.js-fts5 une seule fois (retourne le module SQL avec FTS5). */
 async function getSqlJs() {
   if (_sqlJsModule) return _sqlJsModule;
   await loadSqlJs();
   _sqlJsModule = await window.initSqlJs({
-    locateFile: () => 'https://cdn.jsdelivr.net/npm/sql.js@1.10.2/dist/sql-wasm.wasm'
+    locateFile: () => 'https://cdn.jsdelivr.net/npm/sql.js-fts5@1.4.0/dist/sql-wasm.wasm'
   });
   return _sqlJsModule;
 }
@@ -1278,10 +1297,11 @@ async function loadAndCacheEventIndexDb(eventId) {
 }
 
 /**
- * Exécute une recherche FTS sur un buffer photos_index.db.
+ * Exécute une recherche FTS5 sur un buffer photos_index.db.
+ * Utilise sql.js-fts5 (build avec module FTS5).
  * @param {ArrayBuffer} arrayBuffer - Buffer du fichier .db
  * @param {string} eventId - event_id à ajouter aux lignes
- * @param {string} ftsQuery - Expression FTS5 (ex. "jean" "dupont")
+ * @param {string} ftsQuery - Expression FTS5 (ex. "jean" "dupont") ou préfixe (ex. "dup"*)
  * @param {number} [limit] - Limite optionnelle (ex. pour les suggestions)
  * @returns {Promise<Array<object>>} Lignes trouvées (file_id, rider_name, horse_name, r2_key_*, etc.)
  */
