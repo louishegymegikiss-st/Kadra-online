@@ -728,7 +728,10 @@ async function ensureProductsForEvent(eventId) {
     const url = `/api/products?event_id=${encodeURIComponent(key)}&lang=${encodeURIComponent(currentLanguage || 'fr')}`;
     const response = await fetch(url);
     if (!response.ok) return products;
-    const data = await response.json();
+    const contentType = response.headers.get('content-type') || '';
+    const text = await response.text();
+    if (contentType.indexOf('application/json') === -1 || (text.trim().startsWith('<') && text.indexOf('<!DOCTYPE') !== -1)) return products;
+    const data = JSON.parse(text);
     productsByEvent[key] = data.products || [];
     return productsByEvent[key];
   } catch (e) {
@@ -758,7 +761,7 @@ async function loadProducts() {
       const contentType = response.headers.get('content-type') || '';
       const text = await response.text();
       if (contentType.indexOf('application/json') === -1 || (text.trim().startsWith('<') && text.indexOf('<!DOCTYPE') !== -1)) {
-        console.warn('API produits a renvoyé du HTML au lieu de JSON. Vérifiez que le serveur Node (server.js) tourne sur Infomaniak et que /api/products est bien servi.');
+        console.warn('API produits a renvoyé du HTML au lieu de JSON. Vérifiez que le serveur Node (server.js) tourne et que /api/products est bien servi.');
         products = [];
         productsByEvent[eventId === 'global' ? 'global' : eventId] = [];
         renderPromotions();
