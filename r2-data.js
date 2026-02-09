@@ -167,28 +167,31 @@ async function existsOnR2(r2Key) {
 // ============================================
 
 /**
- * Récupère les produits pour un événement (fusionne avec produits globaux)
+ * Récupère les produits pour un événement (optionnellement fusionnés avec produits globaux).
  * @param {string} eventId - ID de l'événement (ex: "BJ025") ou "global" pour tous
+ * @param {{ includeGlobal?: boolean }} options - includeGlobal: false = uniquement produits de l'événement (défaut quand un event est sélectionné)
  * @returns {Promise<Array>} - Liste des produits
  */
-async function getProductsForEvent(eventId) {
+async function getProductsForEvent(eventId, options = {}) {
+  const includeGlobal = options.includeGlobal !== false;
   const products = [];
   
-  // 1. Charger les produits globaux (tous événements)
-  try {
-    const globalData = await readJsonFromR2('products_global.json');
-    if (globalData?.products && Array.isArray(globalData.products)) {
-      globalData.products.forEach(p => {
-        products.push({ ...p, is_global: true });
-      });
-      console.log(`📦 ${globalData.products.length} produit(s) global(aux) chargé(s)`);
+  // 1. Produits globaux ("défaut / ouverture") — ignorés si includeGlobal === false et event spécifique
+  if (includeGlobal || !eventId || eventId === 'global') {
+    try {
+      const globalData = await readJsonFromR2('products_global.json');
+      if (globalData?.products && Array.isArray(globalData.products)) {
+        globalData.products.forEach(p => {
+          products.push({ ...p, is_global: true });
+        });
+        console.log(`📦 ${globalData.products.length} produit(s) global(aux) chargé(s)`);
+      }
+    } catch (e) {
+      console.debug('📦 Aucun produit global (fichier products_global.json absent)');
     }
-  } catch (e) {
-    // Fichier global n'existe pas encore, c'est normal
-    console.debug('📦 Aucun produit global (fichier products_global.json absent)');
   }
   
-  // 2. Charger les produits spécifiques à l'événement (si eventId n'est pas "global")
+  // 2. Produits spécifiques à l'événement (events/{eventId}/products.json)
   if (eventId && eventId !== 'global') {
     try {
       const r2Key = `events/${eventId}/products.json`;

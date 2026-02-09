@@ -219,12 +219,38 @@ app.post('/api/stripe/webhook', express.raw({ type: 'application/json' }), async
 // Middleware pour parser JSON (après le webhook Stripe)
 app.use(express.json());
 
+// Config client (borne) : option "inclure produits défaut dans la liste d'un événement" (désactivée par défaut)
+const clientConfigPath = path.join(ROOT, 'data', 'client-config.json');
+let clientConfig = { include_default_products_in_event: false };
+function loadClientConfig() {
+  try {
+    if (fs.existsSync(clientConfigPath)) {
+      const raw = fs.readFileSync(clientConfigPath, 'utf8');
+      const data = JSON.parse(raw);
+      if (typeof data.include_default_products_in_event === 'boolean') {
+        clientConfig.include_default_products_in_event = data.include_default_products_in_event;
+      }
+    }
+  } catch (e) {
+    console.warn('Config client non lue, défaut utilisé:', e.message);
+  }
+}
+function saveClientConfig() {
+  try {
+    fs.mkdirSync(path.dirname(clientConfigPath), { recursive: true });
+    fs.writeFileSync(clientConfigPath, JSON.stringify(clientConfig, null, 2), 'utf8');
+  } catch (e) {
+    console.error('Erreur sauvegarde config client:', e);
+  }
+}
+loadClientConfig();
+
 // Charger les produits depuis R2 par événement (eventId = 'global' = produits globaux uniquement)
-async function loadProductsForEvent(eventId) {
+async function loadProductsForEvent(eventId, options = {}) {
   const id = eventId && String(eventId).trim();
   if (!id) return [];
   try {
-    const products = await r2Data.getProductsForEvent(id);
+    const products = await r2Data.getProductsForEvent(id, options);
     return products;
   } catch (e) {
     console.error(`❌ Erreur chargement produits R2 pour ${eventId}:`, e);
@@ -242,18 +268,20 @@ function getUnitPrice(product, position, hasPrintForSamePhoto = false) {
   const useReducedPrice = isDigital && hasPrintForSamePhoto && product.reduced_price_with_print;
   if (useReducedPrice) return product.reduced_price_with_print;
 
-  let specialPromoPosition = null;
-  let specialPromoPrice = null;
+  // Promo spéciale "X=Y" = acheter X pour avoir Y au total → positions (X+1) à Y gratuites (même règle que local/Python)
+  let promoFreeStart = null;
+  let promoFreeEnd = null;
   if (product.special_promo_rule) {
     const match = String(product.special_promo_rule).match(/(\d+)\s*=\s*(\d+)/);
     if (match) {
-      specialPromoPosition = parseInt(match[1], 10);
-      specialPromoPrice = parseFloat(match[2]);
+      const payFor = parseInt(match[1], 10);
+      const getTotal = parseInt(match[2], 10);
+      promoFreeStart = payFor + 1;
+      promoFreeEnd = getTotal;
     }
   }
-
-  if (specialPromoPosition && position === specialPromoPosition) {
-    return specialPromoPrice;
+  if (promoFreeStart != null && promoFreeEnd != null && position >= promoFreeStart && position <= promoFreeEnd) {
+    return 0;
   }
 
   if (product.pricing_rules && typeof product.pricing_rules === 'object') {
@@ -689,17 +717,42 @@ app.get('/admin', (req, res) => {
   }
 });
 
+// Config client (borne) : lu par la borne pour savoir si elle inclut les produits défaut quand un événement est sélectionné
+app.get('/api/config', (req, res) => {
+  res.json({
+    include_default_products_in_event: clientConfig.include_default_products_in_event,
+  });
+});
+
+app.put('/api/admin/config', (req, res) => {
+  try {
+    if (typeof req.body.include_default_products_in_event === 'boolean') {
+      clientConfig.include_default_products_in_event = req.body.include_default_products_in_event;
+      saveClientConfig();
+    }
+    res.json(clientConfig);
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 // Produits pour la borne client (formats et prix par événement, depuis R2)
-// event_id=global ou vide → produits globaux uniquement (prix par défaut à l'arrivée sur la page)
-// event_id=BJ025 → produits globaux + produits spécifiques BJ025
+// event_id=global → produits globaux uniquement. event_id=BJ025 + include_global=0 → uniquement BJ025 (défaut désactivé)
 app.get('/api/products', async (req, res) => {
   try {
     let eventId = (req.query.event_id || '').trim();
     const lang = (req.query.lang || 'fr').trim() || 'fr';
+    let includeGlobal = req.query.include_global;
+    if (includeGlobal === undefined || includeGlobal === '') {
+      includeGlobal = clientConfig.include_default_products_in_event;
+    } else {
+      includeGlobal = includeGlobal === '1' || includeGlobal === 'true';
+    }
     if (eventId === 'global' || !eventId) {
       eventId = 'global';
+      includeGlobal = true;
     }
-    const products = await loadProductsForEvent(eventId);
+    const products = await loadProductsForEvent(eventId, { includeGlobal });
     res.json({ products, event_id: eventId === 'global' ? null : eventId, version: 1 });
   } catch (e) {
     console.error('❌ GET /api/products:', e);

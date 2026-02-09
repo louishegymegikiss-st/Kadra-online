@@ -687,6 +687,8 @@ let products = [];
 let productsByEvent = {};
 let currentSearch = '';
 let currentSearchResults = []; // Stocker les résultats de recherche pour extraire les infos cavalier/cheval
+/** Config serveur (option "inclure produits défaut dans l'événement"), désactivée par défaut quand un event est sélectionné */
+let clientConfig = { include_default_products_in_event: false };
 
 // Initialisation - À faire dans les fichiers spécifiques (client_local_desktop.js, client_online_desktop.js, client_online_mobile.js)
 
@@ -725,7 +727,8 @@ async function ensureProductsForEvent(eventId) {
   const key = eventId && String(eventId).trim() ? eventId : 'global';
   if (productsByEvent[key]) return productsByEvent[key];
   try {
-    const url = `/api/products?event_id=${encodeURIComponent(key)}&lang=${encodeURIComponent(currentLanguage || 'fr')}`;
+    let url = `/api/products?event_id=${encodeURIComponent(key)}&lang=${encodeURIComponent(currentLanguage || 'fr')}`;
+    if (key !== 'global') url += '&include_global=' + (clientConfig.include_default_products_in_event ? '1' : '0');
     const response = await fetch(url);
     if (!response.ok) return products;
     const contentType = response.headers.get('content-type') || '';
@@ -741,14 +744,22 @@ async function ensureProductsForEvent(eventId) {
 
 // Chargement des produits (formats et prix selon l'événement courant, depuis R2)
 async function loadProducts() {
-  // Borne online : charger les produits depuis l'API par événement (R2)
   const useEventApi = !API_BASE || API_BASE === 'null' || API_BASE === null;
   if (useEventApi) {
     try {
-      // Un seul événement sélectionné → prix de cet événement (global + spécifique). Sinon → produits globaux (prix par défaut à l'arrivée).
       const eventId = selectedEventIds.length === 1 ? selectedEventIds[0] : 'global';
-      const url = `/api/products?event_id=${encodeURIComponent(eventId)}&lang=${encodeURIComponent(currentLanguage || 'fr')}`;
-      console.log('Chargement produits:', eventId === 'global' ? 'globaux (par défaut)' : `événement ${eventId}`);
+      if (typeof clientConfig.include_default_products_in_event === 'undefined') {
+        try {
+          const cfgRes = await fetch('/api/config');
+          if (cfgRes.ok) {
+            const cfg = await cfgRes.json();
+            clientConfig.include_default_products_in_event = !!cfg.include_default_products_in_event;
+          }
+        } catch (e) { clientConfig.include_default_products_in_event = false; }
+      }
+      let url = `/api/products?event_id=${encodeURIComponent(eventId)}&lang=${encodeURIComponent(currentLanguage || 'fr')}`;
+      if (eventId !== 'global') url += '&include_global=' + (clientConfig.include_default_products_in_event ? '1' : '0');
+      console.log('Chargement produits:', eventId === 'global' ? 'globaux (par défaut)' : `événement ${eventId}` + (clientConfig.include_default_products_in_event ? ' (avec défaut)' : ' (sans défaut)'));
       const response = await fetch(url);
       if (!response.ok) {
         console.warn('API produits indisponible, liste vide');
@@ -892,14 +903,16 @@ function renderPromotions() {
       let cumulativeTotal = 0;
       const defaultPrice = product.price; // Prix par défaut si position non définie
       
-      // Parser la promo spéciale "X=Y" (ex: "2=1" → toutes les 2 photos, 1 est offerte)
-      let promoGroupSize = null;
-      let promoFreeCount = null;
+      // Promo spéciale "X=Y" = acheter X pour avoir Y au total → positions (X+1) à Y gratuites (même règle que local)
+      let promoFreeStart = null;
+      let promoFreeEnd = null;
       if (product.special_promo_rule) {
         const match = product.special_promo_rule.match(/(\d+)\s*=\s*(\d+)/);
         if (match) {
-          promoGroupSize = parseInt(match[1]); // Taille du groupe (ex: 2)
-          promoFreeCount = parseInt(match[2]); // Nombre de photos gratuites dans le groupe (ex: 1)
+          const payFor = parseInt(match[1], 10);
+          const getTotal = parseInt(match[2], 10);
+          promoFreeStart = payFor + 1;
+          promoFreeEnd = getTotal;
         }
       }
       
@@ -927,26 +940,9 @@ function renderPromotions() {
         const ruleForPosition = rules.find(r => r.position === qty);
         let unitPriceForPosition;
         
-        // Vérifier si cette position est dans la promo gratuite (logique en boucle)
-        // Ex: "2=1" → toutes les 2 photos, 1 est offerte (positions 2, 4, 6, 8...)
-        if (promoGroupSize && promoFreeCount) {
-          // Calculer dans quel groupe se trouve cette position (0-indexed)
-          const groupe = Math.floor((qty - 1) / promoGroupSize);
-          // Position dans le groupe (1-indexed)
-          const posInGroup = ((qty - 1) % promoGroupSize) + 1;
-          // Les Y dernières photos du groupe sont gratuites
-          if (posInGroup > (promoGroupSize - promoFreeCount)) {
-            unitPriceForPosition = 0; // Gratuit
-          } else {
-            // Photo payante
-            if (ruleForPosition) {
-              unitPriceForPosition = ruleForPosition.unitPrice;
-            } else if (qty <= maxPosition) {
-              unitPriceForPosition = defaultPrice;
-            } else {
-              unitPriceForPosition = (lastDefinedPrice === 0) ? lastNonZeroPrice : lastDefinedPrice;
-            }
-          }
+        // Promo "X=Y" : positions (X+1) à Y gratuites
+        if (promoFreeStart != null && promoFreeEnd != null && qty >= promoFreeStart && qty <= promoFreeEnd) {
+          unitPriceForPosition = 0;
         } else if (ruleForPosition) {
           // Règle définie pour cette position
           unitPriceForPosition = ruleForPosition.unitPrice;
@@ -2215,6 +2211,7 @@ async function renderCartItems() {
     return;
   }
 
+  // Panier = comme si "événement tous" : charger les produits de chaque événement présent dans le panier (preview + prix corrects)
   const useEventApi = !API_BASE || API_BASE === 'null' || API_BASE === null;
   if (useEventApi) {
     const eventIds = [...new Set(cart.map(i => (i.event_id && String(i.event_id).trim()) || 'global'))];
@@ -2253,15 +2250,21 @@ async function renderCartItems() {
         });
       }
       
-      // Si toujours pas trouvé, utiliser les données de l'item
+      // Si toujours pas trouvé, utiliser les données de l'item (panier = comme si "événement tous" : preview et prix par event_id)
       if (!photo) {
-        console.warn('Photo non trouvée dans currentSearchResults, utilisation des données de l\'item:', item.photo_id);
+        let fileId = item.file_id || null;
+        let eventId = item.event_id || null;
+        if (item.photo_id && item.photo_id.includes('-')) {
+          const parts = item.photo_id.split('-');
+          eventId = eventId || parts[0] || null;
+          fileId = fileId || parts.slice(1).join('-') || null;
+        }
         photo = {
           filename: item.filename,
           rider_name: item.rider_name || '',
           horse_name: item.horse_name || '',
-          file_id: item.file_id || null,
-          event_id: item.event_id || null
+          file_id: fileId,
+          event_id: eventId
         };
       }
       
@@ -2269,10 +2272,15 @@ async function renderCartItems() {
       const filename = photo.filename || item.filename;
       const riderName = photo.rider_name || photo.cavalier || item.rider_name || '';
       const horseName = photo.horse_name || photo.cheval || item.horse_name || '';
-      const fileId = photo.file_id || photo.id || item.file_id || null;
-      const eventId = photo.event_id || photo.contest || item.event_id || null;
+      let fileId = photo.file_id || photo.id || item.file_id || null;
+      let eventId = photo.event_id || photo.contest || item.event_id || null;
+      if (!fileId && !eventId && item.photo_id && item.photo_id.includes('-')) {
+        const parts = item.photo_id.split('-');
+        eventId = eventId || parts[0] || null;
+        fileId = fileId || parts.slice(1).join('-') || null;
+      }
       
-      // Sauvegarder dans l'item pour la prochaine fois
+      // Sauvegarder dans l'item pour la prochaine fois (preview et getProductsForEventId utilisent event_id)
       item.filename = filename;
       item.rider_name = riderName;
       item.horse_name = horseName;
@@ -2385,17 +2393,19 @@ async function renderCartItems() {
         let currentPrice = basePrice; // Prix de base
         let nextPrice = basePrice; // Par défaut, le prix suivant est le même que le prix de base
         
-        // Parser la promo spéciale "X=Y" (ex: "3=10" → la 3ème photo coûte 10 €)
-        let specialPromoPosition = null;
-        let specialPromoPrice = null;
+        // Promo spéciale "X=Y" = acheter X pour avoir Y au total → positions (X+1) à Y gratuites (même règle que local)
+        let promoFreeStart = null;
+        let promoFreeEnd = null;
         if (product.special_promo_rule) {
           const match = product.special_promo_rule.match(/(\d+)\s*=\s*(\d+)/);
           if (match) {
-            specialPromoPosition = parseInt(match[1]); // Position (ex: 3)
-            specialPromoPrice = parseFloat(match[2]); // Prix pour cette position (ex: 10)
+            const payFor = parseInt(match[1], 10);
+            const getTotal = parseInt(match[2], 10);
+            promoFreeStart = payFor + 1;
+            promoFreeEnd = getTotal;
           }
         }
-        
+
         const nextPhotoPosition = totalQtyInCart + 1;
         const followingPhotoPosition = totalQtyInCart + 2;
         
@@ -2433,9 +2443,8 @@ async function renderCartItems() {
               if (useReducedPrice) {
                 return product.reduced_price_with_print;
               }
-              // Vérifier si cette position correspond à la promo spéciale (ex: "3=10")
-              if (specialPromoPosition && position === specialPromoPosition) {
-                return specialPromoPrice;
+              if (promoFreeStart != null && promoFreeEnd != null && position >= promoFreeStart && position <= promoFreeEnd) {
+                return 0;
               }
               if (rules[position.toString()]) {
                 const rulePrice = parseFloat(rules[position.toString()]);
@@ -2469,21 +2478,12 @@ async function renderCartItems() {
             // Prix réduit avec impression prend le dessus sur TOUT (promo spéciale et tarifs dégressifs)
             currentPrice = product.reduced_price_with_print;
             nextPrice = product.reduced_price_with_print;
-          } else if (specialPromoPosition && specialPromoPrice !== null) {
-            // Pas de pricing_rules, mais vérifier la promo spéciale "X=Y" (ex: "3=10")
-            // Seulement si on n'a pas de prix réduit avec impression
-            // Vérifier si la prochaine photo correspond à la position de la promo
-            if (nextPhotoPosition === specialPromoPosition) {
-              currentPrice = specialPromoPrice;
-            } else {
-              currentPrice = basePrice;
-            }
-            // Vérifier si la photo suivante correspond à la position de la promo
-            if (followingPhotoPosition === specialPromoPosition) {
-              nextPrice = specialPromoPrice;
-            } else {
-              nextPrice = basePrice;
-            }
+          } else if (promoFreeStart != null && promoFreeEnd != null) {
+            currentPrice = (nextPhotoPosition >= promoFreeStart && nextPhotoPosition <= promoFreeEnd) ? 0 : basePrice;
+            nextPrice = (followingPhotoPosition >= promoFreeStart && followingPhotoPosition <= promoFreeEnd) ? 0 : basePrice;
+          } else {
+            currentPrice = basePrice;
+            nextPrice = basePrice;
           }
         }
         
@@ -2503,9 +2503,8 @@ async function renderCartItems() {
               if (getPriceForPosition) {
                 actualPrice = getPriceForPosition(thisPhotoPosition);
               } else {
-                // Pas de pricing_rules : utiliser basePrice ou specialPromoPrice
-                if (specialPromoPosition && thisPhotoPosition === specialPromoPosition) {
-                  actualPrice = specialPromoPrice;
+                if (promoFreeStart != null && promoFreeEnd != null && thisPhotoPosition >= promoFreeStart && thisPhotoPosition <= promoFreeEnd) {
+                  actualPrice = 0;
                 } else {
                   actualPrice = basePrice;
                 }
@@ -3673,23 +3672,22 @@ function getPriceForPosition(product, position, hasPrintForSamePhoto = false) {
     return product.reduced_price_with_print;
   }
   
-  // Parser la promo spéciale "X=Y" (ex: "3=10" → la 3ème photo coûte 10 €)
-  // Seulement si on n'a pas de prix réduit avec impression
-  let specialPromoPosition = null;
-  let specialPromoPrice = null;
+  // Promo spéciale "X=Y" = acheter X pour avoir Y au total → positions (X+1) à Y gratuites (même règle que local)
+  let promoFreeStart = null;
+  let promoFreeEnd = null;
   if (product.special_promo_rule) {
     const match = product.special_promo_rule.match(/(\d+)\s*=\s*(\d+)/);
     if (match) {
-      specialPromoPosition = parseInt(match[1]); // Position (ex: 3)
-      specialPromoPrice = parseFloat(match[2]); // Prix pour cette position (ex: 10)
+      const payFor = parseInt(match[1], 10);
+      const getTotal = parseInt(match[2], 10);
+      promoFreeStart = payFor + 1;
+      promoFreeEnd = getTotal;
     }
   }
-  
-  // Vérifier si cette position correspond à la promo spéciale (ex: "3=10")
-  if (specialPromoPosition && position === specialPromoPosition) {
-    return specialPromoPrice;
+  if (promoFreeStart != null && promoFreeEnd != null && position >= promoFreeStart && position <= promoFreeEnd) {
+    return 0;
   }
-  
+
   // Calculer selon pricing_rules (seulement si pas de prix réduit avec impression)
   if (product.pricing_rules && typeof product.pricing_rules === 'object') {
     const rules = product.pricing_rules;

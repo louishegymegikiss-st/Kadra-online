@@ -27,6 +27,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Charger les commandes par défaut
   await loadAllOrders();
   await loadConfig();
+  await loadClientConfig();
+
+  // Option "Inclure produits défaut dans l'événement" (borne)
+  const includeDefaultCheckbox = document.getElementById('config-include-default-products');
+  if (includeDefaultCheckbox) {
+    includeDefaultCheckbox.addEventListener('change', saveClientConfig);
+  }
 
   // Afficher/masquer les blocs du formulaire produit selon la catégorie
   const productCategorySelect = document.getElementById('product-category');
@@ -685,6 +692,34 @@ async function loadConfig() {
     document.getElementById('turnover-objective').value = config.turnover_objective || 0;
   } catch (error) {
     console.error('Erreur chargement config:', error);
+  }
+}
+
+// Config client (borne) : afficher ou non les produits défaut quand un événement est sélectionné (désactivé par défaut)
+async function loadClientConfig() {
+  try {
+    const response = await fetch('/api/config');
+    const data = await response.json();
+    const cb = document.getElementById('config-include-default-products');
+    if (cb) cb.checked = !!data.include_default_products_in_event;
+  } catch (error) {
+    console.warn('Config client (borne) non chargée:', error);
+  }
+}
+
+async function saveClientConfig() {
+  const cb = document.getElementById('config-include-default-products');
+  if (!cb) return;
+  try {
+    const response = await fetch('/api/admin/config', {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ include_default_products_in_event: cb.checked }),
+    });
+    if (!response.ok) throw new Error('Erreur sauvegarde');
+    showMessage(cb.checked ? 'Produits défaut inclus dans les événements (borne)' : 'Produits défaut exclus quand un événement est sélectionné (borne)', 'success');
+  } catch (error) {
+    showMessage('Erreur sauvegarde option: ' + error.message, 'error');
   }
 }
 

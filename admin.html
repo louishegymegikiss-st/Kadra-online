@@ -279,10 +279,14 @@
                     Produits <span class="badge" id="badge-products">0</span>
                 </button>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px; margin-left: 20px;">
+            <div style="display: flex; align-items: center; gap: 16px; margin-left: 20px; flex-wrap: wrap;">
                 <select id="event-select" style="padding: 8px 12px; border: 2px solid #e0e0e0; border-radius: 5px; font-size: 14px;">
                     <option value="">Tous les événements</option>
                 </select>
+                <label id="config-include-default-label" style="display: flex; align-items: center; gap: 6px; cursor: pointer; white-space: nowrap; font-size: 14px; color: #374151;" title="Quand un événement est sélectionné sur la borne, afficher aussi les produits défaut (ouverture) dans la liste">
+                    <input type="checkbox" id="config-include-default-products" />
+                    <span>Inclure produits défaut (ouverture) dans l'événement</span>
+                </label>
             </div>
         </nav>
 
